@@ -1308,7 +1308,7 @@ pre[class*="language-"] {
   .right-sidebar { display: none; }
   .progress-chip { display: none; }
 
-  .main-content { width: auto; max-width: 100%; margin: var(--sp-6) var(--sp-4); padding: var(--sp-8); }
+  .main-content { width: auto; max-width: 100%; min-width: 0; margin: var(--sp-6) var(--sp-4); padding: var(--sp-8); }
 }
 
 
@@ -1358,8 +1358,17 @@ pre[class*="language-"] {
   .main-content {
     width: auto;
     max-width: 100%;
+    min-width: 0;
     margin: var(--sp-3);
     padding: var(--sp-6) var(--sp-4);
+    overflow-x: hidden;
+  }
+
+  /* Code blocks must not expand past the viewport */
+  .code-block,
+  pre[class*="language-"] {
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   /* --- Topic hero --- */
