@@ -1,12 +1,12 @@
 /* ============================================================
-   Blueprint Dark Code Theme for Prism.js
-   Background: #0F172A (slate-900, matches site header)
-   Base text:  #E2E8F0 (slate-200)
+   Warm Dark Code Theme for Prism.js
+   Background: #1A1410 (warm near-black, matches header)
+   Base text:  #E8DDD0 (warm off-white)
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #E2E8F0;
+  color: #E8DDD0;
   font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
   font-size: 0.9rem;
   line-height: 1.7;
@@ -20,91 +20,101 @@ pre[class*="language-"] {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Code block */
 pre[class*="language-"] {
-  background: #0F172A;
-  padding: 1.25rem 1.5rem;
+  background: #1A1410;
+  padding: 1.375rem 1.5rem;
   overflow-x: auto;
 }
 
-/* Scrollbar inside code */
-pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
+pre[class*="language-"]::-webkit-scrollbar { height: 3px; }
 pre[class*="language-"]::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-/* Selection */
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(79,70,229,0.3);
+  background: rgba(13,110,66,0.28);
 }
 
-/* ---- Tokens ---- */
+/* ---- Tokens: warm, book-printer palette ---- */
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #475569;   /* slate-600:subdued but readable */
+  color: #5A5045;   /* warm muted brown */
   font-style: italic;
 }
 
-.token.punctuation { color: #94A3B8; }  /* slate-400 */
+.token.punctuation { color: #9A9080; }
 
 .token.namespace { opacity: 0.7; }
 
-/* Keywords, control flow */
+/* Keywords */
 .token.keyword,
 .token.control,
-.token.important { color: #818CF8; font-weight: 500; }  /* indigo-400:matches accent family */
+.token.important {
+  color: #9EC4A8;   /* soft sage green, accent family */
+  font-weight: 500;
+}
 
-/* Strings, template literals */
+/* Strings */
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin { color: #86EFAC; }  /* green-300 */
+.token.builtin {
+  color: #C9A96E;   /* warm amber: like printed quotation marks */
+}
 
-/* Numbers, booleans, constants */
+/* Numbers, booleans */
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol { color: #FCA5A5; }  /* red-300 */
+.token.symbol {
+  color: #E8907A;   /* warm terracotta */
+}
 
 /* Functions */
 .token.function,
-.token.function-name { color: #67E8F9; }  /* cyan-300 */
+.token.function-name {
+  color: #7FB5CC;   /* cool blue-gray: contrast against warm tokens */
+}
 
-/* Class / type names */
-.token.class-name,
-.token.namespace { color: #F9A8D4; }  /* pink-300 */
+/* Class and type names */
+.token.class-name {
+  color: #C4A8D4;   /* soft lavender */
+}
 
-/* Properties, tags */
+/* Properties and tags */
 .token.property,
-.token.tag { color: #7DD3FC; }  /* sky-300 */
+.token.tag {
+  color: #8FC4B0;   /* muted teal */
+}
 
 /* Attributes */
 .token.attr-name,
-.token.selector { color: #C4B5FD; }  /* violet-300 */
+.token.selector {
+  color: #C9A96E;   /* warm amber */
+}
 
 /* Operators */
 .token.operator,
-.token.entity { color: #94A3B8; }  /* slate-400 */
+.token.entity {
+  color: #9A9080;   /* warm gray */
+}
 
 /* Variables */
-.token.variable { color: #E2E8F0; }
+.token.variable { color: #E8DDD0; }
 
-/* Decorators (C#) */
-.token.annotation { color: #FCD34D; }  /* amber-300 */
-
-/* Deleted / inserted (diff) */
-.token.deleted { color: #FCA5A5; }
-.token.inserted { color: #86EFAC; }
+/* Deleted / inserted */
+.token.deleted { color: #E8907A; }
+.token.inserted { color: #9EC4A8; }
 
 .token.bold { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 /* Line numbers plugin */
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid rgba(255,255,255,0.06);
+  border-right: 1px solid rgba(255,255,255,0.05);
 }
-.line-numbers-rows > span::before { color: #334155; }  /* slate-700 */
+.line-numbers-rows > span::before { color: #3A302A; }
