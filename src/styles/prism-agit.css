@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Mastercard
-   Background: #141413  (Ink Black / footer color)
-   Base text:  #e8e4e0  (warm near-cream on dark)
-   Accents: Mastercard editorial palette — orange, blue, amber
+   AGIT Code Theme for Prism.js — Starbucks
+   Background: #1e3932  (House Green)
+   Base text:  rgba(255,255,255,0.90)  (Text White on dark green)
+   Accents: four-tier green palette + warm amber for ceremony
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8e4e0;
+  color: rgba(255,255,255,0.90);
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.65;
@@ -22,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #141413;
+  background: #1e3932;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #0a0a09; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #2e2e2d; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #162d27; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #2b5148; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(207, 69, 0, 0.25);
+  background: rgba(0,117,74,0.35);
 }
 
-/* --- Token colors (Mastercard editorial palette on Ink Black) --- */
+/* --- Token colors (Starbucks editorial palette on House Green) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #6b6866; font-style: italic; }
+.token.cdata     { color: rgba(255,255,255,0.35); font-style: italic; }
 
-.token.punctuation { color: #8a8580; }
+.token.punctuation { color: rgba(255,255,255,0.45); }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #f37338; font-weight: 500; }   /* Light Signal Orange */
+.token.important   { color: #7ecdb8; font-weight: 500; }   /* Green Light lifted — mint */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #8ab8d8; }   /* muted dusty blue */
+.token.builtin     { color: #a8d5c2; }   /* Pale green-mint */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #e8c880; }   /* warm amber */
+.token.symbol      { color: #e8c47a; }   /* Warm amber — Rewards ceremony */
 
 .token.function,
-.token.function-name { color: #e8e4e0; font-weight: 500; }
+.token.function-name { color: rgba(255,255,255,0.90); font-weight: 500; }
 
-.token.class-name  { color: #9abce0; }   /* link blue lifted */
+.token.class-name  { color: #9dd6c8; }   /* Light mint-teal */
 
 .token.property,
-.token.tag         { color: #f37338; }   /* orbit orange */
+.token.tag         { color: #7ecdb8; }   /* Green Light lifted */
 
 .token.attr-name,
-.token.selector    { color: #8ab8d8; }   /* dusty blue */
+.token.selector    { color: #a8d5c2; }   /* Pale mint */
 
 .token.operator,
-.token.entity      { color: #8a8580; }
+.token.entity      { color: rgba(255,255,255,0.45); }
 
-.token.variable    { color: #e8e4e0; }
+.token.variable    { color: rgba(255,255,255,0.90); }
 
-.token.deleted     { color: #e08080; }
-.token.inserted    { color: #8ab8d8; }
+.token.deleted     { color: #f28b82; }
+.token.inserted    { color: #a8d5c2; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #2e2e2d;
+  border-right: 1px solid rgba(255,255,255,0.10);
 }
-.line-numbers-rows > span::before { color: #3e3e3c; }
+.line-numbers-rows > span::before { color: rgba(255,255,255,0.18); }

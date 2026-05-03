@@ -1,7 +1,7 @@
 /* ============================================================
    AWFS ELSA ACADEMY — Main Stylesheet
-   Design: Mastercard (DESIGN.md)
-   Fonts: Sofia Sans (MarkForMC sub), JetBrains Mono (code only)
+   Design: Starbucks (DESIGN.md)
+   Fonts: Nunito Sans (SoDoSans sub), JetBrains Mono (code only)
    ============================================================ */
 
 
@@ -9,51 +9,63 @@
    1. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* Ink Black — CTAs, hero bg, headlines, footer */
-  --c-primary:    #141413;
-  --c-charcoal:   #262627;
-  --c-on-primary: #f3f0ee;   /* Canvas Cream on dark */
+  /* Four-tier green brand system — each mapped to a distinct role */
+  --c-green-starbucks: #006241;   /* brand heading, h2 titles, link color */
+  --c-green-accent:    #00754a;   /* primary CTAs, active indicators, fills */
+  --c-green-house:     #1e3932;   /* hero band, code blocks, feature surfaces */
+  --c-green-uplift:    #2b5148;   /* decorative, dark accent variant */
+  --c-green-light:     #d4e9e2;   /* pale mint tint, hero accent bar */
 
-  /* Signal Orange — progress bar, active accents, eyebrow dots */
-  --c-signal:       #cf4500;
-  --c-signal-light: rgba(207,69,0,0.10);
-  --c-orbit:        #f37338;   /* Light Signal Orange — decorative */
+  /* Gold — Rewards ceremony only */
+  --c-gold:       #cba258;
+  --c-gold-light: #dfc49d;
+  --c-gold-wash:  #faf6ee;
 
-  /* Link Blue */
-  --c-link:       #3860be;
-  --c-link-hover: #274fa0;
+  /* Text scale — never pure black, warm against cream canvas */
+  --c-text:        rgba(0,0,0,0.87);    /* primary headings + body on light */
+  --c-text-soft:   rgba(0,0,0,0.58);    /* secondary text, metadata */
+  --c-text-white:  rgba(255,255,255,1); /* on dark-green surfaces */
+  --c-text-ws:     rgba(255,255,255,0.70); /* secondary on dark-green */
+
+  /* Aliases for CSS compatibility */
+  --c-ink:   rgba(0,0,0,0.87);
+  --c-slate: rgba(0,0,0,0.58);
+  --c-steel: rgba(0,0,0,0.45);
+  --c-stone: rgba(0,0,0,0.30);
+  --c-dust:  rgba(0,0,0,0.18);
+
+  /* Link */
+  --c-link:       #006241;
+  --c-link-hover: #004d33;
 
   /* Surfaces */
-  --c-canvas:  #f3f0ee;   /* Warm putty body canvas — never white */
-  --c-lifted:  #fcfbfa;   /* One step lighter — raised cards */
-  --c-white:   #ffffff;   /* Pure white — header, sidebar, modals */
-  --c-bone:    #f4f4f4;   /* Soft bone — chips, inline code bg */
-
-  /* Text scale */
-  --c-ink:    #141413;
-  --c-slate:  #555558;
-  --c-steel:  #696969;
-  --c-stone:  #8a8580;
-  --c-dust:   #d1cdc7;
-
-  /* Hairlines */
-  --c-hairline:        #d1cdc7;
-  --c-hairline-soft:   #e8e4df;
-  --c-hairline-strong: #b8b3ad;
+  --c-canvas:  #f2f0eb;   /* Neutral Warm — primary page canvas, never white */
+  --c-ceramic: #edebe9;   /* Ceramic — section separator, alt warm surface */
+  --c-white:   #ffffff;   /* card surface, sidebar, header */
+  --c-cool:    #f9f9f9;   /* Neutral Cool — inline code, dropdowns */
+  --c-lifted:  #e8e5de;   /* deeper warm — hover state on canvas */
+  --c-bone:    #f9f9f9;   /* inline code bg */
 
   /* Semantic */
-  --c-success: #2a7a4b;
-  --c-success-light: rgba(42,122,75,0.10);
+  --c-success:       #00754a;
+  --c-success-light: rgba(0,117,74,0.10);
+  --c-error:         #c82014;
+  --c-warning:       #fbbc05;
 
-  /* Tier badge palette — Mastercard editorial */
-  --c-t1-bg:    #141413;   --c-t1-text:   #f3f0ee;   /* Ink Pill */
-  --c-t2-bg:    #cf4500;   --c-t2-text:   #ffffff;   /* Signal Orange */
-  --c-t3-bg:    #696969;   --c-t3-text:   #ffffff;   /* Slate */
-  --c-labs-bg:  #3860be;   --c-labs-text: #ffffff;   /* Link Blue */
+  /* Hairlines */
+  --c-hairline:        rgba(0,0,0,0.14);
+  --c-hairline-soft:   rgba(0,0,0,0.08);
+  --c-hairline-strong: rgba(0,0,0,0.24);
 
-  /* Typography — Sofia Sans (MarkForMC open-source substitute) */
-  --f-display: "Sofia Sans", "Inter", Arial, sans-serif;
-  --f-body:    "Sofia Sans", "Inter", Arial, sans-serif;
+  /* Tier badge palette — Starbucks green hierarchy */
+  --c-t1-bg:    #1e3932;   --c-t1-text:   #ffffff;       /* House Green — most authoritative */
+  --c-t2-bg:    #f2f0eb;   --c-t2-text:   #006241;       /* Neutral Warm + Starbucks Green */
+  --c-t3-bg:    #006241;   --c-t3-text:   #ffffff;       /* Starbucks Green */
+  --c-labs-bg:  #00754a;   --c-labs-text: #ffffff;       /* Green Accent — hands-on action */
+
+  /* Typography — Nunito Sans (SoDoSans open-source substitute) */
+  --f-display: "Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --f-body:    "Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --f-code:    "JetBrains Mono", ui-monospace, monospace;
 
   /* Layout */
@@ -67,23 +79,25 @@
   --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;
   --sp-8: 32px;  --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
 
-  /* Border radius — Mastercard scale: tiny | medium (20/40) | pill */
+  /* Border radius — Starbucks scale */
   --r-xs:   4px;
   --r-sm:   8px;
   --r-md:   12px;
-  --r-btn:  20px;    /* all body CTAs, tab buttons */
-  --r-hero: 40px;    /* hero stadium card */
-  --r-card: 16px;    /* standard content cards */
-  --r-full: 9999px;  /* search, filter, chips */
+  --r-btn:  50px;    /* universal full-pill — every button without exception */
+  --r-hero: 16px;    /* topic hero feature card */
+  --r-card: 12px;    /* standard content cards */
+  --r-full: 9999px;  /* search, filter, chip pills */
 
-  /* Elevation — Mastercard atmospheric cushioning */
-  --shadow-xs:   rgba(0,0,0,0.04) 0px 2px 8px;
-  --shadow-card: rgba(0,0,0,0.06) 0px 8px 24px;
-  --shadow-hero: rgba(0,0,0,0.08) 0px 24px 48px;
+  /* Elevation — whisper-soft stacked shadows */
+  --shadow-xs:   0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
+  --shadow-card: 0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
+  --shadow-nav:  0 1px 3px rgba(0,0,0,0.10), 0 2px 2px rgba(0,0,0,0.06), 0 0 2px rgba(0,0,0,0.07);
+  --shadow-hero: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
 
   /* Transitions */
   --t-fast: 150ms ease;
   --t-mid:  200ms ease;
+  --t-btn:  0.2s ease;   /* Starbucks button transition */
 }
 
 
@@ -105,8 +119,9 @@ body {
   font-family: var(--f-body);
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.55;
-  color: var(--c-slate);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--c-text-soft);
   background-color: var(--c-canvas);
   padding-top: var(--header-h);
   -webkit-font-smoothing: antialiased;
@@ -123,17 +138,17 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 button { cursor: pointer; font-family: inherit; }
 ul, ol { padding-left: var(--sp-6); }
 li + li { margin-top: 2px; }
-strong { font-weight: 600; color: var(--c-ink); }
+strong { font-weight: 700; color: var(--c-text); }
 
 kbd {
   font-family: var(--f-code);
   font-size: 0.8em;
-  background: var(--c-bone);
+  background: var(--c-cool);
   border: 1px solid var(--c-hairline-strong);
   border-bottom-width: 2px;
   border-radius: var(--r-sm);
   padding: 0.1em 0.45em;
-  color: var(--c-ink);
+  color: var(--c-text);
 }
 
 .sr-only {
@@ -147,14 +162,14 @@ kbd {
 
 
 /* ============================================================
-   3. PROGRESS BAR — Signal Orange
+   3. PROGRESS BAR — Green Accent
    ============================================================ */
 .progress-bar {
   position: fixed;
   top: 0; left: 0;
   height: 3px;
   width: 0%;
-  background: var(--c-signal);
+  background: var(--c-green-accent);
   z-index: 200;
   transition: width 400ms ease;
   pointer-events: none;
@@ -162,14 +177,14 @@ kbd {
 
 
 /* ============================================================
-   4. SITE HEADER — pure white, soft hairline bottom
+   4. SITE HEADER — white, three-layer soft shadow
    ============================================================ */
 .site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--header-h);
   background: var(--c-white);
-  border-bottom: 1px solid var(--c-hairline);
+  box-shadow: var(--shadow-nav);
   display: flex;
   align-items: center;
   gap: var(--sp-3);
@@ -185,7 +200,7 @@ kbd {
   display: none;
   align-items: center; justify-content: center;
   background: transparent; border: none;
-  color: var(--c-steel);
+  color: var(--c-text-soft);
   padding: var(--sp-2);
   border-radius: var(--r-sm);
   transition: background var(--t-fast);
@@ -204,19 +219,19 @@ kbd {
 }
 .site-logo:hover { background: var(--c-canvas); text-decoration: none; }
 
-/* Sofia Sans — MarkForMC editorial wordmark */
+/* Nunito Sans — SoDoSans editorial wordmark */
 .logo-product {
   font-family: var(--f-display);
   font-size: 1.0625rem;
-  font-weight: 500;
-  color: var(--c-ink);
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--c-green-starbucks);
+  letter-spacing: -0.01em;
   line-height: 1;
 }
 
 
 /* ============================================================
-   5. SEARCH — full pill (999px), editorial expanded state
+   5. SEARCH — full pill, ceramic warm bg
    ============================================================ */
 .search-box {
   position: relative;
@@ -234,21 +249,22 @@ kbd {
 .search-input {
   width: 100%;
   height: 38px;
-  background: var(--c-canvas);
-  border: 1px solid var(--c-hairline-strong);
+  background: var(--c-ceramic);
+  border: 1px solid var(--c-hairline);
   border-radius: var(--r-full);
   padding: 0 var(--sp-4) 0 calc(var(--sp-4) + 14px + var(--sp-2));
   font-family: var(--f-body);
   font-size: 0.875rem;
-  color: var(--c-ink);
+  letter-spacing: -0.01em;
+  color: var(--c-text);
   outline: none;
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 .search-input::placeholder { color: var(--c-stone); }
 .search-input:focus {
-  border-color: var(--c-primary);
-  background: var(--c-lifted);
-  box-shadow: 0 0 0 3px rgba(20,20,19,0.08);
+  border-color: var(--c-green-accent);
+  background: var(--c-white);
+  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
 }
 
 
@@ -258,32 +274,34 @@ kbd {
 .tier-filter {
   height: 36px;
   padding: 0 var(--sp-4);
-  background: var(--c-canvas);
-  border: 1px solid var(--c-hairline-strong);
+  background: var(--c-ceramic);
+  border: 1px solid var(--c-hairline);
   border-radius: var(--r-full);
-  color: var(--c-ink);
+  color: var(--c-text);
   font-family: var(--f-body);
   font-size: 0.8125rem;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   outline: none;
   cursor: pointer;
   transition: border-color var(--t-fast);
 }
-.tier-filter:hover { border-color: var(--c-primary); }
+.tier-filter:hover { border-color: var(--c-green-accent); }
 .tier-filter:focus {
-  border-color: var(--c-primary);
+  border-color: var(--c-green-accent);
   border-width: 1.5px;
-  box-shadow: 0 0 0 3px rgba(20,20,19,0.08);
+  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
 }
 
 .progress-chip {
   font-family: var(--f-body);
   font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--c-steel);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-text-soft);
   white-space: nowrap;
   padding: 4px var(--sp-3);
-  background: var(--c-bone);
+  background: var(--c-ceramic);
   border-radius: var(--r-full);
 }
 
@@ -292,22 +310,22 @@ kbd {
   align-items: center; justify-content: center;
   background: var(--c-white);
   border: 1px solid var(--c-hairline);
-  color: var(--c-ink);
+  color: var(--c-text);
   width: 36px; height: 36px;
   border-radius: var(--r-full);
   transition: background var(--t-fast), border-color var(--t-fast);
 }
-.btn-icon:hover { background: var(--c-canvas); border-color: var(--c-primary); }
+.btn-icon:hover { background: var(--c-ceramic); border-color: var(--c-green-accent); }
 .btn-icon svg { width: 15px; height: 15px; }
 
 
 /* ============================================================
-   7. LEFT SIDEBAR — pure white on cream canvas
+   7. LEFT SIDEBAR — white on warm cream canvas
    ============================================================ */
 .sidebar-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(20,20,19,0.45);
+  background: rgba(30,57,50,0.50);
   z-index: 49;
 }
 .sidebar-overlay.is-visible { display: block; }
@@ -319,13 +337,13 @@ kbd {
   height: calc(100vh - var(--header-h));
   overflow-y: auto;
   background: var(--c-white);
-  border-right: 1px solid var(--c-hairline);
+  border-right: 1px solid var(--c-hairline-soft);
   z-index: 50;
   overscroll-behavior: contain;
 }
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--c-hairline); border-radius: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
 
 .sidebar-scroller { padding: var(--sp-3) 0 var(--sp-16); }
 
@@ -350,28 +368,28 @@ kbd {
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.10em;
   color: var(--c-stone);
 }
 
 .nav-section-count {
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 600;
-  color: var(--c-steel);
+  font-weight: 700;
+  color: var(--c-text-soft);
   padding: 1px 7px;
-  background: var(--c-bone);
+  background: var(--c-ceramic);
   border-radius: var(--r-full);
   flex-shrink: 0;
   transition: color var(--t-fast), background var(--t-fast);
 }
 .nav-section-count.has-progress {
-  background: var(--c-signal);
+  background: var(--c-green-accent);
   color: var(--c-white);
 }
 .nav-section-count.is-complete {
-  background: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-green-house);
+  color: var(--c-white);
 }
 
 .nav-chevron {
@@ -408,27 +426,28 @@ kbd {
   font-family: var(--f-body);
   font-size: 0.875rem;
   font-weight: 400;
-  color: var(--c-steel);
+  letter-spacing: -0.01em;
+  color: var(--c-text-soft);
   text-decoration: none;
   border-left: 2px solid transparent;
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
 .nav-topic-link:hover {
   background: var(--c-canvas);
-  color: var(--c-ink);
+  color: var(--c-text);
   text-decoration: none;
 }
 .nav-topic-link.is-active {
   background: var(--c-canvas);
-  color: var(--c-ink);
-  font-weight: 500;
-  border-left-color: var(--c-signal);
+  color: var(--c-green-starbucks);
+  font-weight: 600;
+  border-left-color: var(--c-green-accent);
 }
 
 .nav-topic-num {
   font-family: var(--f-code);
   font-size: 0.625rem;
-  color: var(--c-dust);
+  color: rgba(0,0,0,0.20);
   min-width: 16px;
   flex-shrink: 0;
   transition: color var(--t-fast);
@@ -447,12 +466,12 @@ kbd {
 .completion-icon {
   width: 12px; height: 12px;
   flex-shrink: 0;
-  color: var(--c-hairline-strong);
+  color: rgba(0,0,0,0.16);
   transition: color var(--t-fast);
 }
-.nav-topic-link.is-complete .completion-icon { color: var(--c-success); }
-.nav-topic-link.is-complete { color: var(--c-dust); }
-.nav-topic-link.is-active .completion-icon { color: var(--c-signal); }
+.nav-topic-link.is-complete .completion-icon { color: var(--c-green-accent); }
+.nav-topic-link.is-complete { color: rgba(0,0,0,0.30); }
+.nav-topic-link.is-active .completion-icon { color: var(--c-green-accent); }
 
 .sidebar-no-results {
   padding: var(--sp-4);
@@ -465,7 +484,7 @@ kbd {
 
 
 /* ============================================================
-   8. TIER BADGES — Mastercard editorial palette
+   8. TIER BADGES — Starbucks four-tier green hierarchy
    ============================================================ */
 .tier-badge {
   display: inline-flex;
@@ -473,7 +492,7 @@ kbd {
   font-family: var(--f-body);
   font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: var(--r-full);
@@ -482,10 +501,10 @@ kbd {
   line-height: 1.6;
 }
 .tier-badge.tier-1       { background: var(--c-t1-bg);   color: var(--c-t1-text); }
-.tier-badge.tier-2       { background: var(--c-t2-bg);   color: var(--c-t2-text); }
+.tier-badge.tier-2       { background: var(--c-t2-bg);   color: var(--c-t2-text); border: 1px solid var(--c-green-starbucks); }
 .tier-badge.tier-3       { background: var(--c-t3-bg);   color: var(--c-t3-text); }
 .tier-badge.tier-labs    { background: var(--c-labs-bg); color: var(--c-labs-text); }
-.tier-badge.tier-welcome { background: var(--c-bone);    color: var(--c-steel); }
+.tier-badge.tier-welcome { background: var(--c-ceramic); color: var(--c-text-soft); }
 
 
 /* ============================================================
@@ -514,10 +533,10 @@ kbd {
 
 
 /* ============================================================
-   10. TOPIC HERO — Ink Black stadium, Canvas Cream text
+   10. TOPIC HERO — House Green feature band, white text
    ============================================================ */
 .topic-hero {
-  background: var(--c-primary);
+  background: var(--c-green-house);
   border-radius: var(--r-hero);
   padding: var(--sp-12) var(--sp-8);
   margin-bottom: var(--sp-8);
@@ -532,29 +551,29 @@ kbd {
   margin-bottom: var(--sp-4);
 }
 
-/* Badges on dark hero — translucent warm-white pill */
+/* Badges on dark hero — translucent white pill */
 .topic-hero .tier-badge {
-  background: rgba(243,240,238,0.15);
-  color: var(--c-on-primary);
-  border: 1px solid rgba(243,240,238,0.25);
-  letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.90);
+  border: 1px solid rgba(255,255,255,0.20);
+  letter-spacing: 0.06em;
 }
 
 .topic-hero h1 {
   font-family: var(--f-display);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--c-on-primary);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--c-text-white);
   margin-bottom: var(--sp-3);
 }
 
-/* Signal Orange accent line — orbital gesture */
+/* Green Light accent bar — pale mint shimmer on dark band */
 .hero-accent {
   display: block;
   width: 28px; height: 2px;
-  background: var(--c-signal);
+  background: var(--c-green-light);
   border-radius: var(--r-full);
   margin-bottom: var(--sp-4);
 }
@@ -563,22 +582,22 @@ kbd {
   font-family: var(--f-body);
   font-size: 1rem;
   font-weight: 400;
-  color: rgba(243,240,238,0.70);
+  color: var(--c-text-ws);
   line-height: 1.55;
   max-width: 64ch;
 }
 
 /* Meta on dark hero */
-.topic-hero .topic-time    { color: rgba(243,240,238,0.50); }
-.topic-hero .prereq-list   { color: rgba(243,240,238,0.50); }
-.topic-hero .prereq-label  { color: rgba(243,240,238,0.65); }
+.topic-hero .topic-time    { color: rgba(255,255,255,0.45); }
+.topic-hero .prereq-list   { color: rgba(255,255,255,0.45); }
+.topic-hero .prereq-label  { color: rgba(255,255,255,0.65); }
 .topic-hero .prereq-chip {
-  border-color: rgba(243,240,238,0.20);
-  color: var(--c-on-primary);
-  background: rgba(243,240,238,0.10);
+  border-color: rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.90);
+  background: rgba(255,255,255,0.10);
 }
 .topic-hero .prereq-chip:hover {
-  background: rgba(243,240,238,0.18);
+  background: rgba(255,255,255,0.18);
   text-decoration: none;
 }
 
@@ -608,7 +627,7 @@ kbd {
   color: var(--c-stone);
   position: relative; z-index: 1;
 }
-.prereq-label { font-weight: 500; color: var(--c-steel); }
+.prereq-label { font-weight: 600; color: var(--c-text-soft); }
 .prereq-chip {
   display: inline-flex;
   align-items: center;
@@ -622,7 +641,7 @@ kbd {
   transition: background var(--t-fast);
 }
 .prereq-chip:hover {
-  background: var(--c-lifted);
+  background: var(--c-canvas);
   text-decoration: none;
 }
 
@@ -632,13 +651,14 @@ kbd {
    ============================================================ */
 .topic-article section { margin-bottom: var(--sp-6); }
 
+/* H2 — Starbucks Green, weight 700: the brand heading signal */
 .topic-article h2 {
   font-family: var(--f-display);
   font-size: clamp(1.25rem, 2.5vw, 1.625rem);
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.20;
-  letter-spacing: -0.02em;
-  color: var(--c-ink);
+  letter-spacing: -0.01em;
+  color: var(--c-green-starbucks);
   margin-top: var(--sp-10);
   margin-bottom: var(--sp-3);
   scroll-margin-top: calc(var(--header-h) + var(--sp-4));
@@ -647,21 +667,20 @@ kbd {
 .topic-article h3 {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.4;
-  color: var(--c-ink);
+  color: var(--c-text);
   margin-top: var(--sp-6);
   margin-bottom: var(--sp-2);
   scroll-margin-top: calc(var(--header-h) + var(--sp-4));
 }
 
-/* Eyebrow — uppercase with +4% tracking, Mastercard signature */
 .topic-article h4 {
   font-family: var(--f-body);
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.10em;
   color: var(--c-stone);
   margin-top: var(--sp-4);
   margin-bottom: var(--sp-2);
@@ -671,12 +690,12 @@ kbd {
   margin-bottom: var(--sp-4);
   max-width: 72ch;
   line-height: 1.6;
-  color: var(--c-slate);
+  color: var(--c-text-soft);
 }
 .topic-article li {
   max-width: 70ch;
   line-height: 1.6;
-  color: var(--c-slate);
+  color: var(--c-text-soft);
 }
 
 .anchor-link {
@@ -691,17 +710,17 @@ kbd {
 }
 .topic-article h2:hover .anchor-link,
 .topic-article h3:hover .anchor-link { opacity: 1; }
-.anchor-link:hover { color: var(--c-signal); opacity: 1 !important; text-decoration: none; }
+.anchor-link:hover { color: var(--c-green-accent); opacity: 1 !important; text-decoration: none; }
 
 
 /* ============================================================
-   12. CODE BLOCKS — Ink Black (#141413)
+   12. CODE BLOCKS — House Green (#1e3932)
    ============================================================ */
 .code-block {
   margin: var(--sp-6) 0;
   border-radius: var(--r-card);
   overflow: hidden;
-  background: var(--c-primary);
+  background: var(--c-green-house);
   box-shadow: var(--shadow-hero);
 }
 
@@ -709,7 +728,7 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0,0,0,0.30);
+  background: rgba(0,0,0,0.25);
   padding: 0 var(--sp-4);
   height: 36px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -720,7 +739,7 @@ kbd {
   font-family: var(--f-code);
   font-size: 0.625rem;
   font-weight: 400;
-  color: rgba(243,240,238,0.45);
+  color: rgba(255,255,255,0.40);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -728,7 +747,7 @@ kbd {
 .code-block-filename {
   font-family: var(--f-code);
   font-size: 0.6875rem;
-  color: rgba(243,240,238,0.45);
+  color: rgba(255,255,255,0.40);
   flex: 1;
   text-align: center;
   overflow: hidden;
@@ -741,7 +760,7 @@ kbd {
   align-items: center;
   gap: var(--sp-1);
   background: transparent; border: none;
-  color: rgba(243,240,238,0.40);
+  color: rgba(255,255,255,0.35);
   font-family: var(--f-body);
   font-size: 0.6875rem;
   padding: var(--sp-1) var(--sp-2);
@@ -750,7 +769,7 @@ kbd {
   cursor: pointer;
   transition: color var(--t-fast), background var(--t-fast);
 }
-.btn-copy:hover { color: var(--c-on-primary); background: rgba(255,255,255,0.08); }
+.btn-copy:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.08); }
 .btn-copy svg { width: 11px; height: 11px; }
 
 .code-block pre[class*="language-"] {
@@ -762,13 +781,13 @@ pre[class*="language-"] {
   margin: var(--sp-6) 0;
 }
 
-/* Inline code — soft bone tint, editorial restraint */
+/* Inline code — Neutral Cool, thin hairline */
 :not(pre) > code:not([class*="language-"]) {
   font-family: var(--f-code);
   font-size: 0.875em;
   font-weight: 400;
-  background: var(--c-bone);
-  color: var(--c-ink);
+  background: var(--c-cool);
+  color: var(--c-green-house);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   border: 1px solid var(--c-hairline);
@@ -787,14 +806,14 @@ pre[class*="language-"] {
   align-self: start;
 }
 .right-sidebar::-webkit-scrollbar { width: 3px; }
-.right-sidebar::-webkit-scrollbar-thumb { background: var(--c-hairline); border-radius: 2px; }
+.right-sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
 
 .right-sidebar-title {
   font-family: var(--f-body);
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.10em;
   color: var(--c-stone);
   margin-bottom: var(--sp-3);
   padding-bottom: var(--sp-2);
@@ -808,7 +827,7 @@ pre[class*="language-"] {
   font-family: var(--f-body);
   font-size: 0.8125rem;
   font-weight: 400;
-  color: var(--c-steel);
+  color: var(--c-text-soft);
   text-decoration: none;
   padding: 5px var(--sp-3);
   border-left: 2px solid var(--c-hairline);
@@ -816,14 +835,14 @@ pre[class*="language-"] {
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .otp-link:hover {
-  color: var(--c-ink);
-  border-left-color: var(--c-signal);
+  color: var(--c-green-starbucks);
+  border-left-color: var(--c-green-accent);
   text-decoration: none;
 }
 .otp-link.is-active {
-  color: var(--c-ink);
-  font-weight: 500;
-  border-left-color: var(--c-signal);
+  color: var(--c-green-starbucks);
+  font-weight: 600;
+  border-left-color: var(--c-green-accent);
 }
 .otp-link.otp-h3 {
   padding-left: calc(var(--sp-3) + var(--sp-4));
@@ -832,7 +851,7 @@ pre[class*="language-"] {
 
 
 /* ============================================================
-   TAB BAR — Mastercard body CTA style (20px radius)
+   TAB BAR — Starbucks 50px pill, Green Accent active
    ============================================================ */
 .topic-tabs-bar {
   display: flex;
@@ -850,28 +869,29 @@ pre[class*="language-"] {
   align-items: center;
   gap: var(--sp-2);
   padding: 8px var(--sp-4);
-  background: var(--c-lifted);
-  border: 1.5px solid var(--c-hairline-strong);
+  background: var(--c-white);
+  border: 1.5px solid var(--c-hairline);
   border-radius: var(--r-btn);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--c-steel);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-text-soft);
   white-space: nowrap;
   cursor: pointer;
-  letter-spacing: -0.01em;
-  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  transition: all var(--t-btn);
 }
 .tab-btn:hover {
-  color: var(--c-ink);
-  border-color: var(--c-primary);
-  background: var(--c-lifted);
+  color: var(--c-green-starbucks);
+  border-color: var(--c-green-accent);
+  background: var(--c-white);
 }
 .tab-btn.is-active {
-  background: var(--c-primary);
-  border-color: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-green-accent);
+  border-color: var(--c-green-accent);
+  color: var(--c-white);
 }
+.tab-btn:active { transform: scale(0.95); }
 .tab-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
 /* Tab panels */
@@ -893,7 +913,7 @@ pre[class*="language-"] {
 .code-explanation {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  color: var(--c-slate);
+  color: var(--c-text-soft);
   line-height: 1.6;
   margin-bottom: var(--sp-3);
   max-width: 72ch;
@@ -914,58 +934,58 @@ pre[class*="language-"] {
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  background: var(--c-lifted);
+  background: var(--c-ceramic);
 }
 .callout-title {
   font-family: var(--f-body);
   font-weight: 700;
   font-size: 0.625rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.10em;
   margin-bottom: var(--sp-2);
 }
 .callout.callout-info {
-  background: rgba(56,96,190,0.07);
-  border-color: rgba(56,96,190,0.15);
-  border-left-color: var(--c-link);
+  background: rgba(0,98,65,0.06);
+  border-color: rgba(0,98,65,0.15);
+  border-left-color: var(--c-green-starbucks);
 }
-.callout.callout-info .callout-title { color: var(--c-link); }
+.callout.callout-info .callout-title { color: var(--c-green-starbucks); }
 .callout.callout-warning {
-  background: rgba(207,69,0,0.07);
-  border-color: rgba(207,69,0,0.15);
-  border-left-color: var(--c-signal);
+  background: rgba(203,162,88,0.08);
+  border-color: rgba(203,162,88,0.20);
+  border-left-color: var(--c-gold);
 }
-.callout.callout-warning .callout-title { color: var(--c-signal); }
+.callout.callout-warning .callout-title { color: #a07c30; }
 .callout.callout-success {
-  background: rgba(42,122,75,0.07);
-  border-color: rgba(42,122,75,0.15);
-  border-left-color: var(--c-success);
+  background: rgba(0,117,74,0.06);
+  border-color: rgba(0,117,74,0.15);
+  border-left-color: var(--c-green-accent);
 }
-.callout.callout-success .callout-title { color: var(--c-success); }
+.callout.callout-success .callout-title { color: var(--c-green-accent); }
 .callout.callout-verify {
-  background: rgba(243,115,56,0.07);
-  border-color: rgba(243,115,56,0.15);
-  border-left-color: var(--c-orbit);
+  background: rgba(203,162,88,0.08);
+  border-color: rgba(203,162,88,0.20);
+  border-left-color: var(--c-gold);
 }
-.callout.callout-verify .callout-title { color: #c85800; }
+.callout.callout-verify .callout-title { color: #a07c30; }
 
 
 /* ============================================================
    HANDS-ON LAB LAYOUT
    ============================================================ */
 .lab-goal {
-  background: rgba(56,96,190,0.07);
-  border: 1px solid rgba(56,96,190,0.15);
-  border-left: 3px solid var(--c-link);
+  background: rgba(0,98,65,0.06);
+  border: 1px solid rgba(0,98,65,0.15);
+  border-left: 3px solid var(--c-green-starbucks);
   border-radius: var(--r-card);
   padding: var(--sp-4) var(--sp-6);
   margin-bottom: var(--sp-6);
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--c-ink);
+  color: var(--c-text);
 }
-.lab-goal strong { color: var(--c-link); font-weight: 600; }
+.lab-goal strong { color: var(--c-green-starbucks); font-weight: 700; }
 
 .lab-steps { padding-left: 0; list-style: none; counter-reset: lab-step; }
 .lab-steps > li {
@@ -984,11 +1004,11 @@ pre[class*="language-"] {
   width: 24px;
   height: 24px;
   min-width: 24px;
-  background: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-green-accent);
+  color: var(--c-white);
   font-family: var(--f-code);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 700;
   border-radius: 50%;
   margin-top: 2px;
 }
@@ -996,11 +1016,11 @@ pre[class*="language-"] {
 .lab-steps > li code {
   font-family: var(--f-code);
   font-size: 0.875em;
-  background: var(--c-bone);
+  background: var(--c-cool);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   border: 1px solid var(--c-hairline);
-  color: var(--c-ink);
+  color: var(--c-green-house);
 }
 
 .lab-section-title {
@@ -1008,7 +1028,7 @@ pre[class*="language-"] {
   font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.10em;
   color: var(--c-stone);
   margin: var(--sp-6) 0 var(--sp-3);
 }
@@ -1024,7 +1044,7 @@ pre[class*="language-"] {
   font-size: 0.9375rem;
   line-height: 1.6;
   max-width: 68ch;
-  color: var(--c-slate);
+  color: var(--c-text-soft);
 }
 .lab-checklist li::before {
   content: '';
@@ -1047,7 +1067,7 @@ pre[class*="language-"] {
   font-size: 0.9375rem;
   line-height: 1.6;
   max-width: 68ch;
-  color: var(--c-slate);
+  color: var(--c-text-soft);
 }
 .pitfall-list li::before {
   content: '!';
@@ -1057,8 +1077,8 @@ pre[class*="language-"] {
   width: 18px;
   height: 18px;
   min-width: 18px;
-  background: rgba(207,69,0,0.12);
-  color: var(--c-signal);
+  background: rgba(200,32,20,0.10);
+  color: var(--c-error);
   font-family: var(--f-body);
   font-size: 0.6875rem;
   font-weight: 700;
@@ -1082,12 +1102,12 @@ pre[class*="language-"] {
   border: 1px solid var(--c-hairline-soft);
   border-radius: var(--r-card);
   overflow: hidden;
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-card);
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 .self-check-item:focus-within {
-  border-color: var(--c-primary);
-  box-shadow: 0 0 0 3px rgba(20,20,19,0.08);
+  border-color: var(--c-green-accent);
+  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
 }
 
 .self-check-q {
@@ -1100,71 +1120,72 @@ pre[class*="language-"] {
 .self-check-question-text {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.5;
-  color: var(--c-ink);
+  color: var(--c-text);
   flex: 1;
 }
 
-/* Reveal — Mastercard primary ink pill, 20px radius */
+/* Reveal — Green Accent pill, scale(0.95) signature press */
 .btn-reveal {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
   flex-shrink: 0;
-  background: var(--c-primary);
-  border: 1.5px solid var(--c-primary);
+  background: var(--c-green-accent);
+  border: 1px solid var(--c-green-accent);
   border-radius: var(--r-btn);
   padding: 7px 18px;
   font-family: var(--f-body);
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--c-on-primary);
+  font-weight: 600;
+  color: var(--c-white);
   cursor: pointer;
   white-space: nowrap;
   letter-spacing: -0.01em;
-  transition: background var(--t-fast), border-color var(--t-fast);
+  transition: all var(--t-btn);
 }
 .btn-reveal:hover {
-  background: var(--c-charcoal);
-  border-color: var(--c-charcoal);
+  background: var(--c-green-starbucks);
+  border-color: var(--c-green-starbucks);
 }
+.btn-reveal:active { transform: scale(0.95); }
 .btn-reveal.is-open {
-  background: var(--c-lifted);
+  background: transparent;
   border-color: var(--c-hairline-strong);
-  color: var(--c-steel);
+  color: var(--c-text-soft);
 }
 .btn-reveal.is-open:hover {
-  background: var(--c-canvas);
-  color: var(--c-ink);
-  border-color: var(--c-primary);
+  background: var(--c-ceramic);
+  color: var(--c-text);
+  border-color: var(--c-text-soft);
 }
 
-/* Answer — lifted cream with Signal Orange left border */
+/* Answer — pale mint tint (form valid state), Green Accent left border */
 .self-check-answer {
   display: none;
   padding: var(--sp-4) var(--sp-6);
-  background: var(--c-lifted);
-  border-top: 1px solid var(--c-hairline-soft);
-  border-left: 3px solid var(--c-signal);
+  background: rgba(212,233,226,0.40);
+  border-top: 1px solid rgba(0,117,74,0.12);
+  border-left: 3px solid var(--c-green-accent);
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--c-ink);
+  color: var(--c-text);
   animation: tabFadeIn 140ms ease both;
 }
 .self-check-answer.is-visible { display: block; }
 .self-check-answer p { margin-bottom: var(--sp-3); max-width: 70ch; }
 .self-check-answer p:last-child { margin-bottom: 0; }
-.self-check-answer strong { color: var(--c-ink); font-weight: 600; }
+.self-check-answer strong { color: var(--c-green-house); font-weight: 700; }
 .self-check-answer code {
   font-family: var(--f-code);
   font-size: 0.875em;
-  background: rgba(209,205,199,0.35);
+  background: rgba(0,0,0,0.06);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   border: 1px solid var(--c-hairline);
-  color: var(--c-ink);
+  color: var(--c-green-house);
 }
 
 
@@ -1179,10 +1200,10 @@ pre[class*="language-"] {
   gap: var(--sp-4);
   padding: var(--sp-6) 0 var(--sp-4);
   margin-top: var(--sp-10);
-  border-top: 1px solid var(--c-hairline);
+  border-top: 1px solid var(--c-hairline-soft);
 }
 
-/* Mark Complete — Mastercard secondary (outlined, 20px radius) */
+/* Mark Complete — outlined pill; Green Accent when done */
 .btn-complete {
   display: inline-flex;
   align-items: center;
@@ -1193,31 +1214,32 @@ pre[class*="language-"] {
   border-radius: var(--r-btn);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--c-steel);
+  font-weight: 600;
+  color: var(--c-text-soft);
   cursor: pointer;
   letter-spacing: -0.01em;
-  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  transition: all var(--t-btn);
 }
 .btn-complete:hover {
-  border-color: var(--c-primary);
-  color: var(--c-ink);
+  border-color: var(--c-green-accent);
+  color: var(--c-green-starbucks);
   background: transparent;
 }
+.btn-complete:active { transform: scale(0.95); }
 .btn-complete.is-complete {
-  background: var(--c-primary);
-  border-color: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-green-accent);
+  border-color: var(--c-green-accent);
+  color: var(--c-white);
 }
 .btn-complete.is-complete:hover {
-  background: var(--c-charcoal);
-  border-color: var(--c-charcoal);
+  background: var(--c-green-starbucks);
+  border-color: var(--c-green-starbucks);
 }
 .btn-complete svg { width: 15px; height: 15px; }
 
 .topic-footer-nav { display: flex; gap: var(--sp-3); align-items: center; }
 
-/* Prev — secondary outlined, 20px radius */
+/* Prev — Dark Outlined pill (Starbucks style) */
 .btn-nav {
   display: inline-flex;
   align-items: center;
@@ -1228,29 +1250,30 @@ pre[class*="language-"] {
   border-radius: var(--r-btn);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--c-ink);
+  font-weight: 600;
+  color: var(--c-text);
   text-decoration: none;
   letter-spacing: -0.01em;
-  transition: background var(--t-fast), border-color var(--t-fast);
+  transition: all var(--t-btn);
 }
 .btn-nav:hover {
-  background: var(--c-lifted);
-  border-color: var(--c-primary);
+  background: var(--c-ceramic);
+  border-color: var(--c-text-soft);
   text-decoration: none;
 }
+.btn-nav:active { transform: scale(0.95); }
 .btn-nav svg { width: 13px; height: 13px; }
 
-/* Next — primary ink pill, 20px radius */
+/* Next — Green Accent filled pill */
 .btn-nav-next {
-  background: var(--c-primary);
-  border-color: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-green-accent);
+  border-color: var(--c-green-accent);
+  color: var(--c-white);
 }
 .btn-nav-next:hover {
-  background: var(--c-charcoal);
-  border-color: var(--c-charcoal);
-  color: var(--c-on-primary);
+  background: var(--c-green-starbucks);
+  border-color: var(--c-green-starbucks);
+  color: var(--c-white);
 }
 
 
@@ -1263,7 +1286,7 @@ pre[class*="language-"] {
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--t-mid);
-    box-shadow: 4px 0 32px rgba(20,20,19,0.12);
+    box-shadow: 4px 0 32px rgba(30,57,50,0.16);
   }
   .sidebar.is-open { transform: translateX(0); }
 
