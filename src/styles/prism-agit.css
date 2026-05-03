@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Airtable Dark
-   Background: #181d26  (surface-dark, matches primary)
-   Base text:  #e8e6e0
-   Accents: Airtable signature palette
+   AGIT Code Theme for Prism.js — Figma Dark
+   Background: #1f1d3d  (block-navy, Figma's dark color-block)
+   Base text:  #e8e6f0
+   Accents: Figma pastel block palette lifted for visibility
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8e6e0;
+  color: #e8e6f0;
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.65;
@@ -22,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #181d26;
+  background: #1f1d3d;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #0d1218; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #2a3040; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #15132e; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #3a3660; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(170, 45, 0, 0.25);
+  background: rgba(197, 176, 244, 0.28);
 }
 
-/* --- Token colors (Airtable signature palette on surface-dark) --- */
+/* --- Token colors (Figma pastel palette lifted on navy-dark) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #545d72; font-style: italic; }
+.token.cdata     { color: #5a587a; font-style: italic; }
 
-.token.punctuation { color: #6b7591; }
+.token.punctuation { color: #7a78a0; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #e07c5a; font-weight: 500; }   /* coral warm — signature */
+.token.important   { color: #c5b0f4; font-weight: 500; }   /* block-lilac */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #7dcfb6; }   /* mint */
+.token.builtin     { color: #a8d8ae; }   /* block-mint lifted */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #f4c06a; }   /* mustard/yellow */
+.token.symbol      { color: #e8d090; }   /* block-cream / ochre lifted */
 
 .token.function,
-.token.function-name { color: #e8e6e0; font-weight: 500; }
+.token.function-name { color: #e8e6f0; font-weight: 500; }
 
-.token.class-name  { color: #88bff0; }  /* link-blue lifted */
+.token.class-name  { color: #a8d890; }  /* block-lime lifted */
 
 .token.property,
-.token.tag         { color: #e07c5a; }  /* coral warm */
+.token.tag         { color: #c5b0f4; }  /* block-lilac */
 
 .token.attr-name,
-.token.selector    { color: #7dcfb6; }  /* mint */
+.token.selector    { color: #a8d8ae; }  /* block-mint lifted */
 
 .token.operator,
-.token.entity      { color: #6b7591; }
+.token.entity      { color: #7a78a0; }
 
-.token.variable    { color: #e8e6e0; }
+.token.variable    { color: #e8e6f0; }
 
-.token.deleted     { color: #e07c5a; }
-.token.inserted    { color: #7dcfb6; }
+.token.deleted     { color: #f3a0a0; }
+.token.inserted    { color: #a8d8ae; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #2a3040;
+  border-right: 1px solid #3a3660;
 }
-.line-numbers-rows > span::before { color: #3a4258; }
+.line-numbers-rows > span::before { color: #4a4870; }
