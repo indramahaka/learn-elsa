@@ -130,6 +130,7 @@ body {
   color: var(--c-slate);
   background-color: var(--c-canvas);
   padding-top: var(--header-h);
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -1307,7 +1308,7 @@ pre[class*="language-"] {
   .right-sidebar { display: none; }
   .progress-chip { display: none; }
 
-  .main-content { margin: var(--sp-6) var(--sp-4); padding: var(--sp-8); }
+  .main-content { width: auto; max-width: 100%; margin: var(--sp-6) var(--sp-4); padding: var(--sp-8); }
 }
 
 
@@ -1355,6 +1356,8 @@ pre[class*="language-"] {
 
   /* --- Main content --- */
   .main-content {
+    width: auto;
+    max-width: 100%;
     margin: var(--sp-3);
     padding: var(--sp-6) var(--sp-4);
   }
