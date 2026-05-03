@@ -3,6 +3,11 @@ const topics = window.topics;
 const { toggleComplete, isComplete, getProgress, subscribe } = window.progressModule;
 const { initTabs } = window.tabsModule;
 
+/* Safe Lucide wrapper — createIcons() can throw cross-origin errors on file:// */
+function createIcons() {
+  try { createIcons(); } catch (e) { /* icons won't render but app still works */ }
+}
+
 /* ---- Element refs ---- */
 const hamburgerBtn   = document.getElementById('hamburgerBtn');
 const sidebar        = document.getElementById('sidebar');
@@ -265,7 +270,7 @@ function updateSidebarCompletion() {
     newIcon.setAttribute('aria-hidden', 'true');
     existing.replaceWith(newIcon);
   });
-  lucide.createIcons();
+  createIcons();
 }
 
 
@@ -337,7 +342,7 @@ function wireCompleteButton(articleEl) {
     btn.classList.toggle('is-complete', done);
     btn.setAttribute('aria-pressed', String(done));
     btn.innerHTML = `<i data-lucide="${done ? 'circle-check' : 'circle'}" aria-hidden="true"></i><span>${done ? 'Mark incomplete' : 'Mark complete'}</span>`;
-    lucide.createIcons();
+    createIcons();
   });
 }
 
@@ -355,7 +360,7 @@ function navigate(rawHash) {
     mainContent.innerHTML = welcomeHtml;
     currentTopicId = null;
     updateSidebarActive(null);
-    lucide.createIcons();
+    createIcons();
     buildOnThisPage();
     addAnchorLinks();
     window.scrollTo(0, 0);
@@ -368,7 +373,7 @@ function navigate(rawHash) {
     mainContent.innerHTML = welcomeHtml;
     currentTopicId = null;
     updateSidebarActive(null);
-    lucide.createIcons();
+    createIcons();
     buildOnThisPage();
     addAnchorLinks();
     const target = document.getElementById(id);
@@ -385,7 +390,7 @@ function navigate(rawHash) {
   wireCopyButtons(articleEl);
 
   if (window.Prism) Prism.highlightAll();
-  lucide.createIcons();
+  createIcons();
   updateSidebarActive(topic.id);
   buildOnThisPage();
   addAnchorLinks();
@@ -548,6 +553,6 @@ document.addEventListener('keydown', e => {
 populateSidebar();
 subscribe(updateProgress);
 
-lucide.createIcons();
+createIcons();
 updateProgress();
 navigate(location.hash);
