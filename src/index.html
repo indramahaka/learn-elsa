@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script>
+    window.onerror = function(msg, src, line) {
+      var d = document.getElementById('_dbg') || document.createElement('div');
+      d.id = '_dbg';
+      d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#c0392b;color:#fff;padding:8px 12px;font:13px monospace;white-space:pre-wrap;max-height:30vh;overflow:auto;';
+      d.textContent += (src ? src.split('/').pop() : '?') + ':' + line + ' — ' + msg + '\n';
+      document.body && document.body.appendChild(d);
+    };
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="AWFS Elsa Academy: Personal learning reference for Elsa Workflows 3.x, anchored to the Approval Workflow Service for Toyota-Astra Motor.">
   <title>AWFS Elsa Academy</title>
@@ -229,9 +238,23 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
-  <script src="scripts/topics.js"></script>
+  <script src="content/topics.js"></script>
   <script src="scripts/progress.js"></script>
   <script src="scripts/tabs.js"></script>
   <script src="scripts/app.js"></script>
+  <script>
+    (function() {
+      var t = typeof window.topics;
+      var p = typeof window.progressModule;
+      var m = typeof window.tabsModule;
+      var ok = (t === 'object' && p === 'object' && m === 'object');
+      if (!ok) {
+        var d = document.createElement('div');
+        d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#e67e22;color:#fff;padding:8px 12px;font:13px monospace;';
+        d.textContent = 'Globals: topics=' + t + '  progress=' + p + '  tabs=' + m;
+        document.body.appendChild(d);
+      }
+    })();
+  </script>
 </body>
 </html>
