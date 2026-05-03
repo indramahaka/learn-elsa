@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Start-Process \"c:\\\\POC\\\\Elsa Academy\\\\src\\\\index.html\")",
+      "WebFetch(domain:docs.slack.dev)"
+    ]
+  }
+}

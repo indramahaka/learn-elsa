@@ -232,7 +232,6 @@ function buildTopicHtml(topic, activeTab) {
         '</span>' +
       '</div>' +
       '<h1>' + escapeHtml(topic.title) + '</h1>' +
-      '<div class="hero-accent"></div>' +
       prereqHtml +
     '</div>' +
 
@@ -538,6 +537,40 @@ hamburgerBtn.addEventListener('click', () =>
 );
 sidebarOverlay.addEventListener('click', closeSidebar);
 
+/* Close sidebar when a nav link is tapped on mobile */
+sidebar.addEventListener('click', e => {
+  if (e.target.closest('.nav-topic-link') && window.innerWidth < 1024) closeSidebar();
+});
+
+
+/* ============================================================
+   MOBILE SEARCH TOGGLE
+   ============================================================ */
+const searchToggle = document.getElementById('searchToggle');
+const searchBack   = document.getElementById('searchBack');
+const siteHeader   = document.querySelector('.site-header');
+
+function openMobileSearch() {
+  siteHeader.classList.add('search-active');
+  document.body.classList.add('search-open');
+  searchToggle.setAttribute('aria-expanded', 'true');
+  searchInput.focus();
+  searchInput.select();
+}
+
+function closeMobileSearch() {
+  siteHeader.classList.remove('search-active');
+  document.body.classList.remove('search-open');
+  searchToggle.setAttribute('aria-expanded', 'false');
+}
+
+if (searchToggle) {
+  searchToggle.addEventListener('click', () =>
+    siteHeader.classList.contains('search-active') ? closeMobileSearch() : openMobileSearch()
+  );
+}
+if (searchBack) searchBack.addEventListener('click', closeMobileSearch);
+
 
 /* ============================================================
    SECTION COLLAPSE / EXPAND
@@ -602,18 +635,21 @@ if (tierFilter) {
    KEYBOARD SHORTCUTS
    ============================================================ */
 document.addEventListener('keydown', e => {
-  /* Escape: close mobile sidebar */
-  if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
-    closeSidebar();
-    hamburgerBtn.focus();
-    return;
+  /* Escape: close mobile sidebar or search */
+  if (e.key === 'Escape') {
+    if (sidebar.classList.contains('is-open')) { closeSidebar(); hamburgerBtn.focus(); return; }
+    if (siteHeader && siteHeader.classList.contains('search-active')) { closeMobileSearch(); return; }
   }
 
-  /* Ctrl+K / Cmd+K: focus search */
+  /* Ctrl+K / Cmd+K: focus search (open mobile search panel if needed) */
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
     e.preventDefault();
-    searchInput.focus();
-    searchInput.select();
+    if (window.innerWidth <= 767 && siteHeader && !siteHeader.classList.contains('search-active')) {
+      openMobileSearch();
+    } else {
+      searchInput.focus();
+      searchInput.select();
+    }
     return;
   }
 

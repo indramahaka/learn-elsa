@@ -1,7 +1,7 @@
 /* ============================================================
    AWFS ELSA ACADEMY — Main Stylesheet
-   Design: Starbucks (DESIGN.md)
-   Fonts: Nunito Sans (SoDoSans sub), JetBrains Mono (code only)
+   Design: Notion (DESIGN.md)
+   Fonts: Inter (Notion-Sans sub), JetBrains Mono (code only)
    ============================================================ */
 
 
@@ -9,63 +9,73 @@
    1. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* Four-tier green brand system — each mapped to a distinct role */
-  --c-green-starbucks: #006241;   /* brand heading, h2 titles, link color */
-  --c-green-accent:    #00754a;   /* primary CTAs, active indicators, fills */
-  --c-green-house:     #1e3932;   /* hero band, code blocks, feature surfaces */
-  --c-green-uplift:    #2b5148;   /* decorative, dark accent variant */
-  --c-green-light:     #d4e9e2;   /* pale mint tint, hero accent bar */
+  /* Primary — Notion Purple: dominant CTA, signature signal */
+  --c-primary:         #5645d4;
+  --c-primary-pressed: #4534b3;
+  --c-primary-deep:    #3a2a99;
+  --c-on-primary:      #ffffff;
 
-  /* Gold — Rewards ceremony only */
-  --c-gold:       #cba258;
-  --c-gold-light: #dfc49d;
-  --c-gold-wash:  #faf6ee;
+  /* Hero band */
+  --c-navy:     #0a1530;
+  --c-navy-mid: #1a2a52;
 
-  /* Text scale — never pure black, warm against cream canvas */
-  --c-text:        rgba(0,0,0,0.87);    /* primary headings + body on light */
-  --c-text-soft:   rgba(0,0,0,0.58);    /* secondary text, metadata */
-  --c-text-white:  rgba(255,255,255,1); /* on dark-green surfaces */
-  --c-text-ws:     rgba(255,255,255,0.70); /* secondary on dark-green */
+  /* Brand color spectrum — echoes live product database properties */
+  --c-orange:   #dd5b00;
+  --c-teal:     #2a9d99;
+  --c-green:    #1aae39;
+  --c-pink:     #ff64c8;
+  --c-yellow:   #f5d75e;
+  --c-purple:   #7b3ff2;
+  --c-purple-300: #d6b6f6;
+  --c-purple-800: #391c57;
 
-  /* Aliases for CSS compatibility */
-  --c-ink:   rgba(0,0,0,0.87);
-  --c-slate: rgba(0,0,0,0.58);
-  --c-steel: rgba(0,0,0,0.45);
-  --c-stone: rgba(0,0,0,0.30);
-  --c-dust:  rgba(0,0,0,0.18);
+  /* Card tints — pastel palette echoing Notion database properties */
+  --c-tint-lavender: #e6e0f5;
+  --c-tint-peach:    #ffe8d4;
+  --c-tint-rose:     #fde0ec;
+  --c-tint-mint:     #d9f3e1;
+  --c-tint-sky:      #dcecfa;
+  --c-tint-yellow:   #fef7d6;
+  --c-tint-cream:    #f8f5e8;
 
   /* Link */
-  --c-link:       #006241;
-  --c-link-hover: #004d33;
+  --c-link:       #0075de;
+  --c-link-hover: #005bab;
+
+  /* Text scale */
+  --c-ink:      #1a1a1a;
+  --c-charcoal: #37352f;
+  --c-slate:    #5d5b54;
+  --c-steel:    #787671;
+  --c-stone:    #a4a097;
+  --c-muted:    #bbb8b1;
+  --c-on-dark:  #ffffff;
+  --c-on-dark-muted: #a4a097;
 
   /* Surfaces */
-  --c-canvas:  #f2f0eb;   /* Neutral Warm — primary page canvas, never white */
-  --c-ceramic: #edebe9;   /* Ceramic — section separator, alt warm surface */
-  --c-white:   #ffffff;   /* card surface, sidebar, header */
-  --c-cool:    #f9f9f9;   /* Neutral Cool — inline code, dropdowns */
-  --c-lifted:  #e8e5de;   /* deeper warm — hover state on canvas */
-  --c-bone:    #f9f9f9;   /* inline code bg */
-
-  /* Semantic */
-  --c-success:       #00754a;
-  --c-success-light: rgba(0,117,74,0.10);
-  --c-error:         #c82014;
-  --c-warning:       #fbbc05;
+  --c-canvas:       #ffffff;
+  --c-surface:      #f6f5f4;
+  --c-surface-soft: #fafaf9;
 
   /* Hairlines */
-  --c-hairline:        rgba(0,0,0,0.14);
-  --c-hairline-soft:   rgba(0,0,0,0.08);
-  --c-hairline-strong: rgba(0,0,0,0.24);
+  --c-hairline:        #e5e3df;
+  --c-hairline-soft:   #ede9e4;
+  --c-hairline-strong: #c8c4be;
 
-  /* Tier badge palette — Starbucks green hierarchy */
-  --c-t1-bg:    #1e3932;   --c-t1-text:   #ffffff;       /* House Green — most authoritative */
-  --c-t2-bg:    #f2f0eb;   --c-t2-text:   #006241;       /* Neutral Warm + Starbucks Green */
-  --c-t3-bg:    #006241;   --c-t3-text:   #ffffff;       /* Starbucks Green */
-  --c-labs-bg:  #00754a;   --c-labs-text: #ffffff;       /* Green Accent — hands-on action */
+  /* Semantic */
+  --c-success: #1aae39;
+  --c-warning: #dd5b00;
+  --c-error:   #e03131;
 
-  /* Typography — Nunito Sans (SoDoSans open-source substitute) */
-  --f-display: "Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --f-body:    "Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Tier badge palette */
+  --c-t1-bg:    #5645d4;   --c-t1-text:   #ffffff;   /* Primary Purple */
+  --c-t2-bg:    #dd5b00;   --c-t2-text:   #ffffff;   /* Brand Orange */
+  --c-t3-bg:    #787671;   --c-t3-text:   #ffffff;   /* Steel Gray */
+  --c-labs-bg:  #2a9d99;   --c-labs-text: #ffffff;   /* Brand Teal */
+
+  /* Typography — Inter (Notion-Sans open-source substitute) */
+  --f-display: "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, sans-serif;
+  --f-body:    "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, sans-serif;
   --f-code:    "JetBrains Mono", ui-monospace, monospace;
 
   /* Layout */
@@ -74,30 +84,27 @@
   --rsidebar-w:  220px;
   --content-max: 760px;
 
-  /* Spacing (8px base) */
+  /* Spacing (from design tokens) */
   --sp-1:  4px;  --sp-2:  8px;  --sp-3: 12px;
   --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;
   --sp-8: 32px;  --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
 
-  /* Border radius — Starbucks scale */
-  --r-xs:   4px;
-  --r-sm:   8px;
-  --r-md:   12px;
-  --r-btn:  50px;    /* universal full-pill — every button without exception */
-  --r-hero: 16px;    /* topic hero feature card */
-  --r-card: 12px;    /* standard content cards */
-  --r-full: 9999px;  /* search, filter, chip pills */
+  /* Border radius — Notion scale: sober editorial, NOT pill for buttons */
+  --r-xs:   4px;    /* tag chips */
+  --r-sm:   6px;    /* type badges, ghost buttons */
+  --r-btn:  8px;    /* all regular buttons — rounded-rect, Notion signature */
+  --r-card: 12px;   /* cards, pricing tiers */
+  --r-hero: 16px;   /* topic hero card (rounded.xl) */
+  --r-full: 9999px; /* pill tabs + badges ONLY */
 
-  /* Elevation — whisper-soft stacked shadows */
-  --shadow-xs:   0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
-  --shadow-card: 0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
-  --shadow-nav:  0 1px 3px rgba(0,0,0,0.10), 0 2px 2px rgba(0,0,0,0.06), 0 0 2px rgba(0,0,0,0.07);
-  --shadow-hero: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+  /* Elevation */
+  --shadow-xs:   rgba(15,15,15,0.04) 0px 1px 2px 0px;
+  --shadow-card: rgba(15,15,15,0.08) 0px 4px 12px 0px;
+  --shadow-hero: rgba(15,15,15,0.20) 0px 24px 48px -8px;
 
   /* Transitions */
   --t-fast: 150ms ease;
   --t-mid:  200ms ease;
-  --t-btn:  0.2s ease;   /* Starbucks button transition */
 }
 
 
@@ -119,9 +126,8 @@ body {
   font-family: var(--f-body);
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
-  color: var(--c-text-soft);
+  line-height: 1.55;
+  color: var(--c-slate);
   background-color: var(--c-canvas);
   padding-top: var(--header-h);
   -webkit-font-smoothing: antialiased;
@@ -138,17 +144,17 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
 button { cursor: pointer; font-family: inherit; }
 ul, ol { padding-left: var(--sp-6); }
 li + li { margin-top: 2px; }
-strong { font-weight: 700; color: var(--c-text); }
+strong { font-weight: 600; color: var(--c-charcoal); }
 
 kbd {
   font-family: var(--f-code);
   font-size: 0.8em;
-  background: var(--c-cool);
+  background: var(--c-surface);
   border: 1px solid var(--c-hairline-strong);
   border-bottom-width: 2px;
   border-radius: var(--r-sm);
   padding: 0.1em 0.45em;
-  color: var(--c-text);
+  color: var(--c-ink);
 }
 
 .sr-only {
@@ -162,14 +168,14 @@ kbd {
 
 
 /* ============================================================
-   3. PROGRESS BAR — Green Accent
+   3. PROGRESS BAR — Primary Purple
    ============================================================ */
 .progress-bar {
   position: fixed;
   top: 0; left: 0;
   height: 3px;
   width: 0%;
-  background: var(--c-green-accent);
+  background: var(--c-primary);
   z-index: 200;
   transition: width 400ms ease;
   pointer-events: none;
@@ -177,14 +183,14 @@ kbd {
 
 
 /* ============================================================
-   4. SITE HEADER — white, three-layer soft shadow
+   4. SITE HEADER — canvas white, hairline bottom
    ============================================================ */
 .site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--header-h);
-  background: var(--c-white);
-  box-shadow: var(--shadow-nav);
+  background: var(--c-canvas);
+  border-bottom: 1px solid var(--c-hairline);
   display: flex;
   align-items: center;
   gap: var(--sp-3);
@@ -200,12 +206,12 @@ kbd {
   display: none;
   align-items: center; justify-content: center;
   background: transparent; border: none;
-  color: var(--c-text-soft);
+  color: var(--c-steel);
   padding: var(--sp-2);
   border-radius: var(--r-sm);
   transition: background var(--t-fast);
 }
-.btn-hamburger:hover { background: var(--c-canvas); }
+.btn-hamburger:hover { background: var(--c-surface); }
 .btn-hamburger svg { width: 18px; height: 18px; }
 
 .site-logo {
@@ -217,21 +223,21 @@ kbd {
   border-radius: var(--r-sm);
   transition: background var(--t-fast);
 }
-.site-logo:hover { background: var(--c-canvas); text-decoration: none; }
+.site-logo:hover { background: var(--c-surface); text-decoration: none; }
 
-/* Nunito Sans — SoDoSans editorial wordmark */
+/* Inter — Notion-Sans editorial wordmark */
 .logo-product {
   font-family: var(--f-display);
   font-size: 1.0625rem;
-  font-weight: 700;
-  color: var(--c-green-starbucks);
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  color: var(--c-ink);
+  letter-spacing: -0.03em;
   line-height: 1;
 }
 
 
 /* ============================================================
-   5. SEARCH — full pill, ceramic warm bg
+   5. SEARCH — rounded.md, surface bg (search-pill spec)
    ============================================================ */
 .search-box {
   position: relative;
@@ -248,23 +254,23 @@ kbd {
 }
 .search-input {
   width: 100%;
-  height: 38px;
-  background: var(--c-ceramic);
+  height: 40px;
+  background: var(--c-surface);
   border: 1px solid var(--c-hairline);
-  border-radius: var(--r-full);
+  border-radius: var(--r-btn);
   padding: 0 var(--sp-4) 0 calc(var(--sp-4) + 14px + var(--sp-2));
   font-family: var(--f-body);
   font-size: 0.875rem;
-  letter-spacing: -0.01em;
-  color: var(--c-text);
+  color: var(--c-ink);
   outline: none;
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
-.search-input::placeholder { color: var(--c-stone); }
+.search-input::placeholder { color: var(--c-steel); }
 .search-input:focus {
-  border-color: var(--c-green-accent);
-  background: var(--c-white);
-  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
+  border-color: var(--c-primary);
+  border-width: 2px;
+  background: var(--c-canvas);
+  box-shadow: none;
 }
 
 
@@ -274,58 +280,55 @@ kbd {
 .tier-filter {
   height: 36px;
   padding: 0 var(--sp-4);
-  background: var(--c-ceramic);
+  background: var(--c-surface);
   border: 1px solid var(--c-hairline);
   border-radius: var(--r-full);
-  color: var(--c-text);
+  color: var(--c-ink);
   font-family: var(--f-body);
   font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 500;
   outline: none;
   cursor: pointer;
   transition: border-color var(--t-fast);
 }
-.tier-filter:hover { border-color: var(--c-green-accent); }
+.tier-filter:hover { border-color: var(--c-hairline-strong); }
 .tier-filter:focus {
-  border-color: var(--c-green-accent);
-  border-width: 1.5px;
-  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
+  border-color: var(--c-primary);
+  border-width: 2px;
 }
 
 .progress-chip {
   font-family: var(--f-body);
   font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--c-text-soft);
+  font-weight: 500;
+  color: var(--c-steel);
   white-space: nowrap;
   padding: 4px var(--sp-3);
-  background: var(--c-ceramic);
+  background: var(--c-surface);
   border-radius: var(--r-full);
 }
 
 .btn-icon {
   display: flex;
   align-items: center; justify-content: center;
-  background: var(--c-white);
+  background: var(--c-canvas);
   border: 1px solid var(--c-hairline);
-  color: var(--c-text);
+  color: var(--c-charcoal);
   width: 36px; height: 36px;
   border-radius: var(--r-full);
   transition: background var(--t-fast), border-color var(--t-fast);
 }
-.btn-icon:hover { background: var(--c-ceramic); border-color: var(--c-green-accent); }
+.btn-icon:hover { background: var(--c-surface); border-color: var(--c-hairline-strong); }
 .btn-icon svg { width: 15px; height: 15px; }
 
 
 /* ============================================================
-   7. LEFT SIDEBAR — white on warm cream canvas
+   7. LEFT SIDEBAR — canvas white
    ============================================================ */
 .sidebar-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(30,57,50,0.50);
+  background: rgba(10,21,48,0.45);
   z-index: 49;
 }
 .sidebar-overlay.is-visible { display: block; }
@@ -336,14 +339,14 @@ kbd {
   width: var(--sidebar-w);
   height: calc(100vh - var(--header-h));
   overflow-y: auto;
-  background: var(--c-white);
-  border-right: 1px solid var(--c-hairline-soft);
+  background: var(--c-canvas);
+  border-right: 1px solid var(--c-hairline);
   z-index: 50;
   overscroll-behavior: contain;
 }
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--c-hairline); border-radius: 2px; }
 
 .sidebar-scroller { padding: var(--sp-3) 0 var(--sp-16); }
 
@@ -360,36 +363,36 @@ kbd {
   text-align: left;
   transition: background var(--t-fast);
 }
-.nav-section-btn:hover { background: var(--c-canvas); }
+.nav-section-btn:hover { background: var(--c-surface-soft); }
 
 .nav-section-label {
   flex: 1;
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   color: var(--c-stone);
 }
 
 .nav-section-count {
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 700;
-  color: var(--c-text-soft);
+  font-weight: 500;
+  color: var(--c-steel);
   padding: 1px 7px;
-  background: var(--c-ceramic);
+  background: var(--c-surface);
   border-radius: var(--r-full);
   flex-shrink: 0;
   transition: color var(--t-fast), background var(--t-fast);
 }
 .nav-section-count.has-progress {
-  background: var(--c-green-accent);
-  color: var(--c-white);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
 }
 .nav-section-count.is-complete {
-  background: var(--c-green-house);
-  color: var(--c-white);
+  background: var(--c-ink);
+  color: var(--c-on-dark);
 }
 
 .nav-chevron {
@@ -426,28 +429,27 @@ kbd {
   font-family: var(--f-body);
   font-size: 0.875rem;
   font-weight: 400;
-  letter-spacing: -0.01em;
-  color: var(--c-text-soft);
+  color: var(--c-steel);
   text-decoration: none;
   border-left: 2px solid transparent;
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
 .nav-topic-link:hover {
-  background: var(--c-canvas);
-  color: var(--c-text);
+  background: var(--c-surface-soft);
+  color: var(--c-charcoal);
   text-decoration: none;
 }
 .nav-topic-link.is-active {
-  background: var(--c-canvas);
-  color: var(--c-green-starbucks);
-  font-weight: 600;
-  border-left-color: var(--c-green-accent);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  font-weight: 500;
+  border-left-color: var(--c-primary);
 }
 
 .nav-topic-num {
   font-family: var(--f-code);
   font-size: 0.625rem;
-  color: rgba(0,0,0,0.20);
+  color: var(--c-muted);
   min-width: 16px;
   flex-shrink: 0;
   transition: color var(--t-fast);
@@ -466,12 +468,12 @@ kbd {
 .completion-icon {
   width: 12px; height: 12px;
   flex-shrink: 0;
-  color: rgba(0,0,0,0.16);
+  color: var(--c-hairline-strong);
   transition: color var(--t-fast);
 }
-.nav-topic-link.is-complete .completion-icon { color: var(--c-green-accent); }
-.nav-topic-link.is-complete { color: rgba(0,0,0,0.30); }
-.nav-topic-link.is-active .completion-icon { color: var(--c-green-accent); }
+.nav-topic-link.is-complete .completion-icon { color: var(--c-green); }
+.nav-topic-link.is-complete { color: var(--c-muted); }
+.nav-topic-link.is-active .completion-icon { color: var(--c-primary); }
 
 .sidebar-no-results {
   padding: var(--sp-4);
@@ -484,15 +486,15 @@ kbd {
 
 
 /* ============================================================
-   8. TIER BADGES — Starbucks four-tier green hierarchy
+   8. TIER BADGES — Notion brand spectrum, full pill
    ============================================================ */
 .tier-badge {
   display: inline-flex;
   align-items: center;
   font-family: var(--f-body);
   font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 3px 10px;
   border-radius: var(--r-full);
@@ -501,10 +503,10 @@ kbd {
   line-height: 1.6;
 }
 .tier-badge.tier-1       { background: var(--c-t1-bg);   color: var(--c-t1-text); }
-.tier-badge.tier-2       { background: var(--c-t2-bg);   color: var(--c-t2-text); border: 1px solid var(--c-green-starbucks); }
+.tier-badge.tier-2       { background: var(--c-t2-bg);   color: var(--c-t2-text); }
 .tier-badge.tier-3       { background: var(--c-t3-bg);   color: var(--c-t3-text); }
 .tier-badge.tier-labs    { background: var(--c-labs-bg); color: var(--c-labs-text); }
-.tier-badge.tier-welcome { background: var(--c-ceramic); color: var(--c-text-soft); }
+.tier-badge.tier-welcome { background: var(--c-surface); color: var(--c-steel); }
 
 
 /* ============================================================
@@ -533,10 +535,10 @@ kbd {
 
 
 /* ============================================================
-   10. TOPIC HERO — House Green feature band, white text
+   10. TOPIC HERO — Brand Navy hero band, white text
    ============================================================ */
 .topic-hero {
-  background: var(--c-green-house);
+  background: var(--c-navy);
   border-radius: var(--r-hero);
   padding: var(--sp-12) var(--sp-8);
   margin-bottom: var(--sp-8);
@@ -551,38 +553,30 @@ kbd {
   margin-bottom: var(--sp-4);
 }
 
-/* Badges on dark hero — translucent white pill */
+/* Badges on dark hero — semi-transparent white pill */
 .topic-hero .tier-badge {
-  background: rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.90);
-  border: 1px solid rgba(255,255,255,0.20);
-  letter-spacing: 0.06em;
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.18);
+  letter-spacing: 0.04em;
 }
 
 .topic-hero h1 {
   font-family: var(--f-display);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--c-text-white);
+  font-weight: 600;
+  line-height: 1.10;
+  letter-spacing: -0.04em;
+  color: var(--c-on-dark);
   margin-bottom: var(--sp-3);
 }
 
-/* Green Light accent bar — pale mint shimmer on dark band */
-.hero-accent {
-  display: block;
-  width: 28px; height: 2px;
-  background: var(--c-green-light);
-  border-radius: var(--r-full);
-  margin-bottom: var(--sp-4);
-}
 
 .topic-lead {
   font-family: var(--f-body);
   font-size: 1rem;
   font-weight: 400;
-  color: var(--c-text-ws);
+  color: var(--c-on-dark-muted);
   line-height: 1.55;
   max-width: 64ch;
 }
@@ -592,12 +586,12 @@ kbd {
 .topic-hero .prereq-list   { color: rgba(255,255,255,0.45); }
 .topic-hero .prereq-label  { color: rgba(255,255,255,0.65); }
 .topic-hero .prereq-chip {
-  border-color: rgba(255,255,255,0.22);
-  color: rgba(255,255,255,0.90);
-  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.20);
+  color: rgba(255,255,255,0.88);
+  background: rgba(255,255,255,0.08);
 }
 .topic-hero .prereq-chip:hover {
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.15);
   text-decoration: none;
 }
 
@@ -627,7 +621,7 @@ kbd {
   color: var(--c-stone);
   position: relative; z-index: 1;
 }
-.prereq-label { font-weight: 600; color: var(--c-text-soft); }
+.prereq-label { font-weight: 500; color: var(--c-steel); }
 .prereq-chip {
   display: inline-flex;
   align-items: center;
@@ -641,7 +635,7 @@ kbd {
   transition: background var(--t-fast);
 }
 .prereq-chip:hover {
-  background: var(--c-canvas);
+  background: var(--c-surface);
   text-decoration: none;
 }
 
@@ -651,14 +645,14 @@ kbd {
    ============================================================ */
 .topic-article section { margin-bottom: var(--sp-6); }
 
-/* H2 — Starbucks Green, weight 700: the brand heading signal */
+/* H2 — Ink, weight 600, tight negative tracking (heading-2 spec) */
 .topic-article h2 {
   font-family: var(--f-display);
   font-size: clamp(1.25rem, 2.5vw, 1.625rem);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.20;
-  letter-spacing: -0.01em;
-  color: var(--c-green-starbucks);
+  letter-spacing: -0.03em;
+  color: var(--c-ink);
   margin-top: var(--sp-10);
   margin-bottom: var(--sp-3);
   scroll-margin-top: calc(var(--header-h) + var(--sp-4));
@@ -667,9 +661,9 @@ kbd {
 .topic-article h3 {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
-  color: var(--c-text);
+  color: var(--c-charcoal);
   margin-top: var(--sp-6);
   margin-bottom: var(--sp-2);
   scroll-margin-top: calc(var(--header-h) + var(--sp-4));
@@ -678,9 +672,9 @@ kbd {
 .topic-article h4 {
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   color: var(--c-stone);
   margin-top: var(--sp-4);
   margin-bottom: var(--sp-2);
@@ -690,12 +684,12 @@ kbd {
   margin-bottom: var(--sp-4);
   max-width: 72ch;
   line-height: 1.6;
-  color: var(--c-text-soft);
+  color: var(--c-slate);
 }
 .topic-article li {
   max-width: 70ch;
   line-height: 1.6;
-  color: var(--c-text-soft);
+  color: var(--c-slate);
 }
 
 .anchor-link {
@@ -710,17 +704,17 @@ kbd {
 }
 .topic-article h2:hover .anchor-link,
 .topic-article h3:hover .anchor-link { opacity: 1; }
-.anchor-link:hover { color: var(--c-green-accent); opacity: 1 !important; text-decoration: none; }
+.anchor-link:hover { color: var(--c-primary); opacity: 1 !important; text-decoration: none; }
 
 
 /* ============================================================
-   12. CODE BLOCKS — House Green (#1e3932)
+   12. CODE BLOCKS — Brand Navy (#0a1530)
    ============================================================ */
 .code-block {
   margin: var(--sp-6) 0;
   border-radius: var(--r-card);
   overflow: hidden;
-  background: var(--c-green-house);
+  background: var(--c-navy);
   box-shadow: var(--shadow-hero);
 }
 
@@ -739,7 +733,7 @@ kbd {
   font-family: var(--f-code);
   font-size: 0.625rem;
   font-weight: 400;
-  color: rgba(255,255,255,0.40);
+  color: var(--c-on-dark-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -747,7 +741,7 @@ kbd {
 .code-block-filename {
   font-family: var(--f-code);
   font-size: 0.6875rem;
-  color: rgba(255,255,255,0.40);
+  color: var(--c-on-dark-muted);
   flex: 1;
   text-align: center;
   overflow: hidden;
@@ -760,7 +754,7 @@ kbd {
   align-items: center;
   gap: var(--sp-1);
   background: transparent; border: none;
-  color: rgba(255,255,255,0.35);
+  color: var(--c-on-dark-muted);
   font-family: var(--f-body);
   font-size: 0.6875rem;
   padding: var(--sp-1) var(--sp-2);
@@ -769,7 +763,7 @@ kbd {
   cursor: pointer;
   transition: color var(--t-fast), background var(--t-fast);
 }
-.btn-copy:hover { color: rgba(255,255,255,0.90); background: rgba(255,255,255,0.08); }
+.btn-copy:hover { color: var(--c-on-dark); background: rgba(255,255,255,0.08); }
 .btn-copy svg { width: 11px; height: 11px; }
 
 .code-block pre[class*="language-"] {
@@ -781,13 +775,13 @@ pre[class*="language-"] {
   margin: var(--sp-6) 0;
 }
 
-/* Inline code — Neutral Cool, thin hairline */
+/* Inline code — surface bg, charcoal text (card-base style) */
 :not(pre) > code:not([class*="language-"]) {
   font-family: var(--f-code);
   font-size: 0.875em;
   font-weight: 400;
-  background: var(--c-cool);
-  color: var(--c-green-house);
+  background: var(--c-surface);
+  color: var(--c-charcoal);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   border: 1px solid var(--c-hairline);
@@ -806,14 +800,14 @@ pre[class*="language-"] {
   align-self: start;
 }
 .right-sidebar::-webkit-scrollbar { width: 3px; }
-.right-sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+.right-sidebar::-webkit-scrollbar-thumb { background: var(--c-hairline); border-radius: 2px; }
 
 .right-sidebar-title {
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   color: var(--c-stone);
   margin-bottom: var(--sp-3);
   padding-bottom: var(--sp-2);
@@ -827,7 +821,7 @@ pre[class*="language-"] {
   font-family: var(--f-body);
   font-size: 0.8125rem;
   font-weight: 400;
-  color: var(--c-text-soft);
+  color: var(--c-steel);
   text-decoration: none;
   padding: 5px var(--sp-3);
   border-left: 2px solid var(--c-hairline);
@@ -835,14 +829,14 @@ pre[class*="language-"] {
   transition: color var(--t-fast), border-color var(--t-fast);
 }
 .otp-link:hover {
-  color: var(--c-green-starbucks);
-  border-left-color: var(--c-green-accent);
+  color: var(--c-charcoal);
+  border-left-color: var(--c-primary);
   text-decoration: none;
 }
 .otp-link.is-active {
-  color: var(--c-green-starbucks);
-  font-weight: 600;
-  border-left-color: var(--c-green-accent);
+  color: var(--c-ink);
+  font-weight: 500;
+  border-left-color: var(--c-primary);
 }
 .otp-link.otp-h3 {
   padding-left: calc(var(--sp-3) + var(--sp-4));
@@ -851,7 +845,7 @@ pre[class*="language-"] {
 
 
 /* ============================================================
-   TAB BAR — Starbucks 50px pill, Green Accent active
+   TAB BAR — pill-tab spec: full pill, active = ink-deep black
    ============================================================ */
 .topic-tabs-bar {
   display: flex;
@@ -864,34 +858,34 @@ pre[class*="language-"] {
 }
 .topic-tabs-bar::-webkit-scrollbar { display: none; }
 
+/* pill-tab: rounded.full, individual outlined pills */
 .tab-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
-  padding: 8px var(--sp-4);
-  background: var(--c-white);
-  border: 1.5px solid var(--c-hairline);
-  border-radius: var(--r-btn);
+  padding: 7px var(--sp-4);
+  background: transparent;
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--r-full);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--c-text-soft);
+  font-weight: 500;
+  color: var(--c-steel);
   white-space: nowrap;
   cursor: pointer;
-  transition: all var(--t-btn);
+  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
 }
 .tab-btn:hover {
-  color: var(--c-green-starbucks);
-  border-color: var(--c-green-accent);
-  background: var(--c-white);
+  color: var(--c-charcoal);
+  border-color: var(--c-hairline-strong);
+  background: var(--c-surface-soft);
 }
+/* pill-tab-active: ink-deep black bg, white text */
 .tab-btn.is-active {
-  background: var(--c-green-accent);
-  border-color: var(--c-green-accent);
-  color: var(--c-white);
+  background: var(--c-ink);
+  border-color: var(--c-ink);
+  color: var(--c-on-dark);
 }
-.tab-btn:active { transform: scale(0.95); }
 .tab-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
 /* Tab panels */
@@ -913,7 +907,7 @@ pre[class*="language-"] {
 .code-explanation {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  color: var(--c-text-soft);
+  color: var(--c-slate);
   line-height: 1.6;
   margin-bottom: var(--sp-3);
   max-width: 72ch;
@@ -934,58 +928,58 @@ pre[class*="language-"] {
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  background: var(--c-ceramic);
+  background: var(--c-surface-soft);
 }
 .callout-title {
   font-family: var(--f-body);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.625rem;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   margin-bottom: var(--sp-2);
 }
 .callout.callout-info {
-  background: rgba(0,98,65,0.06);
-  border-color: rgba(0,98,65,0.15);
-  border-left-color: var(--c-green-starbucks);
+  background: rgba(0,117,222,0.05);
+  border-color: rgba(0,117,222,0.15);
+  border-left-color: var(--c-link);
 }
-.callout.callout-info .callout-title { color: var(--c-green-starbucks); }
+.callout.callout-info .callout-title { color: var(--c-link); }
 .callout.callout-warning {
-  background: rgba(203,162,88,0.08);
-  border-color: rgba(203,162,88,0.20);
-  border-left-color: var(--c-gold);
+  background: rgba(221,91,0,0.05);
+  border-color: rgba(221,91,0,0.15);
+  border-left-color: var(--c-orange);
 }
-.callout.callout-warning .callout-title { color: #a07c30; }
+.callout.callout-warning .callout-title { color: var(--c-orange); }
 .callout.callout-success {
-  background: rgba(0,117,74,0.06);
-  border-color: rgba(0,117,74,0.15);
-  border-left-color: var(--c-green-accent);
+  background: rgba(26,174,57,0.05);
+  border-color: rgba(26,174,57,0.15);
+  border-left-color: var(--c-green);
 }
-.callout.callout-success .callout-title { color: var(--c-green-accent); }
+.callout.callout-success .callout-title { color: var(--c-green); }
 .callout.callout-verify {
-  background: rgba(203,162,88,0.08);
-  border-color: rgba(203,162,88,0.20);
-  border-left-color: var(--c-gold);
+  background: rgba(221,91,0,0.05);
+  border-color: rgba(221,91,0,0.15);
+  border-left-color: var(--c-orange);
 }
-.callout.callout-verify .callout-title { color: #a07c30; }
+.callout.callout-verify .callout-title { color: var(--c-orange); }
 
 
 /* ============================================================
    HANDS-ON LAB LAYOUT
    ============================================================ */
 .lab-goal {
-  background: rgba(0,98,65,0.06);
-  border: 1px solid rgba(0,98,65,0.15);
-  border-left: 3px solid var(--c-green-starbucks);
-  border-radius: var(--r-card);
+  background: rgba(0,117,222,0.05);
+  border: none;
+  border-left: 3px solid var(--c-link);
+  border-radius: 0;
   padding: var(--sp-4) var(--sp-6);
   margin-bottom: var(--sp-6);
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--c-text);
+  color: var(--c-ink);
 }
-.lab-goal strong { color: var(--c-green-starbucks); font-weight: 700; }
+.lab-goal strong { color: var(--c-link); font-weight: 600; }
 
 .lab-steps { padding-left: 0; list-style: none; counter-reset: lab-step; }
 .lab-steps > li {
@@ -1004,11 +998,11 @@ pre[class*="language-"] {
   width: 24px;
   height: 24px;
   min-width: 24px;
-  background: var(--c-green-accent);
-  color: var(--c-white);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
   font-family: var(--f-code);
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: 50%;
   margin-top: 2px;
 }
@@ -1016,19 +1010,19 @@ pre[class*="language-"] {
 .lab-steps > li code {
   font-family: var(--f-code);
   font-size: 0.875em;
-  background: var(--c-cool);
+  background: var(--c-surface);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
   border: 1px solid var(--c-hairline);
-  color: var(--c-green-house);
+  color: var(--c-charcoal);
 }
 
 .lab-section-title {
   font-family: var(--f-body);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.06em;
   color: var(--c-stone);
   margin: var(--sp-6) 0 var(--sp-3);
 }
@@ -1044,7 +1038,7 @@ pre[class*="language-"] {
   font-size: 0.9375rem;
   line-height: 1.6;
   max-width: 68ch;
-  color: var(--c-text-soft);
+  color: var(--c-slate);
 }
 .lab-checklist li::before {
   content: '';
@@ -1067,7 +1061,7 @@ pre[class*="language-"] {
   font-size: 0.9375rem;
   line-height: 1.6;
   max-width: 68ch;
-  color: var(--c-text-soft);
+  color: var(--c-slate);
 }
 .pitfall-list li::before {
   content: '!';
@@ -1077,11 +1071,11 @@ pre[class*="language-"] {
   width: 18px;
   height: 18px;
   min-width: 18px;
-  background: rgba(200,32,20,0.10);
-  color: var(--c-error);
+  background: rgba(221,91,0,0.10);
+  color: var(--c-orange);
   font-family: var(--f-body);
   font-size: 0.6875rem;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: 50%;
   margin-top: 2px;
 }
@@ -1097,17 +1091,19 @@ pre[class*="language-"] {
   margin-top: var(--sp-2);
 }
 
+/* card-base spec: canvas bg, 12px rounded, hairline border */
 .self-check-item {
-  background: var(--c-white);
-  border: 1px solid var(--c-hairline-soft);
+  background: var(--c-canvas);
+  border: 1px solid var(--c-hairline);
   border-radius: var(--r-card);
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-xs);
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 .self-check-item:focus-within {
-  border-color: var(--c-green-accent);
-  box-shadow: 0 0 0 3px rgba(0,117,74,0.15);
+  border-color: var(--c-primary);
+  border-width: 2px;
+  box-shadow: none;
 }
 
 .self-check-q {
@@ -1120,72 +1116,70 @@ pre[class*="language-"] {
 .self-check-question-text {
   font-family: var(--f-body);
   font-size: 0.9375rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
-  color: var(--c-text);
+  color: var(--c-ink);
   flex: 1;
 }
 
-/* Reveal — Green Accent pill, scale(0.95) signature press */
+/* Reveal — button-primary: purple #5645d4, 8px radius */
 .btn-reveal {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
   flex-shrink: 0;
-  background: var(--c-green-accent);
-  border: 1px solid var(--c-green-accent);
+  background: var(--c-primary);
+  border: 1px solid var(--c-primary);
   border-radius: var(--r-btn);
-  padding: 7px 18px;
+  padding: 8px 18px;
   font-family: var(--f-body);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--c-white);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-on-primary);
   cursor: pointer;
   white-space: nowrap;
-  letter-spacing: -0.01em;
-  transition: all var(--t-btn);
+  transition: background var(--t-fast), border-color var(--t-fast);
 }
 .btn-reveal:hover {
-  background: var(--c-green-starbucks);
-  border-color: var(--c-green-starbucks);
+  background: var(--c-primary-pressed);
+  border-color: var(--c-primary-pressed);
 }
-.btn-reveal:active { transform: scale(0.95); }
 .btn-reveal.is-open {
   background: transparent;
   border-color: var(--c-hairline-strong);
-  color: var(--c-text-soft);
+  color: var(--c-slate);
 }
 .btn-reveal.is-open:hover {
-  background: var(--c-ceramic);
-  color: var(--c-text);
-  border-color: var(--c-text-soft);
+  background: var(--c-surface);
+  color: var(--c-ink);
+  border-color: var(--c-hairline-strong);
 }
 
-/* Answer — pale mint tint (form valid state), Green Accent left border */
+/* Answer — lavender tint (card-tint-lavender), purple left border */
 .self-check-answer {
   display: none;
   padding: var(--sp-4) var(--sp-6);
-  background: rgba(212,233,226,0.40);
-  border-top: 1px solid rgba(0,117,74,0.12);
-  border-left: 3px solid var(--c-green-accent);
+  background: var(--c-tint-lavender);
+  border-top: 1px solid rgba(86,69,212,0.12);
+  border-left: 3px solid var(--c-primary);
   font-family: var(--f-body);
   font-size: 0.9375rem;
   line-height: 1.6;
-  color: var(--c-text);
+  color: var(--c-charcoal);
   animation: tabFadeIn 140ms ease both;
 }
 .self-check-answer.is-visible { display: block; }
 .self-check-answer p { margin-bottom: var(--sp-3); max-width: 70ch; }
 .self-check-answer p:last-child { margin-bottom: 0; }
-.self-check-answer strong { color: var(--c-green-house); font-weight: 700; }
+.self-check-answer strong { color: var(--c-ink); font-weight: 600; }
 .self-check-answer code {
   font-family: var(--f-code);
   font-size: 0.875em;
-  background: rgba(0,0,0,0.06);
+  background: rgba(86,69,212,0.08);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
-  border: 1px solid var(--c-hairline);
-  color: var(--c-green-house);
+  border: 1px solid rgba(86,69,212,0.15);
+  color: var(--c-primary-deep);
 }
 
 
@@ -1200,81 +1194,96 @@ pre[class*="language-"] {
   gap: var(--sp-4);
   padding: var(--sp-6) 0 var(--sp-4);
   margin-top: var(--sp-10);
-  border-top: 1px solid var(--c-hairline-soft);
+  border-top: 1px solid var(--c-hairline);
 }
 
-/* Mark Complete — outlined pill; Green Accent when done */
+/* Mark Complete — button-secondary (outlined); button-primary when done */
 .btn-complete {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   padding: 9px var(--sp-5);
   background: transparent;
-  border: 1.5px solid var(--c-hairline-strong);
-  border-radius: var(--r-btn);
+  border: 1px solid var(--c-hairline-strong);
+  border-radius: var(--r-full);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--c-text-soft);
+  font-weight: 500;
+  color: var(--c-slate);
   cursor: pointer;
-  letter-spacing: -0.01em;
-  transition: all var(--t-btn);
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
 .btn-complete:hover {
-  border-color: var(--c-green-accent);
-  color: var(--c-green-starbucks);
+  border-color: var(--c-primary);
+  color: var(--c-ink);
   background: transparent;
 }
-.btn-complete:active { transform: scale(0.95); }
 .btn-complete.is-complete {
-  background: var(--c-green-accent);
-  border-color: var(--c-green-accent);
-  color: var(--c-white);
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-on-primary);
 }
 .btn-complete.is-complete:hover {
-  background: var(--c-green-starbucks);
-  border-color: var(--c-green-starbucks);
+  background: var(--c-primary-pressed);
+  border-color: var(--c-primary-pressed);
 }
 .btn-complete svg { width: 15px; height: 15px; }
 
 .topic-footer-nav { display: flex; gap: var(--sp-3); align-items: center; }
 
-/* Prev — Dark Outlined pill (Starbucks style) */
+/* Prev — button-secondary: outlined 8px rect */
 .btn-nav {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   padding: 9px var(--sp-4);
   background: transparent;
-  border: 1.5px solid var(--c-hairline-strong);
-  border-radius: var(--r-btn);
+  border: 1px solid var(--c-hairline-strong);
+  border-radius: var(--r-full);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--c-text);
+  font-weight: 500;
+  color: var(--c-ink);
   text-decoration: none;
-  letter-spacing: -0.01em;
-  transition: all var(--t-btn);
+  transition: background var(--t-fast), border-color var(--t-fast);
 }
 .btn-nav:hover {
-  background: var(--c-ceramic);
-  border-color: var(--c-text-soft);
+  background: var(--c-surface);
+  border-color: var(--c-hairline-strong);
   text-decoration: none;
 }
-.btn-nav:active { transform: scale(0.95); }
 .btn-nav svg { width: 13px; height: 13px; }
 
-/* Next — Green Accent filled pill */
+/* Next — button-primary: purple pill */
 .btn-nav-next {
-  background: var(--c-green-accent);
-  border-color: var(--c-green-accent);
-  color: var(--c-white);
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-on-primary);
 }
 .btn-nav-next:hover {
-  background: var(--c-green-starbucks);
-  border-color: var(--c-green-starbucks);
-  color: var(--c-white);
+  background: var(--c-primary-pressed);
+  border-color: var(--c-primary-pressed);
+  color: var(--c-on-primary);
 }
+
+
+/* ============================================================
+   MOBILE SEARCH TOGGLE — hidden on desktop, shown on mobile
+   ============================================================ */
+.btn-search-mobile { display: none; }
+
+.btn-search-back {
+  display: none;
+  align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: transparent; border: none;
+  color: var(--c-steel);
+  width: 36px; height: 36px;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.btn-search-back:hover { background: var(--c-surface); color: var(--c-charcoal); }
+.btn-search-back svg { width: 18px; height: 18px; }
 
 
 /* ============================================================
@@ -1285,8 +1294,8 @@ pre[class*="language-"] {
 
   .sidebar {
     transform: translateX(-100%);
-    transition: transform var(--t-mid);
-    box-shadow: 4px 0 32px rgba(30,57,50,0.16);
+    transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 32px rgba(10,21,48,0.15);
   }
   .sidebar.is-open { transform: translateX(0); }
 
@@ -1306,23 +1315,91 @@ pre[class*="language-"] {
    RESPONSIVE: MOBILE (max 767px)
    ============================================================ */
 @media (max-width: 767px) {
-  .header-center { display: none; }
 
+  /* --- Header: grid layout so search can expand to full row --- */
+  .site-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: var(--header-h) 0fr;
+    grid-template-areas:
+      "left right"
+      "search search";
+    padding: 0 var(--sp-3);
+    transition: grid-template-rows 200ms ease;
+    overflow: hidden;
+  }
+  .header-left   { grid-area: left;   display: flex; align-items: center; gap: var(--sp-2); min-width: 0; }
+  .header-right  { grid-area: right;  display: flex; align-items: center; gap: var(--sp-2); }
+  .header-center { grid-area: search; display: flex; align-items: center; gap: var(--sp-2); overflow: hidden; min-height: 0; padding: 0; margin: 0; max-width: none; }
+
+  /* When search is open — expand the search row */
+  .site-header.search-active {
+    grid-template-rows: var(--header-h) 52px;
+  }
+  .site-header.search-active .header-center {
+    padding: 0 0 var(--sp-2);
+  }
+  .site-header.search-active .btn-search-back { display: flex; }
+  .site-header.search-active .header-center .search-box { flex: 1; }
+
+  /* Body & sidebar shift down when search row opens */
+  body.search-open { padding-top: calc(var(--header-h) + 52px); }
+  body.search-open .sidebar {
+    top: calc(var(--header-h) + 52px);
+    height: calc(100vh - var(--header-h) - 52px);
+  }
+
+  /* Show search toggle, hide tier filter (no room) */
+  .btn-search-mobile { display: flex; }
+  .tier-filter { display: none; }
+
+  /* --- Main content --- */
   .main-content {
     margin: var(--sp-3);
     padding: var(--sp-6) var(--sp-4);
   }
 
-  .topic-hero { padding: var(--sp-8) var(--sp-5); border-radius: var(--sp-8); }
+  /* --- Topic hero --- */
+  .topic-hero { padding: var(--sp-8) var(--sp-5); border-radius: var(--r-hero); }
   .topic-hero h1 { font-size: 1.75rem; }
   .topic-lead    { font-size: 0.9375rem; }
-  .topic-article h2 { font-size: 1.25rem; }
+
+  /* --- Typography --- */
+  .topic-article h2 { font-size: 1.25rem; margin-top: var(--sp-8); }
   .topic-article h3 { font-size: 0.9375rem; }
 
-  .tab-btn { padding: 6px var(--sp-3); font-size: 0.8125rem; }
-  .self-check-q { flex-direction: column; gap: var(--sp-3); }
-  .btn-reveal { align-self: flex-start; }
-  .topic-footer { flex-direction: column; align-items: flex-start; }
+  /* --- Tab bar --- */
+  .tab-btn { padding: 6px var(--sp-3); font-size: 0.8125rem; min-height: 40px; }
 
-  .tier-filter { font-size: 0.8125rem; }
+  /* --- Self-check --- */
+  .self-check-q { flex-direction: column; gap: var(--sp-3); }
+  .btn-reveal {
+    align-self: stretch;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* --- Topic footer nav --- */
+  .topic-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-3);
+  }
+  .topic-footer-nav { width: 100%; }
+  .btn-nav, .btn-nav-next {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .btn-nav span, .btn-nav-next span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+  .btn-complete { min-height: 44px; justify-content: center; }
+
+  /* --- Code block header: hide filename on small screens --- */
+  .code-block-filename { display: none; }
+  .code-block-lang { flex: 1; }
 }

@@ -9,7 +9,7 @@
   <!-- Google Fonts: Nunito Sans (SoDoSans sub), JetBrains Mono (code) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles/main.css">
@@ -36,6 +36,9 @@
     </div>
 
     <div class="header-center">
+      <button class="btn-search-back" id="searchBack" aria-label="Close search">
+        <i data-lucide="arrow-left"></i>
+      </button>
       <div class="search-box">
         <i data-lucide="search" class="search-icon" aria-hidden="true"></i>
         <input
@@ -51,6 +54,9 @@
     </div>
 
     <div class="header-right">
+      <button class="btn-icon btn-search-mobile" id="searchToggle" aria-label="Search topics" aria-expanded="false">
+        <i data-lucide="search"></i>
+      </button>
       <label class="sr-only" for="tierFilter">Filter by tier</label>
       <select id="tierFilter" class="tier-filter">
         <option value="all">All Tiers</option>
@@ -155,7 +161,6 @@
             <span class="tier-badge tier-welcome">Welcome</span>
           </div>
           <h1>AWFS Elsa Academy</h1>
-          <div class="hero-accent"></div>
           <p class="topic-lead">Your personal learning reference for Elsa Workflows 3.x, anchored to the Approval Workflow Service (AWFS) for Toyota-Astra Motor. Built for one architect, under pitch deadline.</p>
         </div>
 
