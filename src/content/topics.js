@@ -1655,6 +1655,2503 @@ GROUP BY "DefinitionId";`,
     }
   }
 
+,
+  // ── TIER 2 ──────────────────────────────────────────────────────────────────
+
+  {
+    id: 't2-01',
+    tier: 2,
+    title: 'Signal and Event Activities',
+    slug: 'signal-and-event-activities',
+    estimatedMinutes: 35,
+    prerequisites: ['t1-03', 't1-04'],
+    tabs: {
+      concept: `<h2 id="concept-signals">The Event Activity as a Bookmark Mechanism</h2>
+<p>When Elsa encounters an <code>Event</code> activity, it writes a <strong>bookmark</strong> to the persistence store and suspends the workflow instance. The bookmark records three things: the workflow instance ID, the activity ID, and the <em>event name</em> it is waiting for. The instance is now idle — no thread is held.</p>
+
+<h3>SendSignal vs Trigger</h3>
+<p><strong>Signals</strong> (sent via <code>IWorkflowRuntime.SendSignalAsync</code>) are routed to a specific running instance by <strong>correlationId</strong>. The caller says "resume the instance whose correlationId is <code>DOC-2024-001</code> and whose Event bookmark is named <code>ApprovalDecision</code>". Only one instance is targeted.</p>
+<p><strong>Triggers</strong> (sent via <code>IWorkflowRuntime.TriggerWorkflowAsync</code>) identify a workflow <em>definition</em> by name or hash and start a new instance — or resume any suspended instance of that definition waiting on a matching bookmark, depending on the activity. Use triggers when you want to <em>start</em>; use signals when you want to <em>resume a specific instance</em>.</p>
+
+<h3>CorrelationId Routing</h3>
+<p>The correlationId is set at dispatch time and stored on the <code>WorkflowInstance</code> row. When you call <code>SendSignalAsync</code>, the runtime queries the bookmark table for a row matching <code>(eventName, correlationId)</code>. If exactly one match is found, that instance is loaded and resumed. If zero matches are found, the signal is silently dropped (or an exception is thrown, depending on configuration). If multiple matches are found, all are resumed — this is usually a bug caused by non-unique correlationIds.</p>
+
+<h3>AWFS Connection</h3>
+<p>In the Approval Workflow, after dispatching an instance for document <code>DOC-2024-001</code>, the frontend Approval UI collects the approver's decision and calls a thin API endpoint. That endpoint calls <code>SendSignalAsync</code> with <code>correlationId = "DOC-2024-001"</code> and an <code>ApproverDecision</code> payload carrying <code>{ decision: "Approved", comment: "Looks good" }</code>. The suspended instance resumes at the <code>Event</code> activity, reads the payload from the bookmark input, and continues to the next gate.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Workflow waiting for ApprovalDecision event',
+          filename: 'ApprovalEventWorkflow.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+using Elsa.Workflows.Contracts;
+
+public class ApprovalEventWorkflow : WorkflowBase
+{
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        var decision = builder.WithVariable<string>();
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                new WriteLine("Workflow started. Waiting for approval decision..."),
+
+                // Suspend here; resume when a signal named "ApprovalDecision"
+                // arrives on this instance's correlationId.
+                new Event("ApprovalDecision")
+                {
+                    // The signal payload is stored as the activity output.
+                    // Access it via the activity's Output property.
+                },
+
+                new WriteLine(context =>
+                {
+                    // Read the event payload written by the resume call.
+                    var payload = context.GetInput<ApproverDecision>("ApprovalDecision");
+                    return $"Decision received: {payload?.Decision} — {payload?.Comment}";
+                })
+            }
+        };
+    }
+}
+
+public record ApproverDecision(string Decision, string Comment);`,
+          explanation: 'The <code>Event</code> activity name is the signal name. The runtime matches incoming signals to bookmarks by this name plus the correlationId of the instance.'
+        },
+        {
+          language: 'csharp',
+          title: 'API endpoint that resumes the workflow via SendSignalAsync',
+          filename: 'ApprovalController.cs',
+          code: `using Elsa.Workflows.Runtime.Contracts;
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/approvals")]
+public class ApprovalController : ControllerBase
+{
+    private readonly IWorkflowRuntime _runtime;
+
+    public ApprovalController(IWorkflowRuntime runtime)
+        => _runtime = runtime;
+
+    [HttpPost("{documentId}/decision")]
+    public async Task<IActionResult> SubmitDecision(
+        string documentId,
+        [FromBody] ApproverDecision decision,
+        CancellationToken cancellationToken)
+    {
+        // correlationId must match what was set at dispatch time.
+        var result = await _runtime.SendSignalAsync(
+            signal: "ApprovalDecision",
+            input: decision,
+            correlationId: documentId,
+            cancellationToken: cancellationToken);
+
+        if (!result.WorkflowInstanceIds.Any())
+            return NotFound($"No workflow instance awaiting ApprovalDecision for {documentId}");
+
+        return Ok(new { resumed = result.WorkflowInstanceIds });
+    }
+}`,
+          explanation: '<code>SendSignalAsync</code> returns the IDs of all instances that were resumed. An empty list means the signal found no matching bookmark — check that the correlationId and event name are correct.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Build a workflow that suspends at a named Event bookmark and prints the payload when resumed via a signal.',
+        steps: [
+          'Create <code>SignalDemoWorkflow.cs</code> with a <code>Sequence</code> containing a <code>WriteLine("Waiting...")</code> followed by an <code>Event("PingReceived")</code> followed by a <code>WriteLine</code> that prints the payload.',
+          'Register the workflow in <code>Program.cs</code> with <code>elsa.AddWorkflow&lt;SignalDemoWorkflow&gt;()</code>.',
+          'Dispatch the workflow with a correlationId of <code>"ping-test-1"</code> from a startup hook or minimal API endpoint.',
+          'Verify the console shows <code>Waiting...</code> and the instance is in <code>Suspended</code> state via the management API: <code>GET /elsa/api/workflow-instances?correlationId=ping-test-1</code>.',
+          'Send the resume signal: <code>POST /elsa/api/workflow-instances/{id}/signal</code> with body <code>{"signalName":"PingReceived","input":{"message":"Hello from curl"}}</code>, or call <code>SendSignalAsync</code> from a test endpoint.',
+          'Verify the console prints the payload message and the instance transitions to <code>Finished</code>.',
+          'Test the not-found path: send the same signal again and confirm you get an empty resumed list (the bookmark is consumed on first resume).',
+          'Add a second parallel dispatch with correlationId <code>"ping-test-2"</code> and confirm signals route independently.'
+        ],
+        verification: [
+          'Console shows <code>Waiting...</code> immediately after dispatch.',
+          'Instance status is <code>Suspended</code> before the signal is sent.',
+          'Console shows the payload text after <code>SendSignalAsync</code> is called.',
+          'Instance status is <code>Finished</code> after the signal is processed.'
+        ],
+        pitfalls: [
+          '<strong>Wrong correlationId case.</strong> CorrelationIds are compared as strings; <code>"DOC-001"</code> and <code>"doc-001"</code> are different. Normalise to a consistent case (upper or lower) at all entry points.',
+          '<strong>Duplicate correlationIds.</strong> If two instances share a correlationId and both wait on the same event name, both will be resumed. Ensure document IDs used as correlationIds are globally unique before dispatch.',
+          '<strong>Signal dropped silently.</strong> By default, if no bookmark matches, <code>SendSignalAsync</code> returns an empty list without throwing. Add a guard in your API to return a 404 so the caller knows the signal did not land.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the difference between sending a signal and triggering a workflow?',
+          answer: '<p>A <strong>signal</strong> targets a specific, already-running workflow instance identified by its correlationId plus an event name. It resumes a suspended bookmark. A <strong>trigger</strong> targets a workflow <em>definition</em> by name; it typically starts a new instance (or resumes any instance waiting on a trigger bookmark). Use signals to drive an in-progress approval; use triggers to start a new one.</p>'
+        },
+        {
+          question: 'What happens if you call SendSignalAsync with a correlationId that does not match any suspended instance?',
+          answer: '<p>By default, the call returns a result object with an empty <code>WorkflowInstanceIds</code> collection — the signal is silently discarded. No exception is thrown. Your calling code must check the collection and handle the not-found case explicitly, for example by returning HTTP 404 to the UI.</p>'
+        },
+        {
+          question: 'Why would multiple workflow instances be resumed by a single SendSignalAsync call?',
+          answer: '<p>Because multiple dispatched instances share the same correlationId. Elsa matches bookmarks by <em>both</em> event name and correlationId, so if two instances were dispatched with identical correlationIds and both are waiting on the same event name, both will be resumed simultaneously. This is almost always a bug. Ensure correlationIds are unique per approval request — for AWFS, the document ID is a natural unique key.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't2-02',
+    tier: 2,
+    title: 'HTTP Activities',
+    slug: 'http-activities',
+    estimatedMinutes: 30,
+    prerequisites: ['t1-02', 't1-03'],
+    tabs: {
+      concept: `<h2 id="concept-http-activities">HTTP as a First-Class Workflow Trigger</h2>
+<p>Elsa ships an <code>Elsa.Http</code> package that adds two fundamental activities: <code>HttpEndpoint</code> (inbound) and <code>SendHttpRequest</code> (outbound).</p>
+
+<h3>HttpEndpoint — workflow started over HTTP</h3>
+<p><code>HttpEndpoint</code> replaces a programmatic <code>DispatchWorkflowAsync</code> call entirely. You configure a path and HTTP method on the activity, and Elsa registers a matching ASP.NET route. When a request hits that route, Elsa starts (or resumes) a workflow instance. The request body, headers, and route values are available as activity outputs that downstream activities can read.</p>
+<p>Compared to dispatching via <code>IWorkflowRuntime</code>, <code>HttpEndpoint</code> is simpler for external callers — no Elsa-specific API knowledge required, just a plain HTTP POST. The tradeoff is that the response is returned inline if the workflow uses <code>WriteHttpResponse</code>, so the HTTP connection stays open until the workflow reaches the response activity or times out.</p>
+
+<h3>SendHttpRequest — outbound calls from within a workflow</h3>
+<p><code>SendHttpRequest</code> makes an HTTP call to an external URL during workflow execution. You set the method, URL (which can be an expression using workflow variables), headers, and body. The response status code, headers, and parsed body are available as activity outputs. This is how a workflow calls a microservice — for example, fetching the approver chain from an MDM API.</p>
+
+<h3>WriteHttpResponse</h3>
+<p><code>WriteHttpResponse</code> writes the HTTP response back to the caller of an <code>HttpEndpoint</code>-triggered workflow. Set the status code, content type, and body. Once this activity executes, the HTTP connection is completed.</p>
+
+<h3>JSON Body Extraction</h3>
+<p>The request body from <code>HttpEndpoint</code> is exposed as a <code>JsonElement</code> (or deserialized to a typed model if you configure a content type). Use <code>context.GetActivityOutput&lt;JsonElement&gt;(httpEndpointActivityId)</code> or bind via activity input expressions to extract fields.</p>
+
+<h3>AWFS Connection</h3>
+<p>In AWFS, the approval submission endpoint — <code>POST /api/approvals/submit</code> — can be modeled as an <code>HttpEndpoint</code>-triggered workflow. The request body carries <code>DocumentId</code>, <code>RequesterId</code>, and <code>Amount</code>. No separate controller is needed; Elsa handles the routing. Alternatively, a thin controller dispatches the workflow programmatically — both patterns are valid. The MDM approver-chain lookup inside the workflow is a classic <code>SendHttpRequest</code> use case.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Workflow started via HttpEndpoint POST',
+          filename: 'SubmitApprovalWorkflow.cs',
+          code: `using Elsa.Http;
+using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+
+public class SubmitApprovalWorkflow : WorkflowBase
+{
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        // Define a variable to hold the parsed request body.
+        var requestBody = builder.WithVariable<ApprovalRequest>();
+
+        var httpEndpoint = new HttpEndpoint
+        {
+            Path = new("/api/approvals/submit"),
+            SupportedMethods = new(new[] { HttpMethod.Post }),
+            // Parse the body as ApprovalRequest automatically.
+            ParsedContent = new Output<object>(requestBody)
+        };
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                httpEndpoint,
+
+                new WriteLine(ctx =>
+                    $"Received approval request for doc: {ctx.Get(requestBody)?.DocumentId}"),
+
+                // ... approval logic ...
+
+                new WriteHttpResponse
+                {
+                    StatusCode = new(System.Net.HttpStatusCode.Accepted),
+                    Content = new("{ \"status\": \"queued\" }"),
+                    ContentType = new("application/json")
+                }
+            }
+        };
+    }
+}
+
+public record ApprovalRequest(string DocumentId, string RequesterId, decimal Amount);`,
+          explanation: '<code>HttpEndpoint</code> registers the route automatically once the workflow definition is published. The <code>ParsedContent</code> output holds the deserialized request body.'
+        },
+        {
+          language: 'csharp',
+          title: 'Workflow using SendHttpRequest to call MDM API',
+          filename: 'MdmLookupWorkflow.cs',
+          code: `using Elsa.Http;
+using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+using System.Net.Http;
+
+public class MdmLookupWorkflow : WorkflowBase
+{
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        var costCenter = builder.WithVariable<string>("CC-1001");
+        var approverChain = builder.WithVariable<ApproverChain>();
+
+        var mdmRequest = new SendHttpRequest
+        {
+            Url = new(ctx => $"https://mdm.internal/api/approvers/{ctx.Get(costCenter)}"),
+            Method = new(HttpMethod.Get),
+            // Deserialize the JSON response body into ApproverChain.
+            ParsedContent = new Output<object>(approverChain)
+        };
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                mdmRequest,
+                new WriteLine(ctx =>
+                {
+                    var chain = ctx.Get(approverChain);
+                    return $"Approvers: {string.Join(", ", chain?.Approvers ?? Array.Empty<string>())}";
+                })
+            }
+        };
+    }
+}
+
+public record ApproverChain(string[] Approvers);`,
+          explanation: '<code>SendHttpRequest</code> blocks execution until the HTTP response is received. The <code>ParsedContent</code> output variable holds the deserialized JSON response body.'
+        },
+        {
+          language: 'csharp',
+          title: 'WriteHttpResponse with dynamic body',
+          filename: 'WriteResponseSnippet.cs',
+          code: `// Inside a workflow Build() method, after processing:
+var resultVar = builder.WithVariable<string>();
+
+// ... populate resultVar via earlier activities ...
+
+new WriteHttpResponse
+{
+    StatusCode = new(System.Net.HttpStatusCode.OK),
+    ContentType = new("application/json"),
+    // Expression reads the workflow variable at runtime.
+    Content = new(ctx => \$"{{\"result\":\"{ctx.Get(resultVar)}\"}}")
+}`,
+          explanation: 'The <code>Content</code> input accepts a lambda expression so the response body can include workflow variable values resolved at runtime.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Build a workflow that accepts a JSON POST, calls an external URL using SendHttpRequest, and writes the response back to the HTTP caller.',
+        steps: [
+          'Add the <code>Elsa.Http</code> NuGet package and call <code>elsa.UseHttp()</code> in <code>Program.cs</code>.',
+          'Create <code>HttpProxyWorkflow.cs</code>. Add an <code>HttpEndpoint</code> activity on <code>POST /proxy/fetch</code> that expects a body like <code>{"url":"https://httpbin.org/get"}</code>.',
+          'Declare a variable <code>targetUrl</code> and bind it from the parsed request body.',
+          'Add a <code>SendHttpRequest</code> activity using <code>targetUrl</code> as its URL, method GET.',
+          'Declare a variable <code>responseBody</code> and bind it to the <code>ResponseContent</code> output of <code>SendHttpRequest</code>.',
+          'Add a <code>WriteHttpResponse</code> that echoes <code>responseBody</code> as <code>application/json</code> with status 200.',
+          'Run the app and test: <code>curl -X POST http://localhost:5000/proxy/fetch -H "Content-Type: application/json" -d \'{"url":"https://httpbin.org/get"}\'</code>.',
+          'Verify the response from httpbin.org is returned directly to the curl caller.'
+        ],
+        verification: [
+          'The route <code>POST /proxy/fetch</code> responds without a 404.',
+          '<code>SendHttpRequest</code> successfully calls the external URL (check logs for outbound request).',
+          'The curl caller receives the upstream JSON response body.',
+          'Status code returned is 200 OK.'
+        ],
+        pitfalls: [
+          '<strong>Forgetting UseHttp().</strong> Without <code>elsa.UseHttp()</code>, the <code>HttpEndpoint</code> and <code>SendHttpRequest</code> activities are not registered and will throw at startup or resolve as unknown activities.',
+          '<strong>HTTP connection timeout on inline response.</strong> If the workflow takes too long before reaching <code>WriteHttpResponse</code>, the caller times out. For long-running workflows, return HTTP 202 Accepted immediately and use a webhook callback instead of an inline response.',
+          '<strong>Body parsing type mismatch.</strong> If the content type header is not set to <code>application/json</code>, Elsa may not attempt JSON deserialization. Always set <code>Content-Type: application/json</code> on requests to <code>HttpEndpoint</code> workflows.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the main difference between starting a workflow with HttpEndpoint versus calling DispatchWorkflowAsync from a controller?',
+          answer: '<p><code>HttpEndpoint</code> makes the workflow itself the HTTP handler — no controller code is needed, and the HTTP connection stays open while the workflow runs synchronously up to a <code>WriteHttpResponse</code>. <code>DispatchWorkflowAsync</code> is a fire-and-forget dispatch from application code; the controller responds immediately with a 202 and the workflow runs asynchronously. Use <code>HttpEndpoint</code> for simple request/response flows; use <code>DispatchWorkflowAsync</code> for long-running workflows where the caller should not wait.</p>'
+        },
+        {
+          question: 'How does a workflow read individual fields from the JSON body of an HttpEndpoint request?',
+          answer: '<p>The <code>HttpEndpoint</code> activity exposes a <code>ParsedContent</code> output that holds the deserialized body. If you provide a target type, Elsa deserializes to that type automatically. You bind this output to a workflow variable, then read fields via <code>ctx.Get(myVariable)?.FieldName</code> in downstream activity input expressions. Alternatively, the raw <code>JsonElement</code> is available if you need dynamic property access.</p>'
+        },
+        {
+          question: 'How can you correlate an HttpEndpoint-triggered workflow to resume it later with a signal?',
+          answer: '<p>Extract a unique identifier from the request body (e.g., <code>DocumentId</code>) and use a <code>SetWorkflowContext</code> or a custom activity to call <code>context.WorkflowExecutionContext.CorrelationId = documentId</code> early in the workflow. Alternatively, set the correlationId expression on the <code>HttpEndpoint</code> activity itself so it is applied at instance creation. Future signal calls then target this correlationId.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't2-03',
+    tier: 2,
+    title: 'Error Handling and Fault Tolerance',
+    slug: 'error-handling-and-fault-tolerance',
+    estimatedMinutes: 30,
+    prerequisites: ['t1-03', 't1-04'],
+    tabs: {
+      concept: `<h2 id="concept-error-handling">Faults vs Exceptions in Elsa</h2>
+<p>When an activity throws an unhandled .NET exception, Elsa catches it and transitions the workflow instance to a <strong>Faulted</strong> state. The exception message is stored on the instance record. The workflow stops executing — no subsequent activities run. This is different from a <em>handled</em> exception inside a <code>TryCatch</code> activity, which keeps the workflow alive.</p>
+
+<h3>TryCatch Activity</h3>
+<p><code>TryCatch</code> wraps one or more activities in a try body. If any activity in the body throws, control jumps to the <code>Catch</code> branch. Inside <code>Catch</code>, you can inspect the exception via <code>context.GetActivityOutput&lt;Exception&gt;(tryCatchId)</code>, log it, set a variable, or take a compensating action. After <code>Catch</code> completes, the workflow continues normally — the instance remains <code>Running</code>, not <code>Faulted</code>.</p>
+
+<h3>Retry Loops</h3>
+<p>Elsa has no built-in <code>Retry</code> activity in version 3.x, but you can compose one using a <code>While</code> loop, a counter variable, and a <code>TryCatch</code>. The pattern: initialise <code>attempt = 0</code>; loop while <code>attempt &lt; maxRetries &amp;&amp; !succeeded</code>; inside the loop, wrap the risky activity in <code>TryCatch</code>; on success set <code>succeeded = true</code>; on catch increment <code>attempt</code>. After the loop, check if <code>succeeded</code> is false and fault gracefully.</p>
+
+<h3>Compensation</h3>
+<p>Elsa 3.x has a <code>Compensate</code> activity that triggers a named compensation handler registered on a <code>CompensableActivity</code>. This is useful for saga-style rollback: if a multi-step operation partially succeeds, the compensation handler undoes the completed steps. In AWFS, if the MDM write succeeds but the notification fails, compensation can roll back the MDM write.</p>
+
+<h3>AWFS Connection</h3>
+<p>The MDM API lookup inside an approval workflow is a prime candidate for <code>TryCatch</code>. A transient MDM outage should not kill the entire approval workflow. Instead: catch the exception, increment a retry counter, wait a short delay, and retry. After three failures, set a workflow variable <code>MdmLookupFailed = true</code> and branch to a fallback path that uses a hardcoded approver list or sends an alert to the workflow administrator.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'TryCatch around a failing activity',
+          filename: 'TryCatchWorkflow.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+
+public class TryCatchWorkflow : WorkflowBase
+{
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        var errorMessage = builder.WithVariable<string>();
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                new TryCatch
+                {
+                    Try = new Sequence
+                    {
+                        Activities =
+                        {
+                            new WriteLine("Attempting risky operation..."),
+                            // This activity throws deliberately for demo purposes.
+                            new InlineActivity(ctx =>
+                                throw new InvalidOperationException("MDM service unavailable")),
+                            new WriteLine("This line is never reached.")
+                        }
+                    },
+                    Catch = new Sequence
+                    {
+                        Activities =
+                        {
+                            // Read the caught exception from TryCatch output.
+                            new SetVariable<string>
+                            {
+                                Variable = errorMessage,
+                                Value = new(ctx =>
+                                {
+                                    var ex = ctx.GetActivityOutput<Exception>("try-catch-1");
+                                    return ex?.Message ?? "Unknown error";
+                                })
+                            },
+                            new WriteLine(ctx =>
+                                $"Caught exception: {ctx.Get(errorMessage)}. Continuing workflow.")
+                        }
+                    }
+                },
+                new WriteLine("Workflow completed despite the error.")
+            }
+        };
+    }
+}`,
+          explanation: 'When the <code>InlineActivity</code> throws, the <code>TryCatch</code> catches the exception and executes the <code>Catch</code> branch. The instance stays <code>Running</code> and the sequence continues after the <code>TryCatch</code>.'
+        },
+        {
+          language: 'csharp',
+          title: 'Retry loop with a counter variable',
+          filename: 'RetryLoopWorkflow.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+
+public class RetryLoopWorkflow : WorkflowBase
+{
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        var attempt   = builder.WithVariable<int>(0);
+        var succeeded = builder.WithVariable<bool>(false);
+        const int maxAttempts = 3;
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                // Retry loop: up to maxAttempts times.
+                new While(ctx => ctx.Get(attempt) < maxAttempts && !ctx.Get(succeeded))
+                {
+                    Body = new Sequence
+                    {
+                        Activities =
+                        {
+                            new TryCatch
+                            {
+                                Try = new Sequence
+                                {
+                                    Activities =
+                                    {
+                                        new WriteLine(ctx =>
+                                            $"Attempt {ctx.Get(attempt) + 1} of {maxAttempts}"),
+                                        // Replace with real HTTP call in production.
+                                        new InlineActivity(ctx =>
+                                        {
+                                            // Simulate failure on first two attempts.
+                                            if (ctx.Get(attempt) < 2)
+                                                throw new HttpRequestException("Transient error");
+                                            ctx.Set(succeeded, true);
+                                        }),
+                                        new WriteLine("Call succeeded!")
+                                    }
+                                },
+                                Catch = new Sequence
+                                {
+                                    Activities =
+                                    {
+                                        new InlineActivity(ctx =>
+                                            ctx.Set(attempt, ctx.Get(attempt) + 1)),
+                                        new WriteLine(ctx =>
+                                            $"Attempt failed. Retries used: {ctx.Get(attempt)}")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                // After the loop: check outcome.
+                new If(ctx => !ctx.Get(succeeded))
+                {
+                    Then = new WriteLine("All retries exhausted. Faulting gracefully."),
+                    Else = new WriteLine("Operation completed successfully.")
+                }
+            }
+        };
+    }
+}`,
+          explanation: 'The <code>While</code> condition checks both the attempt count and the success flag. The retry loop exits either on success or when all attempts are consumed. This pattern works for any transient failure — MDM lookups, notification calls, etc.'
+        },
+        {
+          language: 'csharp',
+          title: 'Inspecting a faulted workflow instance',
+          filename: 'FaultInspection.cs',
+          code: `using Elsa.Workflows.Runtime.Contracts;
+using Elsa.Workflows.Management.Contracts;
+
+// In a minimal API or controller:
+app.MapGet("/instances/{id}/fault", async (
+    string id,
+    IWorkflowInstanceStore store) =>
+{
+    var instance = await store.FindAsync(
+        new WorkflowInstanceFilter { Id = id });
+
+    if (instance is null)
+        return Results.NotFound();
+
+    if (instance.Status != WorkflowStatus.Faulted)
+        return Results.Ok(new { status = instance.Status.ToString() });
+
+    return Results.Ok(new
+    {
+        status    = "Faulted",
+        fault     = instance.Fault?.Message,
+        activity  = instance.Fault?.FaultedActivityId,
+        timestamp = instance.Fault?.Timestamp
+    });
+});`,
+          explanation: 'The <code>WorkflowInstance.Fault</code> property carries the exception message, the ID of the activity that threw, and the timestamp. Use this in an operations dashboard to diagnose stuck workflows.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Build a workflow that retries an HTTP call up to 3 times before faulting gracefully, without letting the instance reach Faulted state on transient errors.',
+        steps: [
+          'Create <code>ResilientHttpWorkflow.cs</code> with variables: <code>attempt (int = 0)</code>, <code>succeeded (bool = false)</code>, <code>lastError (string)</code>.',
+          'Add a <code>While</code> loop with condition <code>attempt &lt; 3 &amp;&amp; !succeeded</code>.',
+          'Inside the loop, add a <code>TryCatch</code>. In the <code>Try</code> branch, add a <code>SendHttpRequest</code> targeting a URL that returns 500 for the first two calls (use <code>https://httpbin.org/status/500</code> and swap to <code>/get</code> after verifying retry logic).',
+          'Check the response status code in the <code>Try</code> branch: if it is not 200, throw an exception manually so the catch is triggered.',
+          'In the <code>Catch</code> branch, increment <code>attempt</code> and set <code>lastError</code> from the exception message.',
+          'After the loop, add an <code>If</code>: if <code>!succeeded</code>, write "All retries exhausted: {lastError}" and let the workflow finish normally (not faulted).',
+          'Verify in the management API that the instance ends as <code>Finished</code> (not <code>Faulted</code>) after exhausting retries.'
+        ],
+        verification: [
+          'Console shows attempt 1, 2, 3 before giving up.',
+          'Instance status is <code>Finished</code>, not <code>Faulted</code>, after three failures.',
+          'When the target URL returns 200, the loop exits after the first successful attempt.',
+          '<code>lastError</code> variable contains the exception message from the final failed attempt.'
+        ],
+        pitfalls: [
+          '<strong>Forgetting to increment the counter inside Catch.</strong> If the counter is never incremented, the While loop runs forever. Always put the increment in the Catch branch, not the Try branch.',
+          '<strong>Confusing Faulted state with graceful termination.</strong> A workflow that exits the retry loop and finishes normally is in <code>Finished</code> state — not <code>Faulted</code>. <code>Faulted</code> only occurs when an exception escapes all TryCatch wrappers.',
+          '<strong>SendHttpRequest does not throw on non-2xx.</strong> By default, <code>SendHttpRequest</code> does not throw an exception for 4xx/5xx responses — it just exposes the status code as an output. You must read the status code and throw manually if you want retry logic to trigger.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the difference between a workflow in Faulted state and one that handled an exception via TryCatch?',
+          answer: '<p>A <strong>Faulted</strong> instance has an unhandled exception that escaped all <code>TryCatch</code> wrappers — the workflow stopped, no further activities will run, and the fault details are stored on the instance record. A workflow that handled an exception via <code>TryCatch</code> remains in <strong>Running</strong> (or <strong>Suspended</strong>) state; execution continues normally after the Catch branch. Only unhandled exceptions cause the Faulted transition.</p>'
+        },
+        {
+          question: 'How does SendHttpRequest behave on a 500 response from the remote server — does it throw automatically?',
+          answer: '<p>No. By default, <code>SendHttpRequest</code> does not throw on non-2xx status codes. It completes normally and exposes the <code>StatusCode</code> output. You must explicitly check the status code in a downstream activity and throw (or branch to an error path) if needed. This means a 500 from MDM will silently pass through unless you add that check.</p>'
+        },
+        {
+          question: 'When would you use a Compensate activity instead of a TryCatch retry?',
+          answer: '<p>Use <code>Compensate</code> when a multi-step operation has <em>partially succeeded</em> and you need to undo the completed steps — a saga rollback. For example, if an MDM write succeeds but a downstream notification fails, compensation triggers the MDM rollback handler. Use <code>TryCatch</code> + retry for <em>transient failures</em> where you want to reattempt the same operation. Compensation is for irreversibility; retry is for transience.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't2-04',
+    tier: 2,
+    title: 'Workflow Input and Output',
+    slug: 'workflow-input-and-output',
+    estimatedMinutes: 25,
+    prerequisites: ['t1-02', 't1-03'],
+    tabs: {
+      concept: `<h2 id="concept-input-output">Parameterising Workflows at Dispatch Time</h2>
+<p>Workflow variables (covered in T1-03) hold state that evolves during execution. <strong>Workflow inputs</strong> are different: they are typed values supplied by the <em>caller</em> at dispatch time, before the workflow starts. They do not change during execution. Think of them as constructor parameters for the workflow instance.</p>
+
+<h3>Declaring Typed Inputs</h3>
+<p>In a code-based workflow, declare an input as a property of type <code>Input&lt;T&gt;</code> on your <code>WorkflowBase</code> subclass and decorate it with <code>[WorkflowInput]</code>. Elsa discovers these properties via reflection when the workflow definition is published. At dispatch time, the caller passes a dictionary of <code>{ "PropertyName": value }</code>. Elsa deserializes each value into the declared type and makes them available via the execution context.</p>
+
+<h3>Reading Inputs Inside Activities</h3>
+<p>Inside an activity's <code>ExecuteAsync</code> method, call <code>context.WorkflowExecutionContext.Input.GetValue&lt;T&gt;("PropertyName")</code>. In activity input expressions on the workflow, you can use the shorthand <code>context.GetInput&lt;T&gt;("PropertyName")</code> (extension method from <code>Elsa.Workflows.Helpers</code>).</p>
+
+<h3>Workflow Output</h3>
+<p>Declare an <code>Output&lt;T&gt;</code> property on the workflow class. Inside the workflow, use <code>context.WorkflowExecutionContext.Output.Set("PropertyName", value)</code>. After the workflow finishes, the caller can read the output from the <code>WorkflowInstance.Output</code> dictionary. This is useful when an approval workflow needs to return a final status or a decision summary to the dispatching service.</p>
+
+<h3>AWFS Connection</h3>
+<p>The AWFS approval workflow is dispatched with three typed inputs: <code>DocumentId (string)</code>, <code>RequesterId (string)</code>, and <code>Amount (decimal)</code>. These drive the MDM lookup URL, the notification recipient, and the approval threshold logic. No global state or headers are needed — everything the workflow needs is in its inputs, making each instance fully self-contained.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Workflow class with typed Input properties',
+          filename: 'ApprovalWorkflow.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Attributes;
+using Elsa.Workflows.Activities;
+
+public class ApprovalWorkflow : WorkflowBase
+{
+    // These properties are discovered by Elsa at publish time.
+    [WorkflowInput(Description = "The document being approved.")]
+    public Input<string> DocumentId { get; set; } = default!;
+
+    [WorkflowInput(Description = "Employee who submitted the request.")]
+    public Input<string> RequesterId { get; set; } = default!;
+
+    [WorkflowInput(Description = "Total amount requiring approval.")]
+    public Input<decimal> Amount { get; set; } = default!;
+
+    // Output returned to the caller after the workflow finishes.
+    [WorkflowOutput(Description = "Final approval decision.")]
+    public Output<string> FinalDecision { get; set; } = default!;
+
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                new WriteLine(ctx =>
+                {
+                    var docId  = ctx.GetInput<string>(nameof(DocumentId));
+                    var amount = ctx.GetInput<decimal>(nameof(Amount));
+                    return $"Processing approval for {docId}, amount: {amount:C}";
+                }),
+
+                // ... approval gates ...
+
+                // Write the output before finishing.
+                new InlineActivity(ctx =>
+                    ctx.WorkflowExecutionContext.Output
+                       .Set(nameof(FinalDecision), "Approved"))
+            }
+        };
+    }
+}`,
+          explanation: '<code>[WorkflowInput]</code> and <code>[WorkflowOutput]</code> attributes tell Elsa to surface these properties in the management API and Studio designer as typed parameters.'
+        },
+        {
+          language: 'csharp',
+          title: 'Dispatching with DispatchWorkflowAsync and passing typed inputs',
+          filename: 'DispatchWithInputs.cs',
+          code: `using Elsa.Workflows.Runtime.Contracts;
+using Elsa.Workflows.Runtime.Requests;
+
+public class ApprovalService
+{
+    private readonly IWorkflowRuntime _runtime;
+
+    public ApprovalService(IWorkflowRuntime runtime)
+        => _runtime = runtime;
+
+    public async Task<string> SubmitAsync(
+        string documentId,
+        string requesterId,
+        decimal amount,
+        CancellationToken ct)
+    {
+        var request = new DispatchWorkflowDefinitionRequest
+        {
+            DefinitionId  = "ApprovalWorkflow",   // matches the class name by default
+            VersionOptions = VersionOptions.Published,
+            CorrelationId  = documentId,           // used by signals to target this instance
+
+            // Input dictionary keys must match the [WorkflowInput] property names exactly.
+            Input = new WorkflowInput(new Dictionary<string, object>
+            {
+                [nameof(ApprovalWorkflow.DocumentId)]  = documentId,
+                [nameof(ApprovalWorkflow.RequesterId)] = requesterId,
+                [nameof(ApprovalWorkflow.Amount)]      = amount
+            })
+        };
+
+        var result = await _runtime.DispatchAsync(request, ct);
+        return result.WorkflowInstanceId;
+    }
+}`,
+          explanation: 'The input dictionary key names must match the C# property names on the workflow class exactly (case-sensitive). Mismatched names silently produce null inputs — use <code>nameof()</code> to avoid typos.'
+        },
+        {
+          language: 'csharp',
+          title: 'Reading workflow input inside a custom activity',
+          filename: 'ReadInputActivity.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Attributes;
+
+[Activity("AWFS", "Reads the approval workflow inputs for processing.")]
+public class ProcessApprovalInputActivity : Activity
+{
+    protected override ValueTask ExecuteAsync(ActivityExecutionContext context)
+    {
+        // Read typed inputs from the workflow execution context.
+        var documentId = context.WorkflowExecutionContext
+            .Input.GetValue<string>("DocumentId");
+
+        var amount = context.WorkflowExecutionContext
+            .Input.GetValue<decimal>("Amount");
+
+        // Use the inputs to drive logic.
+        var threshold = amount > 50_000_000m ? "Director" : "Manager";
+
+        context.WorkflowExecutionContext.Properties["RequiredApprover"] = threshold;
+
+        return ValueTask.CompletedTask;
+    }
+}`,
+          explanation: 'Custom activities access workflow-level inputs via <code>context.WorkflowExecutionContext.Input</code>. This is distinct from activity-level inputs, which are bound via <code>Input&lt;T&gt;</code> properties on the activity class itself.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Add typed inputs to the approval skeleton, dispatch with real values, and verify the inputs are readable inside activities.',
+        steps: [
+          'Open the approval workflow from T1 and add three <code>[WorkflowInput]</code> properties: <code>DocumentId (string)</code>, <code>RequesterId (string)</code>, <code>Amount (decimal)</code>.',
+          'Add a <code>[WorkflowOutput]</code> property <code>FinalDecision (string)</code>.',
+          'In the first activity of the workflow (a <code>WriteLine</code>), use <code>ctx.GetInput&lt;string&gt;(nameof(DocumentId))</code> to print the document ID.',
+          'Create a <code>DispatchController</code> with a POST endpoint that accepts <code>{ documentId, requesterId, amount }</code> and calls <code>DispatchAsync</code> with the input dictionary.',
+          'Register the controller and run. POST to the endpoint with real values.',
+          'Check the console output to confirm the <code>WriteLine</code> activity printed the correct <code>DocumentId</code>.',
+          'In the final activity, set the <code>FinalDecision</code> output to <code>"Approved"</code> and verify it appears on the instance record via <code>GET /elsa/api/workflow-instances/{id}</code>.'
+        ],
+        verification: [
+          'Console prints the exact <code>DocumentId</code> passed at dispatch, not null or empty.',
+          '<code>Amount</code> is readable as a <code>decimal</code> inside activities without casting errors.',
+          'The workflow instance record shows the output dictionary with <code>FinalDecision: "Approved"</code>.',
+          'A second dispatch with different input values produces a separate instance with its own correct values.'
+        ],
+        pitfalls: [
+          '<strong>Input key case sensitivity.</strong> The dictionary key <code>"documentId"</code> (camelCase) will not match a property named <code>DocumentId</code> (PascalCase). Always use <code>nameof()</code> or match the exact property name.',
+          '<strong>Decimal serialization over JSON.</strong> When dispatching via the HTTP management API (not C# code), JSON numbers are deserialized as <code>double</code> by default. Elsa re-serializes to the declared type, but very large decimal values may lose precision. For monetary amounts, pass as string and parse inside the workflow.',
+          '<strong>Missing [WorkflowInput] attribute.</strong> Without the attribute, the property is not surfaced in the definition metadata. Dispatch still works by dictionary key, but the Studio designer will not show the input and validation is skipped.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the difference between a workflow variable and a workflow input?',
+          answer: '<p>A <strong>workflow variable</strong> is mutable state owned by the workflow instance — it starts with a default value and changes as activities execute. A <strong>workflow input</strong> is an immutable value supplied by the caller at dispatch time; it cannot be changed during execution. Use inputs for parameters the caller controls (DocumentId, Amount); use variables for state the workflow accumulates (RetryCount, CurrentApprover).</p>'
+        },
+        {
+          question: 'How do you ensure that a second dispatch with different inputs produces an independent instance, not corrupting a running instance?',
+          answer: '<p>Each call to <code>DispatchAsync</code> creates a <strong>new</strong> workflow instance with its own isolated scope. Inputs are stored on the instance record, not shared globally. As long as you supply different correlationIds at dispatch, the two instances are completely independent. The only collision risk is if you intentionally re-use the same correlationId for two dispatches — do not do that for approval workflows.</p>'
+        },
+        {
+          question: 'How does a calling service read the output of a completed workflow?',
+          answer: '<p>After the workflow finishes, the caller queries the workflow instance via <code>IWorkflowInstanceStore.FindAsync</code> and reads the <code>WorkflowInstance.Output</code> dictionary. The output values are serialized as JSON in the persistence store. Alternatively, the workflow can push its output proactively via a webhook activity or by calling an external API as its last step — polling the instance for output is fine for demos but fragile in production.</p>'
+        }
+      ]
+    }
+  }
+
+,
+  {
+    id: 't2-05',
+    tier: 2,
+    title: 'Correlation',
+    slug: 'correlation',
+    estimatedMinutes: 25,
+    prerequisites: ['t2-01', 't2-04'],
+    tabs: {
+      concept: `<h2 id="concept-correlation">CorrelationId: the Routing Key for Running Instances</h2>
+<p>A <strong>correlationId</strong> is a caller-supplied string stored on the <code>WorkflowInstance</code> row. Its sole job is to let external code locate a specific running instance without knowing its Elsa-internal GUID. When you call <code>SendSignalAsync("ApprovalDecision", payload, correlationId: "DOC-2024-001")</code>, the runtime queries the bookmark table for <code>WHERE CorrelationId = 'DOC-2024-001' AND EventName = 'ApprovalDecision'</code> and resumes the matching instance.</p>
+
+<h3>Setting CorrelationId at Dispatch Time</h3>
+<p>Pass <code>CorrelationId = documentId</code> in <code>DispatchWorkflowDefinitionRequest</code>. It is stored immediately when the instance is created, before any activity runs. You can also set it programmatically inside the workflow early on via <code>context.WorkflowExecutionContext.CorrelationId = value</code>, but setting it at dispatch is simpler and recommended.</p>
+
+<h3>Querying Instances by CorrelationId</h3>
+<p>Use <code>IWorkflowInstanceStore.FindAsync(new WorkflowInstanceFilter { CorrelationId = id })</code> in C# code, or hit the management API at <code>GET /elsa/api/workflow-instances?correlationId=DOC-2024-001</code>. Both return the matching instance(s).</p>
+
+<h3>The Collision Problem</h3>
+<p>If two dispatches share the same correlationId and both instances are waiting on the same event name, <code>SendSignalAsync</code> resumes <em>both</em>. This is almost never intentional. For AWFS, the natural unique key is the document ID — but if the same document is resubmitted after rejection, a new correlationId (e.g., <code>DOC-2024-001-v2</code>) must be used, or the previous faulted/cancelled instance must be explicitly terminated first.</p>
+
+<h3>AWFS Connection</h3>
+<p>Each approval request in AWFS is dispatched with <code>correlationId = documentId</code>. The frontend approval UI passes the document ID back when the approver submits a decision. The API endpoint resolves the correct workflow instance purely from that ID — no database join to a custom mapping table required.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Dispatching a workflow with a correlationId',
+          filename: 'DispatchWithCorrelation.cs',
+          code: `var result = await runtime.DispatchAsync(new DispatchWorkflowDefinitionRequest
+{
+    DefinitionId   = "ApprovalWorkflow",
+    VersionOptions = VersionOptions.Published,
+    CorrelationId  = documentId,   // <-- the routing key
+    Input = new WorkflowInput(new Dictionary<string, object>
+    {
+        ["DocumentId"]  = documentId,
+        ["RequesterId"] = requesterId,
+        ["Amount"]      = amount
+    })
+}, cancellationToken);
+
+Console.WriteLine($"Instance: {result.WorkflowInstanceId}, Correlation: {documentId}");`,
+          explanation: 'The <code>CorrelationId</code> field on the dispatch request is stored on the instance row immediately. It does not need to match any activity name or variable — it is purely a lookup key.'
+        },
+        {
+          language: 'csharp',
+          title: 'Sending a signal targeting a specific correlationId',
+          filename: 'SignalByCorrelation.cs',
+          code: `// Resume the exact instance waiting for "ApprovalDecision" with correlationId = documentId.
+var signalResult = await runtime.SendSignalAsync(
+    signal: "ApprovalDecision",
+    input: new ApproverDecision("Approved", "Budget within limit"),
+    correlationId: documentId,
+    cancellationToken: cancellationToken);
+
+if (!signalResult.WorkflowInstanceIds.Any())
+    throw new InvalidOperationException(
+        $"No instance awaiting ApprovalDecision for document {documentId}. " +
+        "The workflow may have already completed or the correlationId is wrong.");`,
+          explanation: 'Always check <code>WorkflowInstanceIds.Any()</code> after sending a signal. A missing result means the correlationId or event name did not match any active bookmark.'
+        },
+        {
+          language: 'sql',
+          title: 'SQL query on WorkflowInstances by CorrelationId',
+          filename: 'query_by_correlation.sql',
+          code: `-- Find the active approval instance for a given document.
+SELECT
+    wi."Id",
+    wi."Status",
+    wi."SubStatus",
+    wi."CorrelationId",
+    wi."CreatedAt",
+    wi."UpdatedAt"
+FROM "WorkflowInstances" wi
+WHERE wi."CorrelationId" = 'DOC-2024-001'
+  AND wi."Status" NOT IN ('Finished', 'Cancelled')
+ORDER BY wi."CreatedAt" DESC
+LIMIT 1;
+
+-- Find all bookmarks for a specific correlation to see what the workflow is waiting for.
+SELECT
+    b."Id",
+    b."ActivityTypeName",
+    b."Hash",
+    b."WorkflowInstanceId"
+FROM "Bookmarks" b
+INNER JOIN "WorkflowInstances" wi ON wi."Id" = b."WorkflowInstanceId"
+WHERE wi."CorrelationId" = 'DOC-2024-001';`,
+          explanation: 'These queries are invaluable in production operations. The second query shows exactly which event name the instance is waiting for — useful when debugging a signal that is not landing.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Run two concurrent workflow instances with different correlationIds, send signals to each, and verify signals route to the correct instance.',
+        steps: [
+          'Dispatch <code>ApprovalEventWorkflow</code> twice: once with <code>correlationId = "DOC-A"</code> and once with <code>correlationId = "DOC-B"</code>.',
+          'Verify both instances are in <code>Suspended</code> state via <code>GET /elsa/api/workflow-instances</code>.',
+          'Send an <code>ApprovalDecision</code> signal for <code>"DOC-A"</code> with decision <code>"Approved"</code>.',
+          'Verify only the DOC-A instance transitions to <code>Finished</code>; DOC-B remains <code>Suspended</code>.',
+          'Send an <code>ApprovalDecision</code> signal for <code>"DOC-B"</code> with decision <code>"Rejected"</code>.',
+          'Verify DOC-B transitions to <code>Finished</code>.',
+          'Try sending a third signal with <code>correlationId = "DOC-C"</code> (no instance) and verify the returned instance IDs list is empty.'
+        ],
+        verification: [
+          'Two separate instance IDs are created, one per dispatch.',
+          'Signal for DOC-A does not affect DOC-B instance.',
+          'Console output for each instance shows the correct decision payload.',
+          'Signal with unknown correlationId returns empty instance list without error.'
+        ],
+        pitfalls: [
+          '<strong>Reusing correlationIds after completion.</strong> Once an instance finishes, its correlationId is free again. But if you re-dispatch with the same correlationId while the old instance is still in <code>Finished</code> state (not purged), a query by correlationId returns multiple rows. Filter by <code>Status NOT IN (Finished, Cancelled)</code>.',
+          '<strong>CorrelationId set inside workflow vs at dispatch.</strong> If you set <code>CorrelationId</code> inside the workflow (not at dispatch), there is a window between instance creation and the first activity execution where the instance has no correlationId. Signals sent during that window will not find it. Always set correlationId at dispatch time.',
+          '<strong>Case sensitivity in different databases.</strong> PostgreSQL string comparisons are case-sensitive by default; SQL Server is usually case-insensitive depending on collation. Pick a canonical casing convention (e.g., always uppercase document IDs) and enforce it at the application layer.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'Why is the document ID a natural choice for the correlationId in AWFS?',
+          answer: '<p>The document ID is already a unique, caller-visible identifier for each approval request. Using it as the correlationId means the approval UI only needs to know the document ID to send a signal — no internal Elsa GUIDs are exposed to the frontend. It also makes operational debugging straightforward: any engineer can query the workflow instance by the document ID they see in the UI.</p>'
+        },
+        {
+          question: 'What happens if you dispatch the same workflow definition twice with identical correlationIds?',
+          answer: '<p>Two separate instances are created, both with the same correlationId. When you call <code>SendSignalAsync</code> for that correlationId, Elsa finds two matching bookmarks and resumes <strong>both</strong> instances. This produces duplicate approvals and corrupted state. Prevent it by checking for an active instance with that correlationId before dispatching, and either reject the duplicate or cancel the existing instance first.</p>'
+        },
+        {
+          question: 'How do you find which event name a suspended workflow instance is waiting for, without access to the source code?',
+          answer: '<p>Query the <code>Bookmarks</code> table for rows whose <code>WorkflowInstanceId</code> matches the instance. Each bookmark row contains the activity type name and a hash that encodes the event name. For <code>Event</code> activities, the event name is embedded in the hash data. Alternatively, the management API endpoint <code>GET /elsa/api/workflow-instances/{id}/bookmarks</code> returns the bookmark list with human-readable metadata if the Elsa API is configured to expose it.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't2-06',
+    tier: 2,
+    title: 'The Approval Loop Pattern',
+    slug: 'the-approval-loop-pattern',
+    estimatedMinutes: 40,
+    prerequisites: ['t2-01', 't2-04', 't2-05'],
+    tabs: {
+      concept: `<h2 id="concept-approval-loop">Modeling Multi-Level Sequential Approval</h2>
+<p>The approval loop is the heart of AWFS. The requirement: route a document through N sequential approvers. Each approver must act before the next is notified. Any rejection terminates the chain immediately. Final approval only happens when all approvers approve.</p>
+
+<h3>ForEach Over an Approver List</h3>
+<p>Elsa's <code>ForEach</code> activity iterates over a collection variable, executing its body once per item. Each iteration is sequential by default (not parallel). Store the approver list as a workflow variable of type <code>List&lt;string&gt;</code>, populated either from workflow input or from an MDM lookup. <code>ForEach</code> exposes the current item via its <code>CurrentValue</code> output, which you bind to a variable inside the loop body.</p>
+
+<h3>Storing Intermediate Decisions</h3>
+<p>Declare a workflow variable <code>decisions</code> of type <code>List&lt;ApprovalDecision&gt;</code>. After each approver acts, append their decision to this list. If the workflow is later queried (e.g., for an audit trail), the full decision history is in that variable on the instance record.</p>
+
+<h3>Early-Exit on Rejection</h3>
+<p>Elsa does not have a <code>break</code> statement for <code>ForEach</code>. The standard pattern is a <strong>gate variable</strong>: declare <code>rejected (bool = false)</code>. Inside the loop body, after reading the signal, set <code>rejected = true</code> if the decision is <code>"Rejected"</code>. Wrap the loop's notification and Event activities in an <code>If(!rejected)</code> guard. After the loop, a final <code>If(rejected)</code> branches to a rejection notification path.</p>
+
+<h3>AWFS: 3-Level Approval</h3>
+<p>For Toyota-Astra Motor, the chain is fixed: <strong>Supervisor → Manager → Director</strong>. The approver IDs are resolved from MDM by cost center at dispatch time and stored as workflow input. The Event activity name at each gate is the same (<code>"ApprovalDecision"</code>) — the correlationId ensures the signal goes to the right instance, not the right gate. Within the instance, the loop iteration position identifies which gate is active.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'ForEach iterating over approver list with Event at each gate',
+          filename: 'ApprovalLoopWorkflow.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Activities;
+using Elsa.Workflows.Attributes;
+
+public class ApprovalLoopWorkflow : WorkflowBase
+{
+    [WorkflowInput] public Input<string>   DocumentId { get; set; } = default!;
+    [WorkflowInput] public Input<string[]> Approvers  { get; set; } = default!;
+
+    protected override void Build(IWorkflowBuilder builder)
+    {
+        var approverList   = builder.WithVariable<string[]>();
+        var currentApprover = builder.WithVariable<string>();
+        var rejected        = builder.WithVariable<bool>(false);
+        var decisions       = builder.WithVariable<List<string>>(new List<string>());
+
+        builder.Root = new Sequence
+        {
+            Activities =
+            {
+                // Copy input into mutable variable.
+                new InlineActivity(ctx =>
+                    ctx.Set(approverList, ctx.GetInput<string[]>(nameof(Approvers)))),
+
+                new ForEach<string>
+                {
+                    Items    = new(ctx => ctx.Get(approverList)!),
+                    CurrentValue = new Output<string>(currentApprover),
+                    Body = new Sequence
+                    {
+                        Activities =
+                        {
+                            // Skip remaining gates if already rejected.
+                            new If(ctx => !ctx.Get(rejected))
+                            {
+                                Then = new Sequence
+                                {
+                                    Activities =
+                                    {
+                                        new WriteLine(ctx =>
+                                            $"Waiting for {ctx.Get(currentApprover)} on {ctx.GetInput<string>(nameof(DocumentId))}"),
+
+                                        // Suspend until signal arrives.
+                                        new Event("ApprovalDecision"),
+
+                                        // Read and record the decision.
+                                        new InlineActivity(ctx =>
+                                        {
+                                            var decision = ctx.GetInput<ApproverDecision>("ApprovalDecision");
+                                            var list     = ctx.Get(decisions)!;
+                                            list.Add($"{ctx.Get(currentApprover)}: {decision?.Decision}");
+                                            ctx.Set(decisions, list);
+
+                                            if (decision?.Decision == "Rejected")
+                                                ctx.Set(rejected, true);
+                                        }),
+
+                                        new WriteLine(ctx =>
+                                        {
+                                            var d = ctx.GetInput<ApproverDecision>("ApprovalDecision");
+                                            return $"{ctx.Get(currentApprover)} decided: {d?.Decision}";
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                // After the loop: branch on outcome.
+                new If(ctx => ctx.Get(rejected))
+                {
+                    Then = new WriteLine(ctx =>
+                        $"Document {ctx.GetInput<string>(nameof(DocumentId))} REJECTED."),
+                    Else = new WriteLine(ctx =>
+                        $"Document {ctx.GetInput<string>(nameof(DocumentId))} APPROVED by all approvers.")
+                }
+            }
+        };
+    }
+}`,
+          explanation: 'The <code>If(!rejected)</code> guard inside the loop body is the early-exit mechanism. Once <code>rejected</code> is true, subsequent iterations skip the Event activity and pass through immediately, letting the loop complete without waiting for more signals.'
+        },
+        {
+          language: 'csharp',
+          title: 'Simulating each approval gate via signals in an integration test',
+          filename: 'ApprovalLoopTest.cs',
+          code: `// Helper: send a signal and wait briefly for the workflow to process it.
+async Task SignalDecision(string correlationId, string decision, string comment)
+{
+    await runtime.SendSignalAsync(
+        signal: "ApprovalDecision",
+        input: new ApproverDecision(decision, comment),
+        correlationId: correlationId);
+
+    // Give the background job runner time to process the resume.
+    await Task.Delay(500);
+}
+
+// Happy path: all three approve.
+await dispatchService.SubmitAsync("DOC-001", "EMP-99", 1_000_000m, ct);
+await SignalDecision("DOC-001", "Approved", "OK by supervisor");
+await SignalDecision("DOC-001", "Approved", "OK by manager");
+await SignalDecision("DOC-001", "Approved", "OK by director");
+// Instance should now be Finished with all-approved message.
+
+// Rejection path: manager rejects at gate 2.
+await dispatchService.SubmitAsync("DOC-002", "EMP-99", 1_000_000m, ct);
+await SignalDecision("DOC-002", "Approved", "OK by supervisor");
+await SignalDecision("DOC-002", "Rejected", "Over budget");
+// After rejection, loop should skip director gate.
+// Only 2 signals needed; 3rd would find no bookmark.`,
+          explanation: 'On the rejection path only two signals are needed. The third gate is skipped by the <code>If(!rejected)</code> guard, so no bookmark is created for the director — a third <code>SendSignalAsync</code> call returns an empty result.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Build a 3-approver sequential loop, simulate each approval via signals, and verify the rejection short-circuit works.',
+        steps: [
+          'Create <code>ApprovalLoopWorkflow.cs</code> with inputs <code>DocumentId (string)</code> and <code>Approvers (string[])</code>.',
+          'Add variables <code>currentApprover</code>, <code>rejected (bool=false)</code>, <code>decisions (List&lt;string&gt;)</code>.',
+          'Implement the <code>ForEach</code> loop with the <code>If(!rejected)</code> guard wrapping the <code>Event("ApprovalDecision")</code>.',
+          'Dispatch the workflow with approvers <code>["supervisor@tam.co.id", "manager@tam.co.id", "director@tam.co.id"]</code> and <code>correlationId = "DOC-LOOP-01"</code>.',
+          'Verify the console shows "Waiting for supervisor...".',
+          'Send <code>Approved</code> signal; verify "Waiting for manager..." appears.',
+          'Send <code>Approved</code> signal; verify "Waiting for director..." appears.',
+          'Send final <code>Approved</code> signal; verify "APPROVED by all approvers" and instance is <code>Finished</code>.',
+          'Repeat with <code>"DOC-LOOP-02"</code>: approve supervisor, reject manager. Verify only 2 signals needed and instance finishes with "REJECTED".'
+        ],
+        verification: [
+          'Happy path requires exactly 3 signals to finish.',
+          'Rejection at gate 2 requires exactly 2 signals; instance finishes (not faults) with rejected message.',
+          'No bookmark remains after rejection (third signal returns empty instance list).',
+          '<code>decisions</code> variable on the instance contains one entry per processed gate.'
+        ],
+        pitfalls: [
+          '<strong>ForEach does not support break.</strong> You cannot exit a ForEach loop early in Elsa 3.x. The gate variable pattern is mandatory for early-exit semantics. Attempting to throw an exception inside the loop to force exit will fault the instance.',
+          '<strong>Event bookmark is created even if guard is false.</strong> Actually the opposite: if the <code>If(!rejected)</code> guard evaluates to false, the <code>Event</code> activity is never reached, so no bookmark is created. This is correct — but it means you must not assume a bookmark exists for every iteration.',
+          '<strong>Signal consumed by wrong gate.</strong> All gates use the same event name <code>"ApprovalDecision"</code>. Elsa only suspends at one gate at a time (the current loop iteration), so there is only ever one bookmark with that name for a given correlationId. Sending the signal at the right time is sufficient — no per-gate event naming is needed.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'Why does ForEach not need a break statement for the rejection path if you use a gate variable?',
+          answer: '<p>When <code>rejected</code> is true, the <code>If(!rejected)</code> guard at the top of each loop body evaluates to false, so the body is skipped entirely — no <code>Event</code> activity is reached and no bookmark is created. The loop iteration still completes (the ForEach increments its index), so the loop finishes normally after all items are consumed. The net effect is identical to a break: remaining gates do not suspend, and the loop exits after touching all items without waiting for signals.</p>'
+        },
+        {
+          question: 'How would you model parallel (AND-split) approval — where all three approvers must act simultaneously?',
+          answer: '<p>Replace <code>ForEach</code> with <code>Fork</code> (parallel split). Create three branches, one per approver, each with its own <code>Event</code> activity using a unique event name or a unique correlationId suffix. Use <code>Join</code> (or <code>ParallelForEach</code> with <code>WaitAll</code>) to resume the main flow once all branches complete. This is more complex than sequential — each branch needs its own bookmark routing key to avoid signal ambiguity.</p>'
+        },
+        {
+          question: 'Where are the intermediate decisions stored, and how can an audit system read them after the workflow finishes?',
+          answer: '<p>The <code>decisions</code> workflow variable is serialized into the <code>WorkflowInstance.WorkflowState</code> JSON blob in the database when the instance is persisted. After the instance finishes, query the instance record and deserialize <code>WorkflowState.Variables</code> to extract the decisions list. Alternatively, the workflow can write decisions to an external audit table via a custom activity at each gate — this makes the audit data available without parsing the Elsa state blob.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't2-07',
+    tier: 2,
+    title: 'Elsa Management API',
+    slug: 'elsa-management-api',
+    estimatedMinutes: 25,
+    prerequisites: ['t1-02', 't2-04'],
+    tabs: {
+      concept: `<h2 id="concept-management-api">The Elsa HTTP Management API</h2>
+<p>Calling <code>elsa.UseWorkflowsApi()</code> in <code>Program.cs</code> mounts a set of REST endpoints under <code>/elsa/api</code> (configurable). These endpoints expose the full Elsa runtime and management surface over HTTP — no C# code required on the calling side. This is how the AWFS backend (a separate service) dispatches approval workflows, and how an operations dashboard inspects and cancels stuck instances.</p>
+
+<h3>Key Endpoints</h3>
+<ul>
+  <li><code>POST /elsa/api/workflow-definitions/{definitionId}/dispatch</code> — start a new instance</li>
+  <li><code>POST /elsa/api/workflow-instances/{id}/cancel</code> — cancel a running instance</li>
+  <li><code>GET /elsa/api/workflow-instances/{id}</code> — get a single instance with full state</li>
+  <li><code>GET /elsa/api/workflow-instances</code> — list instances with filters (status, correlationId, definitionId)</li>
+  <li><code>GET /elsa/api/workflow-definitions</code> — list published definitions</li>
+  <li><code>POST /elsa/api/signals/{signal}/dispatch</code> — send a signal (resume by event name + correlationId)</li>
+</ul>
+
+<h3>Authentication</h3>
+<p>By default, the management API has <strong>no authentication</strong>. In production, protect it with JWT bearer tokens or API keys. Call <code>elsa.UseWorkflowsApi(options => options.RoutePrefix = "internal/elsa")</code> to move it off a public route, and add an ASP.NET authorization policy that gates the entire prefix. For the AWFS POC, placing the API behind the internal Kubernetes network boundary (not exposed via ingress) is sufficient.</p>
+
+<h3>AWFS Connection</h3>
+<p>The AWFS backend service (not the Elsa host itself) calls <code>POST /elsa/api/workflow-definitions/ApprovalWorkflow/dispatch</code> when a new document is submitted for approval. The admin UI calls <code>GET /elsa/api/workflow-instances?correlationId=DOC-2024-001</code> to show the current state, and <code>POST /elsa/api/workflow-instances/{id}/cancel</code> to unstick a workflow that an approver has left pending for too long.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Registering the management API in Program.cs',
+          filename: 'Program.cs',
+          code: `var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddElsa(elsa =>
+{
+    elsa.UseEntityFrameworkCore(ef =>
+        ef.UsePostgreSql(builder.Configuration.GetConnectionString("Elsa")));
+
+    elsa.UseWorkflowRuntime();
+
+    // Mount the HTTP management API.
+    elsa.UseWorkflowsApi(api =>
+    {
+        api.RoutePrefix = "elsa/api";  // default; change for security
+    });
+
+    elsa.AddWorkflow<ApprovalLoopWorkflow>();
+});
+
+// Required for the management API controllers.
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+app.UseRouting();
+app.UseAuthorization();   // Add JWT/policy here in production.
+app.MapControllers();
+
+app.Run();`,
+          explanation: '<code>UseWorkflowsApi()</code> registers the management API controllers. You still need <code>AddControllers()</code> and <code>MapControllers()</code> in the middleware pipeline.'
+        },
+        {
+          language: 'bash',
+          title: 'Dispatch, inspect, and cancel via curl',
+          filename: 'management_api_demo.sh',
+          code: `# 1. Dispatch a new workflow instance.
+curl -s -X POST http://localhost:5000/elsa/api/workflow-definitions/ApprovalWorkflow/dispatch \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "correlationId": "DOC-CURL-01",
+    "input": {
+      "DocumentId": "DOC-CURL-01",
+      "RequesterId": "EMP-42",
+      "Amount": 5000000,
+      "Approvers": ["sup@tam.co.id", "mgr@tam.co.id", "dir@tam.co.id"]
+    }
+  }' | jq .
+
+# 2. List instances filtered by correlationId.
+curl -s "http://localhost:5000/elsa/api/workflow-instances?correlationId=DOC-CURL-01" | jq .
+
+# Capture the instance ID from the response above, then:
+INSTANCE_ID="<paste-id-here>"
+
+# 3. Get full instance details (status, variables, bookmarks).
+curl -s "http://localhost:5000/elsa/api/workflow-instances/$INSTANCE_ID" | jq .
+
+# 4. Send an approval signal to resume the suspended instance.
+curl -s -X POST "http://localhost:5000/elsa/api/signals/ApprovalDecision/dispatch" \\
+  -H "Content-Type: application/json" \\
+  -d "{\"correlationId\":\"DOC-CURL-01\",\"input\":{\"Decision\":\"Approved\",\"Comment\":\"OK\"}}" | jq .
+
+# 5. Cancel the instance if it gets stuck.
+curl -s -X POST "http://localhost:5000/elsa/api/workflow-instances/$INSTANCE_ID/cancel" | jq .`,
+          explanation: 'These five curl commands cover the full operations lifecycle: dispatch, observe, signal, and cancel. Replace the base URL and instance ID with real values from your environment.'
+        },
+        {
+          language: 'csharp',
+          title: 'Calling the management API from another .NET service (HttpClient)',
+          filename: 'ElsaManagementClient.cs',
+          code: `public class ElsaManagementClient
+{
+    private readonly HttpClient _http;
+
+    public ElsaManagementClient(HttpClient http) => _http = http;
+
+    public async Task<string> DispatchApprovalAsync(
+        string documentId, string requesterId, decimal amount,
+        string[] approvers, CancellationToken ct)
+    {
+        var payload = new
+        {
+            correlationId = documentId,
+            input = new
+            {
+                DocumentId  = documentId,
+                RequesterId = requesterId,
+                Amount      = amount,
+                Approvers   = approvers
+            }
+        };
+
+        var response = await _http.PostAsJsonAsync(
+            "elsa/api/workflow-definitions/ApprovalWorkflow/dispatch",
+            payload, ct);
+
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content
+            .ReadFromJsonAsync<DispatchResult>(cancellationToken: ct);
+
+        return result!.WorkflowInstanceId;
+    }
+}
+
+public record DispatchResult(string WorkflowInstanceId);`,
+          explanation: 'Register <code>ElsaManagementClient</code> as a typed <code>HttpClient</code> in DI with the Elsa host base URL. This decouples the AWFS backend from the Elsa assembly — it only needs the HTTP contract.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Use the management API via curl/Postman to dispatch, inspect, signal, and cancel a workflow instance without writing any extra C# code.',
+        steps: [
+          'Ensure <code>UseWorkflowsApi()</code> is called in <code>Program.cs</code> and the app is running.',
+          'Use curl to dispatch <code>ApprovalLoopWorkflow</code> with <code>correlationId = "DOC-API-01"</code> and three approvers.',
+          'List instances: <code>GET /elsa/api/workflow-instances?correlationId=DOC-API-01</code>. Confirm status is <code>Suspended</code>.',
+          'Copy the instance ID from the response.',
+          'Get the full instance detail: <code>GET /elsa/api/workflow-instances/{id}</code>. Locate the current bookmark.',
+          'Send a signal: <code>POST /elsa/api/signals/ApprovalDecision/dispatch</code> with the correlationId and decision payload.',
+          'Re-fetch the instance and confirm it advanced to the next gate (or finished if all approved).',
+          'Dispatch a second instance, then immediately cancel it: <code>POST /elsa/api/workflow-instances/{id}/cancel</code>. Confirm status becomes <code>Cancelled</code>.'
+        ],
+        verification: [
+          'Dispatch returns a <code>workflowInstanceId</code> in the response body.',
+          'List endpoint returns the correct instance filtered by correlationId.',
+          'Signal causes the workflow to advance (console shows next gate message).',
+          'Cancel endpoint transitions the instance to <code>Cancelled</code> status.'
+        ],
+        pitfalls: [
+          '<strong>Missing MapControllers().</strong> If <code>app.MapControllers()</code> is absent from the middleware pipeline, all management API routes return 404. This is the single most common setup error.',
+          '<strong>DefinitionId casing.</strong> The <code>definitionId</code> URL segment is matched against the workflow definition name, which defaults to the C# class name. <code>approvalloopworkflow</code> will not match <code>ApprovalLoopWorkflow</code> — use the exact class name.',
+          '<strong>Signal endpoint vs SendSignalAsync.</strong> The REST signal endpoint is <code>POST /elsa/api/signals/{signalName}/dispatch</code>, not <code>/elsa/api/workflow-instances/{id}/signal</code>. Check the Elsa 3.x route table in source if unsure — routes changed between minor versions.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'Why does AWFS call the Elsa management API over HTTP rather than referencing the Elsa NuGet packages directly?',
+          answer: '<p>Decoupling. The AWFS backend (the service that receives document submissions) and the Elsa host (the service that runs workflows) can be deployed, scaled, and versioned independently. The AWFS backend only depends on an HTTP contract, not on Elsa assemblies. In a microservices architecture on Kubernetes, this also means the Elsa host can be scaled horizontally without the AWFS backend knowing about individual nodes.</p>'
+        },
+        {
+          question: 'What is the minimum change needed to secure the management API so it is not publicly accessible?',
+          answer: '<p>Two steps: (1) change the route prefix to a non-obvious internal path (<code>elsa.UseWorkflowsApi(o => o.RoutePrefix = "internal/elsa-mgmt")</code>), and (2) add an ASP.NET authorization policy that requires a valid API key or JWT bearer token on that path prefix. In Kubernetes, additionally configure the ingress to block external traffic to the internal prefix — only in-cluster service-to-service calls are allowed.</p>'
+        },
+        {
+          question: 'How do you list all workflow instances that are currently Suspended (waiting for approval) across all document IDs?',
+          answer: '<p>Call <code>GET /elsa/api/workflow-instances?status=Suspended&amp;workflowDefinitionId=ApprovalWorkflow</code>. The management API supports filtering by status and definition ID. The response is paginated — use the <code>page</code> and <code>pageSize</code> query parameters for large result sets. This query is the backbone of an operations dashboard that shows all pending approvals at a glance.</p>'
+        }
+      ]
+    }
+  }
+
+,
+  // ── TIER 3 ──────────────────────────────────────────────────────────────────
+
+  {
+    id: 't3-01',
+    tier: 3,
+    title: 'Distributed Hosting and Message Bus',
+    slug: 'distributed-hosting-and-message-bus',
+    estimatedMinutes: 45,
+    prerequisites: ['t2-07'],
+    tabs: {
+      concept: `<h2 id="concept-distributed">Running Multiple Elsa Nodes</h2>
+<p>A single Elsa process is fine for a POC, but production on Kubernetes requires multiple replicas for availability and throughput. Distributing Elsa introduces two fundamental problems: the <strong>competing-consumers problem</strong> and the <strong>distributed lock problem</strong>.</p>
+
+<h3>Competing Consumers</h3>
+<p>When a signal arrives at a load balancer in front of three Elsa pods, all three nodes may simultaneously try to resume the same workflow instance. Without coordination, two nodes load the same instance state, both run activities, and both write back — producing corrupted state or duplicate side effects (e.g., two approval notification emails).</p>
+
+<h3>Distributed Locking</h3>
+<p>Elsa 3.x solves this with a distributed lock around instance execution. Configure a <code>IDistributedLockProvider</code> backed by Redis, SQL, or Azure Blob Storage. Before any node resumes an instance, it acquires an exclusive lock keyed by instance ID. If the lock is already held, the node waits or backs off. Release the lock after the execution round completes.</p>
+
+<h3>MassTransit for Distributed Dispatch</h3>
+<p>Elsa integrates with <strong>MassTransit</strong> to dispatch workflow signals and triggers via a message broker (RabbitMQ, Azure Service Bus, Amazon SQS). Instead of resuming the instance inline on the node that received the HTTP signal, the signal is published as a message. A single consumer (or a competing-consumers group with locking) dequeues and processes it. This decouples signal ingestion from instance execution and enables reliable delivery even if a node crashes mid-execution.</p>
+
+<h3>Sticky Sessions vs Distributed Locks</h3>
+<p>An alternative to distributed locking is <strong>sticky sessions</strong>: route all signals for a given correlationId to the same pod (consistent hashing on the load balancer). This avoids lock contention but sacrifices availability — if the pinned pod restarts, inflight workflows are delayed until the pod recovers. For AWFS on Kubernetes with rolling deploys, distributed locking is the safer choice.</p>
+
+<h3>AWFS Relevance</h3>
+<p>TAM runs Kubernetes with 2–4 replicas per service. The Elsa host must use distributed locking (Redis is already in the TAM infrastructure) and MassTransit over RabbitMQ for signal dispatch. This guarantees that no approval decision is processed twice and no approval is lost on a pod restart.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Adding MassTransit transport to Elsa (RabbitMQ)',
+          filename: 'Program.Distributed.cs',
+          code: `builder.Services.AddElsa(elsa =>
+{
+    elsa.UseEntityFrameworkCore(ef =>
+        ef.UsePostgreSql(connectionString));
+
+    elsa.UseWorkflowRuntime(runtime =>
+    {
+        // Use MassTransit for workflow dispatch messages.
+        runtime.UseMassTransitDispatcher();
+    });
+
+    elsa.UseWorkflowsApi();
+    elsa.AddWorkflow<ApprovalLoopWorkflow>();
+});
+
+// Register MassTransit with RabbitMQ transport.
+builder.Services.AddMassTransit(mt =>
+{
+    // Elsa registers its own consumers automatically via this extension.
+    mt.AddElsaConsumers();
+
+    mt.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host("rabbitmq://rabbitmq:5672", h =>
+        {
+            h.Username("elsa");
+            h.Password("elsa-secret");
+        });
+
+        // Auto-configure queues for Elsa consumers.
+        cfg.ConfigureEndpoints(ctx);
+    });
+});`,
+          explanation: '<code>UseMassTransitDispatcher()</code> replaces the default in-process dispatcher with one that publishes messages to RabbitMQ. All Elsa nodes subscribe to the same queues, but distributed locking ensures only one processes each message.'
+        },
+        {
+          language: 'csharp',
+          title: 'Configuring distributed locking with Redis',
+          filename: 'Program.DistributedLock.cs',
+          code: `using Medallion.Threading.Redis;
+using StackExchange.Redis;
+
+builder.Services.AddElsa(elsa =>
+{
+    elsa.UseWorkflowRuntime(runtime =>
+    {
+        runtime.UseMassTransitDispatcher();
+
+        // Replace the default (in-memory) lock with a Redis-backed lock.
+        runtime.UseDistributedLockProvider(sp =>
+        {
+            var redis = sp.GetRequiredService<IConnectionMultiplexer>();
+            return new RedisDistributedSynchronizationProvider(redis.GetDatabase());
+        });
+    });
+});
+
+// Register the Redis connection.
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(
+        builder.Configuration.GetConnectionString("Redis")!));`,
+          explanation: 'This uses the <code>Medallion.Threading.Redis</code> package, which is the recommended distributed lock provider for Elsa 3.x on Redis infrastructure. The lock is keyed by workflow instance ID, so concurrent resume attempts on different nodes serialize safely.'
+        },
+        {
+          language: 'yaml',
+          title: 'Docker Compose with 2 Elsa nodes',
+          filename: 'docker-compose.distributed.yml',
+          code: `version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: elsa
+      POSTGRES_USER: elsa
+      POSTGRES_PASSWORD: elsa-secret
+    ports: ["5432:5432"]
+
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports: ["5672:5672", "15672:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: elsa
+      RABBITMQ_DEFAULT_PASS: elsa-secret
+
+  elsa-node-1:
+    image: awfs-elsa:latest
+    environment:
+      ConnectionStrings__Elsa: "Host=postgres;Database=elsa;Username=elsa;Password=elsa-secret"
+      ConnectionStrings__Redis: "redis:6379"
+      RabbitMQ__Host: "rabbitmq://rabbitmq:5672"
+    depends_on: [postgres, redis, rabbitmq]
+    ports: ["5001:8080"]
+
+  elsa-node-2:
+    image: awfs-elsa:latest
+    environment:
+      ConnectionStrings__Elsa: "Host=postgres;Database=elsa;Username=elsa;Password=elsa-secret"
+      ConnectionStrings__Redis: "redis:6379"
+      RabbitMQ__Host: "rabbitmq://rabbitmq:5672"
+    depends_on: [postgres, redis, rabbitmq]
+    ports: ["5002:8080"]`,
+          explanation: 'Both nodes share the same PostgreSQL database, Redis lock store, and RabbitMQ broker. Signals dispatched to either node are routed via RabbitMQ; the distributed lock ensures exactly one node processes each instance execution round.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Run two Elsa nodes with Docker Compose, dispatch workflows to both, and confirm only one node processes each instance.',
+        steps: [
+          'Add MassTransit and Redis NuGet packages: <code>MassTransit.RabbitMQ</code>, <code>Medallion.Threading.Redis</code>, <code>StackExchange.Redis</code>.',
+          'Update <code>Program.cs</code> to use <code>UseMassTransitDispatcher()</code> and <code>UseDistributedLockProvider()</code> as shown above.',
+          'Create <code>docker-compose.distributed.yml</code> with postgres, redis, rabbitmq, and two Elsa nodes.',
+          'Build the Docker image: <code>docker build -t awfs-elsa:latest .</code>',
+          'Start the stack: <code>docker compose -f docker-compose.distributed.yml up</code>.',
+          'Dispatch 10 workflows in parallel to both nodes alternately using curl.',
+          'Check the logs of both nodes — each workflow instance log lines should appear on exactly one node.',
+          'Send signals to the management API on either node and verify the correct instances resume regardless of which node receives the signal.'
+        ],
+        verification: [
+          'RabbitMQ management UI (port 15672) shows Elsa queues receiving and consuming messages.',
+          'No duplicate activity executions appear in the combined logs of both nodes.',
+          'Redis contains lock keys during active instance processing (visible via <code>redis-cli KEYS *elsa*</code>).',
+          'Stopping one node mid-flight does not permanently lose any instance — the message is requeued.'
+        ],
+        pitfalls: [
+          '<strong>Missing AddElsaConsumers().</strong> Without this call in the MassTransit configuration, Elsa\'s message consumers are not registered and no workflow dispatch messages are processed.',
+          '<strong>EF Core migrations not run on both nodes.</strong> If both nodes start simultaneously, both may try to run database migrations — use a startup job or InitDB container to run migrations before pods start.',
+          '<strong>Redis connection string format.</strong> StackExchange.Redis expects <code>"host:port"</code> format, not a URI. <code>"redis://redis:6379"</code> is wrong; <code>"redis:6379"</code> is correct.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the competing-consumers problem in distributed Elsa, and how does distributed locking solve it?',
+          answer: '<p>When multiple Elsa nodes all receive (or dequeue) the same resume message, they simultaneously load the workflow instance state, execute activities, and write back — producing duplicate side effects and corrupted state. Distributed locking solves it by serialising access: only the node that acquires the lock for a given instance ID proceeds; others wait or back off. The lock is held for the duration of one execution round and released before the next activity group can run.</p>'
+        },
+        {
+          question: 'Why is MassTransit preferred over direct HTTP signal calls for distributed Elsa?',
+          answer: '<p>HTTP signal calls are fire-and-forget with no delivery guarantee — if the target node crashes before processing, the signal is lost. MassTransit routes signals through a durable message broker (RabbitMQ, Azure Service Bus). If a node crashes mid-processing, the broker redelivers the message to a healthy node. This gives at-least-once delivery semantics, which combined with distributed locking and idempotent activities achieves exactly-once workflow progression.</p>'
+        },
+        {
+          question: 'When would sticky sessions be acceptable instead of distributed locking for AWFS?',
+          answer: '<p>Sticky sessions are acceptable when: (a) you have full control over the load balancer and can guarantee consistent hashing by correlationId, (b) the workflow SLA allows a delay of minutes on pod restart (no hard real-time requirement), and (c) the deployment model uses blue/green (not rolling) deploys so instances are not migrated mid-execution. For TAM\'s Kubernetes environment with rolling deploys and Redis already available, distributed locking is the right choice.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't3-02',
+    tier: 3,
+    title: 'Elsa Studio (Visual Designer)',
+    slug: 'elsa-studio-visual-designer',
+    estimatedMinutes: 30,
+    prerequisites: ['t1-02', 't2-07'],
+    tabs: {
+      concept: `<h2 id="concept-studio">Elsa Studio as a Blazor Visual Designer</h2>
+<p>Elsa Studio is a <strong>Blazor WebAssembly</strong> application (hosted in a Blazor Server shell) that connects to any Elsa server via the management API. It provides a drag-and-drop workflow designer, a workflow instance inspector, and a definition version manager — all without writing code.</p>
+
+<h3>What You Can Do Visually</h3>
+<ul>
+  <li>Create and edit workflow definitions using a canvas with activity nodes and connection arrows.</li>
+  <li>Configure activity properties (inputs, outputs, expressions) via property panels.</li>
+  <li>Publish definitions and see version history.</li>
+  <li>Inspect running instances: current activity, variable values, bookmark state.</li>
+  <li>Retry or cancel faulted instances.</li>
+</ul>
+
+<h3>What Still Requires Code</h3>
+<p>Custom activities must be written in C# and registered with the Elsa host. Studio can <em>use</em> custom activities once they are registered — it discovers them via the management API's activity descriptor endpoint — but it cannot create them. Complex C# expressions in activity inputs are written as JavaScript in Studio (Elsa evaluates JavaScript expressions at runtime via Jint). Very complex control flow (dynamic ForEach over typed objects) is easier in code.</p>
+
+<h3>How Visual Definitions Map to JSON</h3>
+<p>Every workflow created in Studio is stored as a JSON document (the workflow definition). The JSON describes the activity graph: activity type names, their property values (as literal values or expression strings), and the connections between activities. This JSON can be exported, committed to source control, imported programmatically, or loaded by a code-based Elsa host. Code-based workflows (subclasses of <code>WorkflowBase</code>) are compiled to the same internal graph at publish time.</p>
+
+<h3>AWFS Relevance</h3>
+<p>TAM's CTO and process owners can visualise the approval flow in Studio without reading C# code. During the pitch, opening Studio and walking through the approval workflow visually — showing each gate, the decision branch, the escalation timer — is far more persuasive than a code listing. Studio also serves as the production operations console for inspecting stuck instances.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Adding Elsa Studio NuGet packages and host',
+          filename: 'ElsaStudio.Program.cs',
+          code: `// This is a SEPARATE project from the Elsa workflow host.
+// The Studio is a thin Blazor Server app that proxies requests to the Elsa API.
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+
+// Add Elsa Studio services, pointing to the Elsa host's management API.
+builder.Services.AddElsaStudio(studio =>
+{
+    studio.BackendUrl = builder.Configuration["Elsa:BackendUrl"]
+        ?? "http://localhost:5000";   // URL of the Elsa workflow host
+});
+
+var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseRouting();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+app.Run();
+
+// Required NuGet packages:
+// Elsa.Studio
+// Elsa.Studio.Core
+// Elsa.Studio.Workflows
+// Elsa.Studio.Shell`,
+          explanation: 'Studio is a standalone app that talks to the Elsa host over HTTP. It does not run workflows itself — it is purely a UI layer. The <code>BackendUrl</code> must point to the Elsa host where <code>UseWorkflowsApi()</code> is registered.'
+        },
+        {
+          language: 'json',
+          title: 'JSON output from a visually-authored workflow',
+          filename: 'simple_approval.workflow.json',
+          code: `{
+  "id": "visual-approval-v1",
+  "definitionId": "VisualApproval",
+  "name": "Visual Approval Workflow",
+  "version": 1,
+  "isPublished": true,
+  "root": {
+    "type": "Elsa.Sequence",
+    "id": "seq-1",
+    "activities": [
+      {
+        "type": "Elsa.WriteLine",
+        "id": "log-1",
+        "text": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "Waiting for approval decision..."
+          }
+        }
+      },
+      {
+        "type": "Elsa.Event",
+        "id": "event-1",
+        "eventName": {
+          "typeName": "String",
+          "expression": {
+            "type": "Literal",
+            "value": "ApprovalDecision"
+          }
+        }
+      },
+      {
+        "type": "Elsa.WriteLine",
+        "id": "log-2",
+        "text": {
+          "typeName": "String",
+          "expression": {
+            "type": "JavaScript",
+            "value": "\`Decision: \${getInput('ApprovalDecision')?.Decision}\`"
+          }
+        }
+      }
+    ]
+  }
+}`,
+          explanation: 'This is the exact JSON Elsa stores when you save a workflow in Studio. Activity type names are fully qualified. Expressions carry a <code>type</code> field: <code>Literal</code>, <code>JavaScript</code>, or <code>CSharp</code>. You can import this JSON via the management API to load a visually-authored workflow programmatically.'
+        },
+        {
+          language: 'csharp',
+          title: 'Loading a JSON workflow definition programmatically',
+          filename: 'LoadJsonDefinition.cs',
+          code: `using Elsa.Workflows.Management.Contracts;
+using System.Text.Json;
+
+// In a startup service or migration helper:
+public class WorkflowDefinitionSeeder : IHostedService
+{
+    private readonly IWorkflowDefinitionManager _manager;
+    private readonly IWebHostEnvironment _env;
+
+    public WorkflowDefinitionSeeder(
+        IWorkflowDefinitionManager manager, IWebHostEnvironment env)
+    {
+        _manager = manager;
+        _env = env;
+    }
+
+    public async Task StartAsync(CancellationToken ct)
+    {
+        var jsonPath = Path.Combine(_env.ContentRootPath,
+            "Workflows", "simple_approval.workflow.json");
+
+        if (!File.Exists(jsonPath)) return;
+
+        var json = await File.ReadAllTextAsync(jsonPath, ct);
+        var model = JsonSerializer.Deserialize<WorkflowDefinitionModel>(json);
+
+        if (model is null) return;
+
+        await _manager.PublishAsync(model, ct);
+    }
+
+    public Task StopAsync(CancellationToken ct) => Task.CompletedTask;
+}`,
+          explanation: 'This seeds a JSON workflow definition at startup — useful for committing visually-authored workflows to source control and deploying them without manual Studio interaction. Register as a hosted service in <code>Program.cs</code>.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Spin up Studio locally, recreate the approval workflow visually, export its JSON, and load it into the Elsa host programmatically.',
+        steps: [
+          'Create a new Blazor Server project: <code>dotnet new blazorserver -n AwfsStudio</code>.',
+          'Add Studio NuGet packages: <code>Elsa.Studio</code>, <code>Elsa.Studio.Workflows</code>, <code>Elsa.Studio.Shell</code>.',
+          'Configure <code>Program.cs</code> with <code>AddElsaStudio(studio => studio.BackendUrl = "http://localhost:5000")</code>.',
+          'Run the Studio project and navigate to <code>http://localhost:5001</code>.',
+          'In the Studio designer, create a new workflow with a Sequence containing: WriteLine → Event("ApprovalDecision") → WriteLine.',
+          'Publish the workflow definition.',
+          'Export the workflow JSON (Studio → Definitions → Export).',
+          'Save the JSON to <code>Workflows/visual_approval.json</code> in the Elsa host project.',
+          'Add the <code>WorkflowDefinitionSeeder</code> hosted service to the Elsa host and verify the definition appears in the management API on startup.'
+        ],
+        verification: [
+          'Studio loads with the Elsa host\'s workflow definitions visible in the sidebar.',
+          'The visually created workflow is published and visible via <code>GET /elsa/api/workflow-definitions</code>.',
+          'The exported JSON contains the correct activity types and event name.',
+          'The seeder imports the JSON definition and it can be dispatched via the management API.'
+        ],
+        pitfalls: [
+          '<strong>CORS errors from Studio to Elsa host.</strong> If Studio and the Elsa host run on different ports, configure CORS on the Elsa host: <code>app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())</code> for local development.',
+          '<strong>Studio version mismatch.</strong> Elsa Studio NuGet versions must match the Elsa host NuGet versions exactly. A Studio 3.1 connecting to an Elsa 3.0 host will encounter API schema mismatches.',
+          '<strong>Blazor WASM loading time.</strong> The Studio Blazor WASM bundle is large (~15 MB). The first load takes 5–10 seconds on a development machine. This is normal — it is not a connection error.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the difference between a workflow created in Studio and one written as a C# WorkflowBase subclass?',
+          answer: '<p>Both produce the same internal activity graph at runtime. A Studio-created workflow is stored as a JSON document in the workflow definitions table. A code-based workflow compiles its graph in the <code>Build()</code> method and is stored as a definition when the host starts. The key difference is tooling: code-based workflows have full IDE support, type safety, and version control via Git; Studio workflows are easier for non-developers to author and visualise but require the Studio app to edit.</p>'
+        },
+        {
+          question: 'How do you use a custom C# activity (e.g., SendWhatsApp) in Studio?',
+          answer: '<p>Register the custom activity on the Elsa host with <code>elsa.AddActivity&lt;SendWhatsAppActivity&gt;()</code>. Studio calls the management API\'s activity descriptors endpoint (<code>GET /elsa/api/activity-descriptors</code>) to discover all registered activities. The custom activity appears in Studio\'s activity palette automatically. You configure its input properties via the Studio property panel — no code editing required in Studio itself.</p>'
+        },
+        {
+          question: 'Can you round-trip a workflow: edit it in Studio, export JSON, modify the JSON in a text editor, and re-import it?',
+          answer: '<p>Yes. The workflow JSON is a plain document with no binary or platform-specific fields. Export it from Studio, edit activity expressions or add activities by hand, then import it via <code>POST /elsa/api/workflow-definitions/import</code> or via the seeder pattern. The imported version becomes a new version of the definition. Existing instances using the old version continue on the old version; new dispatches use the latest published version.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't3-03',
+    tier: 3,
+    title: 'Custom Storage Providers',
+    slug: 'custom-storage-providers',
+    estimatedMinutes: 40,
+    prerequisites: ['t1-02', 't2-07'],
+    tabs: {
+      concept: `<h2 id="concept-custom-storage">The Elsa Storage Abstraction Layer</h2>
+<p>Elsa 3.x stores three kinds of data, each behind its own interface: workflow instances (<code>IWorkflowInstanceStore</code>), bookmarks (<code>IBookmarkStore</code>), and workflow definitions (<code>IWorkflowDefinitionStore</code>). By default, the <code>Elsa.EntityFrameworkCore</code> package provides implementations backed by EF Core (supporting PostgreSQL, SQL Server, SQLite). You can replace any or all of these with custom implementations.</p>
+
+<h3>When to Implement a Custom Provider</h3>
+<ul>
+  <li>Your organisation mandates a specific database (Oracle, MongoDB, Cassandra) not supported by the built-in EF Core provider.</li>
+  <li>You need to co-locate Elsa state in an existing domain database with a non-standard schema.</li>
+  <li>You need hybrid storage: definitions in blob storage (immutable, version-controlled), instances in a fast NoSQL store.</li>
+  <li>You are writing integration tests and want a fast in-memory store that does not require a real database.</li>
+</ul>
+
+<h3>IWorkflowInstanceStore — Key Methods</h3>
+<p><code>FindAsync(WorkflowInstanceFilter)</code> — find a single instance matching criteria (ID, correlationId, status).<br>
+<code>FindManyAsync(WorkflowInstanceFilter)</code> — find all matching instances.<br>
+<code>SaveAsync(WorkflowInstance)</code> — upsert an instance (insert or update by ID).<br>
+<code>DeleteAsync(WorkflowInstanceFilter)</code> — delete matching instances.<br>
+<code>CountAsync(WorkflowInstanceFilter)</code> — return the count of matching instances.</p>
+
+<h3>Registration</h3>
+<p>Call <code>services.AddSingleton&lt;IWorkflowInstanceStore, MyCustomStore&gt;()</code> (or <code>AddScoped</code> depending on your store's lifetime requirements) <em>after</em> the <code>AddElsa()</code> call. DI resolution resolves the last registered implementation, so your custom store overrides the default EF Core one.</p>
+
+<h3>AWFS Connection</h3>
+<p>TAM's infrastructure team may require workflow instance data to reside in the same Oracle database as the ERP system, for unified backup and compliance. Implementing <code>IWorkflowInstanceStore</code> against Oracle via Dapper is a straightforward path that does not require migrating the entire ERP to PostgreSQL.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Minimal IWorkflowInstanceStore implementation (in-memory)',
+          filename: 'InMemoryWorkflowInstanceStore.cs',
+          code: `using Elsa.Workflows.Management.Contracts;
+using Elsa.Workflows.Management.Entities;
+using Elsa.Workflows.Management.Filters;
+using System.Collections.Concurrent;
+
+/// <summary>
+/// Thread-safe in-memory workflow instance store — for testing only.
+/// </summary>
+public class InMemoryWorkflowInstanceStore : IWorkflowInstanceStore
+{
+    private readonly ConcurrentDictionary<string, WorkflowInstance> _store = new();
+
+    public ValueTask<WorkflowInstance?> FindAsync(
+        WorkflowInstanceFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        var instance = _store.Values.FirstOrDefault(i => Matches(i, filter));
+        return ValueTask.FromResult(instance);
+    }
+
+    public ValueTask<IEnumerable<WorkflowInstance>> FindManyAsync(
+        WorkflowInstanceFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        var results = _store.Values.Where(i => Matches(i, filter));
+        return ValueTask.FromResult(results);
+    }
+
+    public ValueTask SaveAsync(
+        WorkflowInstance instance,
+        CancellationToken cancellationToken = default)
+    {
+        _store[instance.Id] = instance;
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask<long> DeleteAsync(
+        WorkflowInstanceFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        var toDelete = _store.Values.Where(i => Matches(i, filter)).ToList();
+        foreach (var instance in toDelete)
+            _store.TryRemove(instance.Id, out _);
+        return ValueTask.FromResult((long)toDelete.Count);
+    }
+
+    public ValueTask<long> CountAsync(
+        WorkflowInstanceFilter filter,
+        CancellationToken cancellationToken = default)
+    {
+        var count = _store.Values.Count(i => Matches(i, filter));
+        return ValueTask.FromResult((long)count);
+    }
+
+    private static bool Matches(WorkflowInstance i, WorkflowInstanceFilter f)
+    {
+        if (f.Id         != null && i.Id            != f.Id)            return false;
+        if (f.CorrelationId != null && i.CorrelationId != f.CorrelationId) return false;
+        if (f.Status     != null && i.Status         != f.Status)        return false;
+        if (f.DefinitionId != null && i.DefinitionId  != f.DefinitionId)  return false;
+        return true;
+    }
+}`,
+          explanation: 'This in-memory implementation is suitable for unit and integration tests. It is thread-safe via <code>ConcurrentDictionary</code>. The <code>Matches</code> helper implements only the filter fields used by AWFS — extend it for other filter properties as needed.'
+        },
+        {
+          language: 'csharp',
+          title: 'Registering a custom store in DI, overriding the EF Core default',
+          filename: 'Program.CustomStorage.cs',
+          code: `builder.Services.AddElsa(elsa =>
+{
+    // Optionally keep EF Core for definitions and bookmarks...
+    elsa.UseEntityFrameworkCore(ef => ef.UsePostgreSql(connectionString));
+
+    elsa.UseWorkflowRuntime();
+    elsa.UseWorkflowsApi();
+    elsa.AddWorkflow<ApprovalLoopWorkflow>();
+});
+
+// Override the EF Core workflow instance store with the in-memory implementation.
+// Register AFTER AddElsa() so this takes precedence.
+builder.Services.AddSingleton<IWorkflowInstanceStore, InMemoryWorkflowInstanceStore>();`,
+          explanation: 'ASP.NET Core DI resolves the <strong>last</strong> registered implementation of an interface. Registering the custom store after <code>AddElsa()</code> ensures it overrides the EF Core store for <code>IWorkflowInstanceStore</code> only, while all other stores remain EF Core-backed.'
+        },
+        {
+          language: 'csharp',
+          title: 'Key method signatures for IBookmarkStore (reference)',
+          filename: 'IBookmarkStore.Reference.cs',
+          code: `// Elsa.Workflows.Runtime.Contracts — key methods to implement:
+
+// Find bookmarks matching a filter (event name, workflow instance ID, hash, etc.)
+ValueTask<IEnumerable<StoredBookmark>> FindManyAsync(
+    BookmarkFilter filter,
+    CancellationToken cancellationToken = default);
+
+// Persist a new bookmark when a workflow suspends.
+ValueTask SaveAsync(
+    StoredBookmark bookmark,
+    CancellationToken cancellationToken = default);
+
+// Remove bookmarks when they are consumed (workflow resumes).
+ValueTask<long> DeleteAsync(
+    BookmarkFilter filter,
+    CancellationToken cancellationToken = default);
+
+// The BookmarkFilter has fields: WorkflowInstanceId, Hash, ActivityTypeName, CorrelationId.
+// The Hash field is the key used by the signal routing logic to find the exact bookmark.`,
+          explanation: 'The bookmark store is the most performance-critical store: signal routing queries it on every resume. Any custom implementation must support efficient lookup by Hash and CorrelationId — add a compound index if using a relational database.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Implement the in-memory store, register it to override the EF Core store, and verify it intercepts all workflow instance operations.',
+        steps: [
+          'Create <code>InMemoryWorkflowInstanceStore.cs</code> with the full implementation above.',
+          'In <code>Program.cs</code>, after <code>AddElsa()</code>, add <code>builder.Services.AddSingleton&lt;IWorkflowInstanceStore, InMemoryWorkflowInstanceStore&gt;()</code>.',
+          'Run the app and dispatch a workflow. Verify the console does not show EF Core SQL logs for WorkflowInstances table (add <code>EnableSensitiveDataLogging</code> to EF Core to confirm).',
+          'Add a log statement to the <code>SaveAsync</code> method of your custom store (e.g., <code>Console.WriteLine($"[InMemoryStore] Saving instance {instance.Id}")</code>).',
+          'Dispatch and signal a workflow; confirm the log appears for each save.',
+          'Call <code>GET /elsa/api/workflow-instances</code> and verify the in-memory instances are returned.',
+          'Restart the app and confirm instances are gone (in-memory is not durable — expected behavior for a test store).'
+        ],
+        verification: [
+          '<code>[InMemoryStore] Saving instance ...</code> appears in logs during dispatch and resume.',
+          'EF Core does not emit SQL SELECT/INSERT for WorkflowInstances table (check logs).',
+          'Management API list endpoint returns instances from the in-memory store.',
+          'Instances are cleared on app restart (confirming in-memory, not EF Core).'
+        ],
+        pitfalls: [
+          '<strong>Registration order matters.</strong> If you register the custom store before <code>AddElsa()</code>, the EF Core registration inside <code>AddElsa()</code> overrides it. Always register custom stores <em>after</em> <code>AddElsa()</code>.',
+          '<strong>Incomplete filter implementation.</strong> The <code>Matches</code> helper above only covers a subset of <code>WorkflowInstanceFilter</code> fields. If Elsa internally queries by a field your <code>Matches</code> does not check, it returns incorrect results. Review the full filter class and implement all fields.',
+          '<strong>Thread safety with collections.</strong> Using a plain <code>Dictionary</code> instead of <code>ConcurrentDictionary</code> in a multi-threaded ASP.NET environment leads to intermittent KeyNotFoundException or data corruption. Always use thread-safe collections in custom stores.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'Why must the custom store be registered after AddElsa() to take effect?',
+          answer: '<p>ASP.NET Core DI resolves an interface to the <strong>last</strong> registered implementation when <code>GetService&lt;T&gt;()</code> is called (for singleton/transient registrations). The EF Core store is registered inside <code>AddElsa()</code>. If your custom store is registered after, it is the last registration and wins. Registering before means the EF Core registration overwrites yours.</p>'
+        },
+        {
+          question: 'What is the performance risk of a naive IBookmarkStore implementation that does a full table scan on FindManyAsync?',
+          answer: '<p>Every signal dispatch and workflow resume queries the bookmark store by hash and correlationId. With thousands of concurrent suspended instances, a full scan reads all bookmark rows on every query — O(N) per resume. At TAM\'s scale (hundreds of pending approvals at peak), this causes measurable latency spikes. Any production bookmark store must support indexed lookups by <code>Hash</code> and <code>CorrelationId</code>.</p>'
+        },
+        {
+          question: 'Can you mix custom stores for different data types — e.g., Oracle for instances and PostgreSQL for bookmarks?',
+          answer: '<p>Yes. Each store interface is registered independently in DI. You can override <code>IWorkflowInstanceStore</code> with an Oracle/Dapper implementation while keeping <code>IBookmarkStore</code> and <code>IWorkflowDefinitionStore</code> on the default EF Core/PostgreSQL implementation. This is useful during incremental migrations: migrate the most performance-critical store first and leave others on the default until ready.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't3-04',
+    tier: 3,
+    title: 'Workflow Middleware and Events',
+    slug: 'workflow-middleware-and-events',
+    estimatedMinutes: 35,
+    prerequisites: ['t1-04', 't2-07'],
+    tabs: {
+      concept: `<h2 id="concept-middleware">IActivityMiddleware — Cross-Cutting Concerns</h2>
+<p>Elsa 3.x has a middleware pipeline for activity execution, similar to ASP.NET Core's HTTP middleware. Each activity execution passes through a chain of <code>IActivityMiddleware</code> implementations before and after the activity's own <code>ExecuteAsync</code> runs. This is the correct place for cross-cutting concerns: logging, authorization checks, timing, correlation ID propagation.</p>
+
+<h3>Implementing IActivityMiddleware</h3>
+<p>Implement the interface's single method: <code>InvokeAsync(ActivityExecutionContext context, ActivityMiddlewareDelegate next)</code>. Call <code>await next(context)</code> to execute the inner middleware chain and ultimately the activity itself. Code before <code>next()</code> runs pre-execution; code after runs post-execution. Throw an exception before <code>next()</code> to prevent the activity from executing.</p>
+
+<h3>Workflow Lifecycle Events (Notifications)</h3>
+<p>Elsa publishes .NET <strong>notifications</strong> (via its internal mediator) at key lifecycle points:
+<ul>
+  <li><code>WorkflowStarted</code> — fired when a new instance begins execution.</li>
+  <li><code>WorkflowFinished</code> — fired when an instance reaches the terminal state.</li>
+  <li><code>WorkflowFaulted</code> — fired when an instance transitions to Faulted.</li>
+  <li><code>ActivityExecuted</code> — fired after each activity completes (success or fault).</li>
+  <li><code>ActivityFaulted</code> — fired when an activity throws an unhandled exception.</li>
+</ul>
+Subscribe to these by implementing <code>INotificationHandler&lt;TNotification&gt;</code> from <code>Elsa.Mediator</code>.</p>
+
+<h3>Middleware vs Notifications</h3>
+<p>Use <strong>middleware</strong> when you need to intercept and potentially modify or block activity execution synchronously — e.g., an authorization check that prevents the activity from running if the current user lacks permission. Use <strong>notifications</strong> for passive observation — e.g., writing an audit log row after an activity completes, or sending an alert after a fault. Notifications are asynchronous and do not block the execution pipeline.</p>
+
+<h3>AWFS Connection</h3>
+<p>AWFS requires a complete audit trail: every activity execution must be logged with timestamp, instance ID, activity name, and duration. A middleware logs start time; the post-<code>next()</code> code logs end time and duration. A <code>WorkflowFaulted</code> notification handler sends an alert to the operations team via the notification service.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'IActivityMiddleware that logs activity start and end',
+          filename: 'AuditActivityMiddleware.cs',
+          code: `using Elsa.Workflows;
+using Elsa.Workflows.Pipelines.ActivityExecution;
+using Microsoft.Extensions.Logging;
+
+public class AuditActivityMiddleware : IActivityMiddleware
+{
+    private readonly ILogger<AuditActivityMiddleware> _logger;
+
+    public AuditActivityMiddleware(ILogger<AuditActivityMiddleware> logger)
+        => _logger = logger;
+
+    public async ValueTask InvokeAsync(
+        ActivityExecutionContext context,
+        ActivityMiddlewareDelegate next)
+    {
+        var instanceId   = context.WorkflowExecutionContext.Id;
+        var activityId   = context.Activity.Id;
+        var activityType = context.Activity.GetType().Name;
+        var started      = DateTimeOffset.UtcNow;
+
+        _logger.LogInformation(
+            "[AUDIT] START | Instance: {InstanceId} | Activity: {Type} ({Id})",
+            instanceId, activityType, activityId);
+
+        try
+        {
+            await next(context);   // Run the activity (and inner middleware).
+        }
+        finally
+        {
+            var duration = DateTimeOffset.UtcNow - started;
+            _logger.LogInformation(
+                "[AUDIT] END   | Instance: {InstanceId} | Activity: {Type} ({Id}) | {Ms}ms",
+                instanceId, activityType, activityId, duration.TotalMilliseconds);
+        }
+    }
+}`,
+          explanation: 'The <code>try/finally</code> ensures the END log is written even if the activity throws. The activity type name and ID are available directly from <code>context.Activity</code>. For a production audit trail, write these to a database table rather than a log file.'
+        },
+        {
+          language: 'csharp',
+          title: 'Subscribing to WorkflowFaulted notification',
+          filename: 'WorkflowFaultedHandler.cs',
+          code: `using Elsa.Mediator.Contracts;
+using Elsa.Workflows.Notifications;
+
+public class WorkflowFaultedHandler : INotificationHandler<WorkflowFaulted>
+{
+    private readonly INotificationService _notificationService;
+    private readonly ILogger<WorkflowFaultedHandler> _logger;
+
+    public WorkflowFaultedHandler(
+        INotificationService notificationService,
+        ILogger<WorkflowFaultedHandler> logger)
+    {
+        _notificationService = notificationService;
+        _logger = logger;
+    }
+
+    public async Task HandleAsync(
+        WorkflowFaulted notification,
+        CancellationToken cancellationToken)
+    {
+        var instance     = notification.WorkflowExecutionContext;
+        var faultMessage = notification.WorkflowExecutionContext.Fault?.Message
+                           ?? "Unknown fault";
+
+        _logger.LogError(
+            "[FAULT] Workflow {InstanceId} faulted: {Message}",
+            instance.Id, faultMessage);
+
+        // Alert the operations team.
+        await _notificationService.SendAsync(
+            recipient: "ops-team@tam.co.id",
+            subject:   $"Workflow Faulted: {instance.Id}",
+            body:      $"Instance {instance.Id} faulted at {DateTimeOffset.UtcNow}: {faultMessage}",
+            cancellationToken: cancellationToken);
+    }
+}`,
+          explanation: '<code>INotificationHandler&lt;WorkflowFaulted&gt;</code> is called asynchronously after the fault is recorded. It does not affect the faulted instance — it is purely observational. Replace <code>INotificationService</code> with your own email/WhatsApp/Teams notification implementation.'
+        },
+        {
+          language: 'csharp',
+          title: 'Registering middleware and notification handlers',
+          filename: 'Program.Middleware.cs',
+          code: `builder.Services.AddElsa(elsa =>
+{
+    elsa.UseEntityFrameworkCore(ef => ef.UsePostgreSql(connectionString));
+    elsa.UseWorkflowRuntime();
+    elsa.UseWorkflowsApi();
+    elsa.AddWorkflow<ApprovalLoopWorkflow>();
+
+    // Register activity middleware (runs for EVERY activity execution).
+    elsa.UseActivityPipeline(pipeline =>
+        pipeline.UseMiddleware<AuditActivityMiddleware>());
+});
+
+// Register notification handlers (workflow lifecycle events).
+builder.Services.AddNotificationHandler<WorkflowFaultedHandler>();
+
+// Or register all handlers in an assembly:
+// builder.Services.AddNotificationHandlersFrom<WorkflowFaultedHandler>();`,
+          explanation: '<code>UseActivityPipeline</code> adds the middleware to the global activity execution pipeline. Notification handlers are standard DI registrations — Elsa\'s mediator resolves all <code>INotificationHandler&lt;T&gt;</code> implementations when publishing a notification.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Add activity-level audit logging to the AWFS skeleton and verify it fires for every activity including the Event bookmark.',
+        steps: [
+          'Create <code>AuditActivityMiddleware.cs</code> with the implementation above.',
+          'Register it in <code>Program.cs</code> using <code>elsa.UseActivityPipeline(p => p.UseMiddleware&lt;AuditActivityMiddleware&gt;())</code>.',
+          'Create <code>WorkflowFaultedHandler.cs</code> (replace <code>INotificationService</code> with a simple <code>Console.WriteLine</code> for the lab).',
+          'Register the handler with <code>builder.Services.AddNotificationHandler&lt;WorkflowFaultedHandler&gt;()</code>.',
+          'Run the app and dispatch the approval loop workflow.',
+          'Verify the console shows <code>[AUDIT] START</code> and <code>[AUDIT] END</code> for every activity including the <code>Event</code> activity.',
+          'Introduce a deliberate fault (throw inside an InlineActivity outside TryCatch) and verify the <code>WorkflowFaulted</code> handler fires and logs the fault message.',
+          'Confirm that after the fault, subsequent activities do NOT emit audit logs (the instance stopped).'
+        ],
+        verification: [
+          '<code>[AUDIT] START | Activity: Event</code> appears when the workflow suspends at the approval gate.',
+          '<code>[AUDIT] END | Activity: Event</code> appears when the signal resumes the workflow.',
+          '<code>[FAULT]</code> log line appears when the deliberate fault is triggered.',
+          'Duration (ms) in the END log is non-zero and plausible.'
+        ],
+        pitfalls: [
+          '<strong>Middleware not firing.</strong> If <code>UseActivityPipeline</code> is called before <code>UseWorkflowRuntime()</code>, the pipeline may not be fully initialised. Ensure <code>UseWorkflowRuntime()</code> is called first.',
+          '<strong>Notification handler not registered.</strong> <code>AddNotificationHandler&lt;T&gt;</code> must be called on <code>builder.Services</code>, not inside <code>AddElsa()</code>. Placing it inside the Elsa lambda has no effect in Elsa 3.x.',
+          '<strong>Event activity audit logs appear in two separate runs.</strong> The START log fires when the workflow first reaches the Event activity (before suspension). The END log fires when the workflow resumes — which may be minutes or hours later, in a different process if the host restarted. This is normal and expected behaviour.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the difference between activity middleware and a WorkflowFaulted notification handler?',
+          answer: '<p>Middleware runs <strong>synchronously inside the execution pipeline</strong> for every activity — it can inspect, modify, or block execution. A notification handler runs <strong>asynchronously outside the pipeline</strong> after an event occurs — it is purely observational and cannot affect the outcome. Use middleware for enforcement (auth, timing); use notifications for side effects (logging, alerting).</p>'
+        },
+        {
+          question: 'If you have 10 different activity types in a workflow, how many times does the AuditActivityMiddleware run per workflow execution?',
+          answer: '<p>Once per activity execution — so at least 10 times for a single pass through a 10-activity workflow. If activities are inside loops, the middleware runs once per loop iteration per activity. It fires for built-in activities (WriteLine, ForEach, If) as well as custom activities. The total count depends on the execution path taken, not just the number of activity definitions in the workflow.</p>'
+        },
+        {
+          question: 'How would you implement an authorization middleware that prevents an activity from executing if the current user does not have a required role?',
+          answer: '<p>In <code>InvokeAsync</code>, before calling <code>await next(context)</code>, resolve the current user identity from the execution context properties (or from a DI-injected <code>IHttpContextAccessor</code>) and check the required role. If the check fails, throw an <code>UnauthorizedAccessException</code> (or a custom exception) without calling <code>next()</code>. The thrown exception will be caught by any enclosing <code>TryCatch</code> activity, or will fault the workflow instance if unhandled.</p>'
+        }
+      ]
+    }
+  },
+
+  {
+    id: 't3-05',
+    tier: 3,
+    title: 'Performance and Observability',
+    slug: 'performance-and-observability',
+    estimatedMinutes: 40,
+    prerequisites: ['t3-01', 't3-04'],
+    tabs: {
+      concept: `<h2 id="concept-performance">Bottlenecks in Elsa</h2>
+<p>Elsa 3.x trades raw throughput for correctness and durability. Every activity execution that can yield (suspend) involves at minimum: one read of the workflow instance state, one write of updated state, one write/delete of bookmarks. For a 10-activity workflow with 3 suspension points, that is roughly 13 database round-trips per completion. Understanding this model is essential for sizing infrastructure at TAM's volume.</p>
+
+<h3>Key Bottlenecks</h3>
+<ul>
+  <li><strong>Persistence round-trips per activity:</strong> each resume reads the full instance state blob (can be 50–200 KB for complex workflows with many variables). Keep variable payloads small; avoid storing large documents as workflow variables.</li>
+  <li><strong>Bookmark table scans:</strong> signal routing queries bookmarks by <code>Hash</code> and <code>CorrelationId</code>. Without an index on these columns, every signal does a full table scan — catastrophic at scale.</li>
+  <li><strong>Lock contention:</strong> with distributed locking (T3-01), high-frequency resume operations for the same instance serialize through a single Redis lock. Design workflows to minimize the number of sequential resume round-trips for the same instance.</li>
+</ul>
+
+<h3>OpenTelemetry Integration</h3>
+<p>Elsa 3.x has built-in OpenTelemetry instrumentation. Adding the OTEL SDK to the host produces spans for workflow dispatch, activity execution, and instance persistence. Connect to any OTEL-compatible backend (Jaeger, Zipkin, Azure Monitor, Datadog). Key spans to watch: <code>elsa.workflow.execute</code>, <code>elsa.activity.execute</code>, <code>elsa.bookmark.find</code>.</p>
+
+<h3>Key Metrics</h3>
+<ul>
+  <li><strong>Instance throughput:</strong> new instances dispatched per second.</li>
+  <li><strong>Resume latency:</strong> time from signal received to workflow continuing — the critical SLA metric for AWFS.</li>
+  <li><strong>Fault rate:</strong> percentage of instances that transition to Faulted — a rising fault rate signals a systemic problem.</li>
+  <li><strong>Bookmark table size:</strong> row count in the Bookmarks table is a proxy for the number of suspended instances.</li>
+</ul>
+
+<h3>AWFS Volume Estimate</h3>
+<p>TAM processes approximately 500–2,000 purchase approvals per day. At peak (end of month), 200 approvals might be submitted within an hour. Each approval involves 3–5 activity executions and 3 resume events (one per approval gate). This is 200 × 6 = 1,200 database round-trips per peak hour — well within PostgreSQL's capability on modest hardware. The main risk is bookmark table growth if old Finished instances are not purged regularly.</p>`,
+
+      code: [
+        {
+          language: 'csharp',
+          title: 'Adding OpenTelemetry to the Elsa host',
+          filename: 'Program.Otel.cs',
+          code: `using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService("awfs-elsa-host"))
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            // Elsa registers its own ActivitySource under "Elsa".
+            .AddSource("Elsa")
+            .AddOtlpExporter(otlp =>
+            {
+                otlp.Endpoint = new Uri(
+                    builder.Configuration["Otel:Endpoint"] ?? "http://localhost:4317");
+            });
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddOtlpExporter();
+    });`,
+          explanation: 'Elsa\'s built-in <code>ActivitySource</code> named <code>"Elsa"</code> emits spans for workflow and activity execution. Adding <code>.AddSource("Elsa")</code> to the tracing builder captures all Elsa spans. Export to any OTEL-compatible backend by changing the <code>AddOtlpExporter</code> endpoint.'
+        },
+        {
+          language: 'sql',
+          title: 'Recommended PostgreSQL indexes on WorkflowInstances and Bookmarks',
+          filename: 'elsa_performance_indexes.sql',
+          code: `-- CorrelationId is queried on every signal dispatch.
+CREATE INDEX IF NOT EXISTS idx_workflow_instances_correlation
+    ON "WorkflowInstances" ("CorrelationId")
+    WHERE "CorrelationId" IS NOT NULL;
+
+-- Status filter is used by management UI and purge jobs.
+CREATE INDEX IF NOT EXISTS idx_workflow_instances_status
+    ON "WorkflowInstances" ("Status");
+
+-- Composite: definition + status for "list all pending approvals".
+CREATE INDEX IF NOT EXISTS idx_workflow_instances_definition_status
+    ON "WorkflowInstances" ("DefinitionId", "Status");
+
+-- Bookmark Hash is the primary signal routing key — must be fast.
+CREATE INDEX IF NOT EXISTS idx_bookmarks_hash
+    ON "Bookmarks" ("Hash");
+
+-- CorrelationId on bookmarks enables the compound signal lookup.
+CREATE INDEX IF NOT EXISTS idx_bookmarks_correlation
+    ON "Bookmarks" ("CorrelationId")
+    WHERE "CorrelationId" IS NOT NULL;
+
+-- Compound index for the most common query pattern in SendSignalAsync.
+CREATE INDEX IF NOT EXISTS idx_bookmarks_hash_correlation
+    ON "Bookmarks" ("Hash", "CorrelationId");`,
+          explanation: 'Apply these indexes after running the Elsa EF Core migrations. The compound <code>(Hash, CorrelationId)</code> index on Bookmarks is the single most impactful index — it turns the signal routing query from a full scan into a near-instant lookup.'
+        },
+        {
+          language: 'csharp',
+          title: 'HealthCheck endpoint wiring for Elsa',
+          filename: 'Program.HealthChecks.cs',
+          code: `builder.Services
+    .AddHealthChecks()
+    // Check that the PostgreSQL connection is alive.
+    .AddNpgsql(
+        connectionString,
+        name: "elsa-postgres",
+        tags: new[] { "db", "elsa" })
+    // Check that the Redis lock store is reachable.
+    .AddRedis(
+        builder.Configuration.GetConnectionString("Redis")!,
+        name: "elsa-redis",
+        tags: new[] { "cache", "elsa" })
+    // Custom check: count faulted instances in the last hour.
+    .AddAsyncCheck("elsa-fault-rate", async (ct) =>
+    {
+        await using var scope = app.Services.CreateAsyncScope();
+        var store = scope.ServiceProvider
+            .GetRequiredService<IWorkflowInstanceStore>();
+
+        var faultedCount = await store.CountAsync(
+            new WorkflowInstanceFilter
+            {
+                Status = WorkflowStatus.Faulted
+            }, ct);
+
+        return faultedCount > 10
+            ? HealthCheckResult.Degraded(
+                $"{faultedCount} faulted instances — investigate.")
+            : HealthCheckResult.Healthy($"{faultedCount} faulted instances.");
+    });
+
+// Expose health endpoints.
+app.MapHealthChecks("/health/live",  new() { Predicate = _ => false });
+app.MapHealthChecks("/health/ready", new() { Predicate = c => c.Tags.Contains("db") });
+app.MapHealthChecks("/health/full",  new());`,
+          explanation: 'The custom fault-rate health check returns <code>Degraded</code> when more than 10 instances are in Faulted state — a signal to the ops team that something systemic is wrong. Kubernetes liveness and readiness probes should point to the <code>/health/live</code> and <code>/health/ready</code> endpoints respectively.'
+        }
+      ],
+
+      handsOn: {
+        goal: 'Run a load test with 100 concurrent workflow instances, measure resume latency, and inspect OTEL spans in Jaeger.',
+        steps: [
+          'Add the OTEL packages: <code>OpenTelemetry.Extensions.Hosting</code>, <code>OpenTelemetry.Instrumentation.AspNetCore</code>, <code>OpenTelemetry.Exporter.OpenTelemetryProtocol</code>.',
+          'Add the OTEL configuration to <code>Program.cs</code> as shown above, pointing to a local Jaeger instance.',
+          'Start Jaeger locally: <code>docker run -d -p 16686:16686 -p 4317:4317 jaegertracing/all-in-one:latest</code>.',
+          'Apply the performance indexes to your PostgreSQL database using <code>elsa_performance_indexes.sql</code>.',
+          'Write a load test script that dispatches 100 workflow instances in parallel (use <code>Parallel.ForEachAsync</code> or a tool like k6).',
+          'For each instance, record the time between dispatch and first "Waiting for supervisor..." log line.',
+          'Send 100 approval signals (one per instance) and record the time between signal sent and "decided:" log line (resume latency).',
+          'Open Jaeger at <code>http://localhost:16686</code> and filter by service <code>awfs-elsa-host</code>. Inspect <code>elsa.workflow.execute</code> spans and find the slowest.',
+          'Run the same load test without the performance indexes and compare query durations in the spans.'
+        ],
+        verification: [
+          'Jaeger shows spans with <code>elsa.workflow.execute</code> and <code>elsa.activity.execute</code> for each instance.',
+          'Resume latency (signal → continuation) is below 500 ms for 95th percentile with indexes applied.',
+          'The <code>/health/full</code> endpoint returns healthy after the load test completes.',
+          'No instances are in Faulted state after the load test.'
+        ],
+        pitfalls: [
+          '<strong>OTEL exporter endpoint blocked.</strong> The OTLP exporter uses gRPC on port 4317. If a firewall or Docker network blocks this port, spans are silently dropped. Verify connectivity with <code>grpc_health_probe</code> or check Jaeger\'s logs.',
+          '<strong>Indexes not applied because migrations ran first.</strong> EF Core migrations create tables without the custom indexes. Always run <code>elsa_performance_indexes.sql</code> manually after migrations, or add the indexes to a custom migration.',
+          '<strong>Workflow state blob size.</strong> If workflow variables hold large objects (e.g., full document contents), the state blob can exceed 1 MB. PostgreSQL handles large blobs but with increased I/O. Store only IDs in workflow variables; fetch full documents from external storage when needed.'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'What is the single most impactful database index to add for AWFS, and why?',
+          answer: '<p>The compound index on <code>Bookmarks(Hash, CorrelationId)</code>. Every call to <code>SendSignalAsync</code> executes a query of the form <code>WHERE Hash = ? AND CorrelationId = ?</code>. Without this index, the query scans the entire Bookmarks table — which grows proportionally to the number of concurrent suspended instances. With the index, the query is a near-O(1) B-tree lookup regardless of table size.</p>'
+        },
+        {
+          question: 'What does resume latency measure, and what is an acceptable target for AWFS?',
+          answer: '<p>Resume latency is the time from when <code>SendSignalAsync</code> is called (or the signal message is enqueued in the broker) to when the workflow\'s next activity begins executing. It includes bookmark lookup, distributed lock acquisition, instance state load, and activity execution start. For an interactive approval flow where the approver is waiting for a UI confirmation, a P95 resume latency under 1 second is acceptable. For background batch processing, 5 seconds is fine.</p>'
+        },
+        {
+          question: 'How do you prevent the WorkflowInstances and Bookmarks tables from growing unboundedly in production?',
+          answer: '<p>Implement a periodic purge job that deletes <code>Finished</code> and <code>Cancelled</code> instances (and their associated bookmarks) older than a retention period (e.g., 90 days). Use <code>IWorkflowInstanceStore.DeleteAsync(new WorkflowInstanceFilter { Status = WorkflowStatus.Finished })</code> filtered by <code>UpdatedAt &lt; retentionCutoff</code>. Run the purge as a background hosted service or a scheduled Kubernetes job. Archive the purged records to cold storage (e.g., blob storage) if compliance requires retention beyond 90 days.</p>'
+        }
+      ]
+    }
+  }
+
+,
+  // ── LABS ────────────────────────────────────────────────────────────────────
+
+  {
+    id: 'lab-01',
+    tier: 'labs',
+    title: 'Build the AWFS Skeleton',
+    slug: 'build-the-awfs-skeleton',
+    estimatedMinutes: 60,
+    prerequisites: ['t1-02', 't1-03', 't1-04'],
+    tabs: {
+      concept: `<h2 id="lab01-goal">Goal</h2>
+<p>Scaffold a minimal AWFS host: Elsa 3.x + PostgreSQL + a single approval workflow stub that accepts <code>DocumentId</code>, <code>RequesterId</code>, and <code>Amount</code> as typed inputs and logs each approval stage. By the end you have a runnable foundation that all subsequent labs extend.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Scaffold a minimal AWFS host: Elsa + PostgreSQL + a single approval workflow stub that accepts a DocumentId and logs each approval stage.',
+        steps: [
+          '<strong>Create the project.</strong> Run <code>dotnet new web -n AwfsElsaHost</code> and <code>cd AwfsElsaHost</code>.',
+          '<strong>Add NuGet packages.</strong> Add <code>Elsa</code>, <code>Elsa.EntityFrameworkCore</code>, <code>Elsa.EntityFrameworkCore.PostgreSql</code>, <code>Elsa.Http</code>, and <code>Npgsql.EntityFrameworkCore.PostgreSQL</code>.',
+          '<strong>Configure Program.cs.</strong> Register Elsa with <code>builder.Services.AddElsa(elsa => { elsa.UseEntityFrameworkCore(ef => ef.UsePostgreSql(...)); elsa.UseWorkflowRuntime(); elsa.UseWorkflowsApi(); })</code>.',
+          '<strong>Create ApprovalWorkflow.cs.</strong> Subclass <code>WorkflowBase</code>. Add <code>[WorkflowInput]</code> properties for <code>DocumentId (string)</code>, <code>RequesterId (string)</code>, <code>Amount (decimal)</code>. In <code>Build()</code>, add a <code>Sequence</code> with three <code>WriteLine</code> activities logging "Workflow started for {DocumentId}", "Awaiting Supervisor approval", and "Workflow complete".',
+          '<strong>Register the workflow.</strong> Add <code>elsa.AddWorkflow&lt;ApprovalWorkflow&gt;()</code> inside the Elsa configuration.',
+          '<strong>Run EF Core migrations.</strong> Run <code>dotnet ef migrations add InitialCreate</code> and <code>dotnet ef database update</code>. Confirm the Elsa tables appear in PostgreSQL.',
+          '<strong>Dispatch a test instance.</strong> Add a minimal API endpoint <code>POST /test-dispatch</code> that calls <code>IWorkflowRuntime.DispatchAsync</code> with <code>correlationId = "DOC-TEST-01"</code> and the three inputs.',
+          '<strong>Verify via management API.</strong> Call <code>GET /elsa/api/workflow-instances?correlationId=DOC-TEST-01</code> and confirm the instance is <code>Finished</code> with all three log lines in the console.'
+        ],
+        verification: [
+          'The Elsa management API is reachable at <code>GET /elsa/api/workflow-definitions</code> and returns the <code>ApprovalWorkflow</code> definition.',
+          'Dispatching via <code>POST /test-dispatch</code> creates an instance and logs "Workflow started for DOC-TEST-01".',
+          'The instance transitions to <code>Finished</code> without errors.',
+          'PostgreSQL contains the Elsa schema tables: <code>WorkflowInstances</code>, <code>Bookmarks</code>, <code>WorkflowDefinitions</code>.'
+        ],
+        pitfalls: [
+          '<strong>EF Core tools not installed.</strong> Run <code>dotnet tool install --global dotnet-ef</code> if the <code>dotnet ef</code> command is not found. Also add <code>Microsoft.EntityFrameworkCore.Design</code> to the project.',
+          '<strong>PostgreSQL connection string format.</strong> The Npgsql connection string format is <code>"Host=localhost;Database=awfs_elsa;Username=postgres;Password=secret"</code> — not a JDBC URL. Misformatted strings produce a cryptic startup exception.',
+          '<strong>Missing AddControllers / MapControllers.</strong> The Elsa management API is controller-based. Without <code>builder.Services.AddControllers()</code> and <code>app.MapControllers()</code>, all <code>/elsa/api/*</code> routes return 404.'
+        ]
+      },
+
+      selfCheck: []
+    }
+  },
+
+  {
+    id: 'lab-02',
+    tier: 'labs',
+    title: 'Three-Level Sequential Approval',
+    slug: 'three-level-sequential-approval',
+    estimatedMinutes: 75,
+    prerequisites: ['lab-01', 't2-01', 't2-05', 't2-06'],
+    tabs: {
+      concept: `<h2 id="lab02-goal">Goal</h2>
+<p>Extend the skeleton to route through three sequential approval gates (Supervisor → Manager → Director), each waiting for a named event signal carrying the approver's decision. Rejection at any gate short-circuits the remaining gates.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Extend the skeleton to route through three sequential approval gates (Supervisor → Manager → Director), each waiting for a named event signal carrying the decision.',
+        steps: [
+          '<strong>Add Approvers input.</strong> Add <code>[WorkflowInput] public Input&lt;string[]&gt; Approvers { get; set; }</code> to <code>ApprovalWorkflow</code>.',
+          '<strong>Add gate variables.</strong> Declare <code>currentApprover (string)</code>, <code>rejected (bool = false)</code>, <code>decisions (List&lt;string&gt; = new())</code> via <code>builder.WithVariable&lt;T&gt;()</code>.',
+          '<strong>Replace the stub Sequence with a ForEach.</strong> Iterate over <code>Approvers</code>. In each iteration, wrap the gate logic in <code>If(!rejected)</code>.',
+          '<strong>Inside the If: add the gate body.</strong> WriteLine "Waiting for {currentApprover}", Event("ApprovalDecision"), InlineActivity to read the decision, append to decisions list, set rejected=true if "Rejected".',
+          '<strong>After the ForEach: add outcome branch.</strong> <code>If(rejected)</code> → WriteLine "REJECTED", Else → WriteLine "APPROVED by all".',
+          '<strong>Update the dispatch endpoint.</strong> Pass <code>Approvers = new[] { "sup@tam.co.id", "mgr@tam.co.id", "dir@tam.co.id" }</code> in the input dictionary.',
+          '<strong>Add a signal endpoint.</strong> <code>POST /approvals/{correlationId}/decision</code> that calls <code>SendSignalAsync("ApprovalDecision", payload, correlationId)</code>.',
+          '<strong>Test happy path.</strong> Dispatch, send three Approved signals, verify APPROVED log. Test rejection path: send Approved, Rejected — verify REJECTED and only 2 signals consumed.'
+        ],
+        verification: [
+          'Console shows "Waiting for sup@tam.co.id" immediately after dispatch.',
+          'After three Approved signals, console shows "APPROVED by all" and instance is <code>Finished</code>.',
+          'After one Approved and one Rejected, console shows "REJECTED" and instance is <code>Finished</code> after exactly 2 signals.',
+          'Sending a third signal after rejection returns an empty instance list (no bookmark remains).'
+        ],
+        pitfalls: [
+          '<strong>Input key for string array.</strong> When dispatching from C# code, pass the approver array as <code>string[]</code>, not <code>List&lt;string&gt;</code>. The Elsa input deserializer may not convert between the two. Declare the input type consistently.',
+          '<strong>Signal payload class namespace.</strong> <code>ApproverDecision</code> must be visible to both the workflow class and the signal endpoint. Place it in a shared <code>Models</code> namespace or a shared project assembly.',
+          '<strong>ForEach does not break on rejection.</strong> The gate variable approach means all loop iterations still execute (they just skip their bodies). Ensure the final outcome branch is after the ForEach, not inside it.'
+        ]
+      },
+
+      selfCheck: []
+    }
+  },
+
+  {
+    id: 'lab-03',
+    tier: 'labs',
+    title: 'POA Delegation',
+    slug: 'poa-delegation',
+    estimatedMinutes: 60,
+    prerequisites: ['lab-02', 't2-05'],
+    tabs: {
+      concept: `<h2 id="lab03-goal">Goal</h2>
+<p>Add POA (Persetujuan / delegation) support: when the primary approver sends a "delegate" signal, the workflow reassigns the pending approval to a delegate ID and re-suspends at the same gate, waiting for the delegate's decision instead.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Add POA delegation: when the primary approver sends a "delegate" signal, the workflow reassigns the pending approval to a delegate ID and re-suspends at the same gate.',
+        steps: [
+          '<strong>Add a delegation loop variable.</strong> Inside the ForEach body, introduce a <code>gateComplete (bool = false)</code> variable and a <code>While(!gateComplete)</code> loop that wraps the Event activity and decision logic.',
+          '<strong>Listen for two event types.</strong> Inside the While loop, use an <code>Event("ApprovalDecision")</code> and detect in the InlineActivity whether the payload carries <code>Decision = "Delegate"</code>. If so, set <code>currentApprover</code> to the delegate ID from the payload and continue the While loop (do not set gateComplete). If "Approved" or "Rejected", set <code>gateComplete = true</code>.',
+          '<strong>Add a DelegateId field to ApproverDecision.</strong> Update the record: <code>record ApproverDecision(string Decision, string Comment, string? DelegateId = null)</code>.',
+          '<strong>Add a delegation signal endpoint.</strong> <code>POST /approvals/{correlationId}/delegate</code> that sends <code>ApproverDecision("Delegate", "Delegating to {delegateId}", DelegateId: delegateId)</code>.',
+          '<strong>Log the delegation.</strong> Add a WriteLine after detecting Delegate: "Gate reassigned to {newApprover}".',
+          '<strong>Test delegation.</strong> Dispatch, send a Delegate signal with <code>DelegateId = "deputy@tam.co.id"</code>, verify "Gate reassigned to deputy@tam.co.id", then send an Approved signal from the delegate and verify the gate completes.',
+          '<strong>Test delegation + rejection.</strong> Dispatch, delegate, then reject from delegate. Verify the loop exits and the ForEach rejection path fires.'
+        ],
+        verification: [
+          'After a Delegate signal, console shows the new approver name and the workflow remains Suspended.',
+          'The delegate can approve or reject — the outcome is the same as if the original approver had acted.',
+          'Multiple delegations in sequence (A delegates to B, B delegates to C) work correctly.'
+        ],
+        pitfalls: [
+          '<strong>While loop inside ForEach.</strong> Elsa supports nested loops, but the gate variable must be reset at the start of each ForEach iteration (before the While). Otherwise, <code>gateComplete = true</code> from the previous gate persists into the next, causing the While to skip immediately.',
+          '<strong>Signal payload parsing on delegation.</strong> Ensure <code>DelegateId</code> is included in the signal payload JSON. If omitted, the default value is null and the <code>currentApprover</code> is set to null — causing a "Waiting for (null)" log and a broken subsequent signal lookup.',
+          '<strong>Infinite delegation chain.</strong> There is no guard preventing infinite delegation cycles (A→B→A→B…). For production, add a max-delegation counter variable and fault gracefully if exceeded.'
+        ]
+      },
+
+      selfCheck: []
+    }
+  },
+
+  {
+    id: 'lab-04',
+    tier: 'labs',
+    title: 'Dynamic Approver via MDM Lookup',
+    slug: 'dynamic-approver-via-mdm-lookup',
+    estimatedMinutes: 60,
+    prerequisites: ['lab-02', 't2-02', 't2-03'],
+    tabs: {
+      concept: `<h2 id="lab04-goal">Goal</h2>
+<p>Replace the hardcoded approver list in the dispatch payload with a runtime lookup from a mock MDM endpoint. The workflow uses <code>SendHttpRequest</code> to fetch the approver chain for the document's cost center immediately after starting, before the first gate.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Replace the hardcoded approver list with a runtime lookup from a mock MDM endpoint, using SendHttpRequest to fetch the approver chain for the document\'s cost center.',
+        steps: [
+          '<strong>Create a mock MDM endpoint.</strong> Add a minimal API endpoint <code>GET /mock/mdm/approvers/{costCenter}</code> that returns <code>{"approvers":["sup@tam.co.id","mgr@tam.co.id","dir@tam.co.id"]}</code> as JSON.',
+          '<strong>Add CostCenter input.</strong> Add <code>[WorkflowInput] public Input&lt;string&gt; CostCenter { get; set; }</code> to <code>ApprovalWorkflow</code>. Remove the <code>Approvers</code> input.',
+          '<strong>Add a dynamic approver variable.</strong> Declare <code>approverChain (string[])</code> as a workflow variable (no default).',
+          '<strong>Add SendHttpRequest at the start of the workflow.</strong> Before the ForEach, add a <code>SendHttpRequest</code> activity that calls <code>http://localhost:5000/mock/mdm/approvers/{CostCenter}</code> and stores the parsed response in <code>approverChain</code>.',
+          '<strong>Add TryCatch around the MDM call.</strong> Wrap the <code>SendHttpRequest</code> in a <code>TryCatch</code>. On catch, set <code>approverChain</code> to a fallback hardcoded array and log a warning.',
+          '<strong>Use approverChain in ForEach.</strong> Update the ForEach <code>Items</code> expression to use <code>approverChain</code> instead of the removed Approvers input.',
+          '<strong>Update the dispatch call.</strong> Pass <code>CostCenter = "CC-1001"</code> instead of an approver list. Remove the Approvers key from the input dictionary.'
+        ],
+        verification: [
+          'Dispatch with <code>CostCenter = "CC-1001"</code> causes the MDM endpoint to be called and logs the resolved approver list.',
+          'The approval loop works identically to Lab 02 — three gates, same signal flow.',
+          'When the mock MDM endpoint returns 500, the fallback approver list is used and the workflow continues (not faulted).'
+        ],
+        pitfalls: [
+          '<strong>ParsedContent type for string array.</strong> <code>SendHttpRequest.ParsedContent</code> deserializes the JSON response. The MDM mock returns <code>{"approvers":[...]}</code> — you need a DTO record like <code>record MdmResponse(string[] Approvers)</code> and bind <code>approverChain</code> to <code>response.Approvers</code> in an InlineActivity after the request.',
+          '<strong>Localhost URL inside Docker.</strong> If running in Docker Compose, replace <code>localhost:5000</code> with the service name (e.g., <code>http://awfs-elsa-host:8080</code>). Use an environment variable for the MDM base URL to avoid hardcoding.',
+          '<strong>SendHttpRequest does not throw on 500.</strong> Manually check the status code output and throw if not 200, so the TryCatch retry logic triggers on MDM failures (see T2-03 pitfalls).'
+        ]
+      },
+
+      selfCheck: []
+    }
+  }
+
+,
+  {
+    id: 'lab-05',
+    tier: 'labs',
+    title: 'SLA Escalation',
+    slug: 'sla-escalation',
+    estimatedMinutes: 75,
+    prerequisites: ['lab-02', 't1-05'],
+    tabs: {
+      concept: `<h2 id="lab05-goal">Goal</h2>
+<p>Add a parallel <code>Delay</code> branch that fires after 24 hours (shortened to 30 seconds in the lab), cancels the waiting approval gate, and triggers a WhatsApp notification activity to alert the approver that the SLA has been breached.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Add a parallel Delay branch that fires after 24 hours (30 seconds in lab), cancels the waiting approval gate, and calls the WhatsApp notification activity.',
+        steps: [
+          '<strong>Create a stub SendWhatsApp activity.</strong> Create <code>SendWhatsAppActivity.cs</code> with <code>[Activity]</code> attribute, an <code>Input&lt;string&gt; Recipient</code> and <code>Input&lt;string&gt; Message</code>, and <code>ExecuteAsync</code> that logs "WhatsApp sent to {Recipient}: {Message}".',
+          '<strong>Register the activity.</strong> Add <code>elsa.AddActivity&lt;SendWhatsAppActivity&gt;()</code> in <code>Program.cs</code>.',
+          '<strong>Wrap each approval gate in a Fork.</strong> Replace the <code>If(!rejected)</code> gate body with a <code>Fork</code> containing two branches: Branch A (the existing Event + decision logic) and Branch B (a <code>Delay</code> activity set to 30 seconds followed by a <code>SendWhatsApp</code> and an InlineActivity that sets <code>escalated = true</code>).',
+          '<strong>Configure the Fork join strategy.</strong> Set <code>JoinMode = First</code> (or equivalent) so the Fork completes as soon as either branch finishes — whichever arrives first wins.',
+          '<strong>After the Fork: handle escalation.</strong> Check <code>escalated</code>: if true, set <code>rejected = true</code> and log "Gate escalated — approval bypassed".',
+          '<strong>Add escalated variable.</strong> Declare <code>escalated (bool = false)</code>. Reset it to false at the start of each ForEach iteration so subsequent gates start fresh.',
+          '<strong>Test normal path.</strong> Approve within 30 seconds — Delay branch should not fire. Verify WhatsApp activity does not log.',
+          '<strong>Test escalation path.</strong> Dispatch and wait 35 seconds without sending a signal. Verify "WhatsApp sent" and "Gate escalated" appear, and the instance finishes (not hangs).'
+        ],
+        verification: [
+          'Approving within the SLA window (30 seconds) completes the gate normally; no escalation message.',
+          'Waiting past 30 seconds without a signal triggers the WhatsApp stub and escalates the gate.',
+          'After escalation, the approval loop continues to the next gate (or exits if the escalation policy is to reject).',
+          'The Delay duration is configurable via a workflow variable (not hardcoded) so it can be set to 24 hours in production.'
+        ],
+        pitfalls: [
+          '<strong>Fork join semantics in Elsa 3.x.</strong> Elsa\'s <code>Fork</code> activity supports different join modes. Verify <code>JoinMode.First</code> (or its equivalent in the version you use) actually cancels the losing branch when one branch completes. In some versions the losing branch is left as a dangling bookmark — check for orphaned bookmarks after the gate completes.',
+          '<strong>Delay not cancellable after approval.</strong> If the Delay branch bookmark is not cleaned up when the approval branch wins the race, the Delay will fire later and cause unexpected behaviour. Test by approving at second 5, then waiting 35 seconds and confirming no escalation fires.',
+          '<strong>escalated variable not reset per iteration.</strong> If <code>escalated = true</code> from gate 1 is not reset before gate 2 starts, gate 2 immediately escalates without waiting. Add an InlineActivity at the top of each ForEach iteration to reset <code>escalated = false</code>.',
+          '<strong>Delay activity timer not persisted on restart.</strong> The Delay timer is stored as a bookmark with a future expiry. If the app restarts, the timer is reloaded from the bookmark store and resumes correctly — this is Elsa\'s durability guarantee. Test it by restarting the app mid-Delay.'
+        ]
+      },
+
+      selfCheck: []
+    }
+  },
+
+  {
+    id: 'lab-06',
+    tier: 'labs',
+    title: 'Full Mini-AWFS Demo',
+    slug: 'full-mini-awfs-demo',
+    estimatedMinutes: 90,
+    prerequisites: ['lab-01', 'lab-02', 'lab-03', 'lab-04', 'lab-05'],
+    tabs: {
+      concept: `<h2 id="lab06-goal">Goal</h2>
+<p>Wire labs 01–05 into a single demo-ready workflow: submit → MDM lookup → 3-level approval loop with POA support → SLA escalation → final status webhook. Run the complete happy-path and rejection-path end-to-end.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Wire labs 01–05 into a single demo-ready workflow: submit → MDM lookup → 3-level approval loop with POA support → SLA escalation → final status webhook. Run the complete happy-path and rejection-path end-to-end.',
+        steps: [
+          '<strong>Merge the features.</strong> Integrate the MDM lookup (Lab 04), the POA delegation While loop (Lab 03), and the SLA Fork (Lab 05) into the single <code>ApprovalWorkflow</code> from Lab 02. Resolve any variable name conflicts.',
+          '<strong>Add a final status webhook.</strong> After the approval loop\'s outcome If-branch, add a <code>SendHttpRequest</code> that POSTs to <code>http://localhost:5000/mock/callbacks/approval-result</code> with body <code>{"documentId":"...","decision":"Approved/Rejected","decisions":[...]}</code>.',
+          '<strong>Add a mock callback endpoint.</strong> Add <code>POST /mock/callbacks/approval-result</code> that logs the received payload.',
+          '<strong>Verify the complete input shape.</strong> Dispatch now requires only <code>DocumentId</code>, <code>RequesterId</code>, <code>Amount</code>, <code>CostCenter</code>. The approver chain is resolved at runtime.',
+          '<strong>Run happy path.</strong> Dispatch with valid inputs. Approve at all three gates within the SLA window. Verify the callback receives <code>"decision":"Approved"</code> and all three decisions in the list.',
+          '<strong>Run rejection path.</strong> Dispatch, approve supervisor, reject manager. Verify the callback receives <code>"decision":"Rejected"</code> after 2 signals.',
+          '<strong>Run delegation path.</strong> Dispatch, send Delegate from supervisor to deputy, approve from deputy, approve manager, approve director. Verify all four signals land correctly and the callback fires with Approved.',
+          '<strong>Run escalation path.</strong> Dispatch, approve supervisor, wait 35 seconds at manager gate. Verify escalation fires, the loop exits, and the callback receives the appropriate outcome.',
+          '<strong>Prepare the demo script.</strong> Write a concise curl sequence for each of the four paths above. Practise running it end-to-end without errors.',
+          '<strong>Test crash recovery.</strong> Dispatch a workflow, restart the app mid-Delay, confirm the Delay timer resumes and the workflow completes normally.'
+        ],
+        verification: [
+          'All four paths (happy, rejection, delegation, escalation) complete without the instance reaching Faulted state.',
+          'The final status webhook receives the correct payload for each path.',
+          'App restart mid-workflow does not lose the instance or its bookmark state.',
+          'The management API shows all instances as Finished (not stuck) after each test.',
+          'The demo script runs end-to-end in under 5 minutes from a cold start.'
+        ],
+        pitfalls: [
+          '<strong>Variable name collisions.</strong> Merging three labs into one workflow introduces multiple variables with similar names. Prefix variables with the feature name (e.g., <code>poaGateComplete</code>, <code>slaEscalated</code>) to avoid accidental reuse.',
+          '<strong>Callback webhook unreachable.</strong> If the final SendHttpRequest cannot reach the callback endpoint (e.g., firewall, wrong port), wrap it in a TryCatch so a callback failure does not fault the entire workflow after all approvals are complete.',
+          '<strong>Demo timing for the SLA path.</strong> A 30-second delay during a live demo is long. Reduce to 10 seconds for the demo and explain it represents 24 hours in production.'
+        ]
+      },
+
+      selfCheck: []
+    }
+  },
+
+  {
+    id: 'lab-07',
+    tier: 'labs',
+    title: 'CTO Q&A Drill',
+    slug: 'cto-qa-drill',
+    estimatedMinutes: 45,
+    prerequisites: ['lab-06'],
+    tabs: {
+      concept: `<h2 id="lab07-goal">Goal</h2>
+<p>Simulate a CTO deep-dive Q&amp;A session. For each of the 10 questions below, write a concise spoken answer (2–3 sentences), then verify against the self-check answers in the T1–T3 topics. The goal is fluency under pressure — you should be able to answer any of these questions in under 30 seconds without looking at notes.</p>`,
+
+      code: [],
+
+      handsOn: {
+        goal: 'Simulate a CTO deep-dive Q&A session. For each of the 10 questions, write a concise spoken answer (2–3 sentences) and verify against the topic self-check answers.',
+        steps: [
+          '<strong>Q1: "Why Elsa instead of Azure Logic Apps or Temporal?"</strong> — Cover: open-source, .NET-native, no vendor lock-in, runs on-prem for TAM\'s compliance requirements.',
+          '<strong>Q2: "What happens if the Elsa host crashes while an approval is pending?"</strong> — Cover: bookmark durability in PostgreSQL, instance state persisted after every activity, resume on restart.',
+          '<strong>Q3: "How do you ensure an approval signal goes to the right document and not someone else\'s?"</strong> — Cover: correlationId routing, one correlationId per document, signal matched by (eventName, correlationId).',
+          '<strong>Q4: "Can we version the approval workflow without killing in-flight approvals?"</strong> — Cover: Elsa definition versioning, in-flight instances pin to their definition version, new dispatches use latest published.',
+          '<strong>Q5: "How does POA delegation work technically?"</strong> — Cover: While loop inside ForEach, Delegate signal updates currentApprover variable, workflow re-suspends at same gate for the delegate.',
+          '<strong>Q6: "What happens when MDM is down?"</strong> — Cover: TryCatch + retry loop, fallback approver list, MDM failure does not fault the approval workflow.',
+          '<strong>Q7: "How does the SLA timer survive a server restart?"</strong> — Cover: Delay activity stores a future-expiry bookmark in PostgreSQL, timer is reloaded on restart from the bookmark store.',
+          '<strong>Q8: "How many approvals per day can this handle on a single node?"</strong> — Cover: 500–2000/day at TAM is well within PostgreSQL capacity, scale to multiple nodes with Redis + MassTransit for higher loads.',
+          '<strong>Q9: "Can non-developers change the approval logic?"</strong> — Cover: Elsa Studio visual designer, JSON workflow definitions exportable and importable, Studio connects to the production Elsa host.',
+          '<strong>Q10: "How do you monitor stuck or faulted approvals in production?"</strong> — Cover: management API list by status=Faulted, WorkflowFaulted notification handler alerts ops team, OTEL spans for latency tracking.'
+        ],
+        verification: [
+          'You can answer Q1–Q5 without referring to notes in under 30 seconds each.',
+          'Your Q3 answer correctly uses the term "correlationId" and explains the matching logic.',
+          'Your Q8 answer gives a concrete number (500–2000/day) and explains the scaling path.'
+        ],
+        pitfalls: [
+          '<strong>Confusing correlationId with workflowInstanceId.</strong> The CTO may ask "how do you find the right instance?" — the answer is correlationId (business key), not the internal GUID. Practise using the right term.',
+          '<strong>Overselling Elsa Studio.</strong> Studio is a visual designer, not a no-code platform. Custom activities still require C# development. Be precise: "business analysts can visualise and adjust routing logic; new activity types require an engineer."'
+        ]
+      },
+
+      selfCheck: [
+        {
+          question: 'If a CTO asks "what is your biggest technical risk with this architecture?", what is the honest answer?',
+          answer: '<p>The biggest technical risk is <strong>database contention at scale</strong>: every activity execution involves at least one read and one write of the workflow instance state blob. At TAM\'s current volume (500–2000 approvals/day) this is negligible. But if approval volume spikes 10x (e.g., year-end batch processing), the PostgreSQL write throughput and bookmark table size become bottlenecks. The mitigation plan is: Redis distributed locking, MassTransit for async dispatch, compound indexes on Bookmarks, and a regular instance purge job. All of these are documented and implementable within Sprint 4.</p>'
+        },
+        {
+          question: 'What is the one-sentence pitch for why AWFS uses Elsa instead of a hand-rolled state machine?',
+          answer: '<p>Elsa provides durable workflow persistence, visual observability via Studio, and a rich activity library out of the box — building equivalent capabilities from scratch (bookmark storage, distributed locking, definition versioning, a visual designer) would take months and introduce custom maintenance burden that grows with every new approval rule TAM adds.</p>'
+        },
+        {
+          question: 'How do you answer "is this production-proven?" for Elsa 3.x?',
+          answer: '<p>Elsa 3.x is used in production by multiple ISVs and enterprise teams globally; the GitHub repository has over 6,000 stars and active commercial support from the core maintainers. For TAM specifically, the AWFS POC demonstrates all critical paths end-to-end with PostgreSQL persistence, distributed locking, and crash recovery — the production readiness evidence is the running demo, not just vendor claims.</p>'
+        }
+      ]
+    }
+  }
+
 ]; // end topics array
 
 window.topics = topics;
