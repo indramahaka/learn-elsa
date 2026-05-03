@@ -1,451 +1,767 @@
 ---
 version: alpha
-name: Cohere
-description: Cohere's 2026 web system is a controlled enterprise AI interface built from stark white editorial space, deep green-black product bands, soft mineral surfaces, rounded media cards, and a distinctive type split between monospaced-feeling display headlines and precise Unica77 UI text.
+name: MongoDB
+description: MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with bright MongoDB green ({colors.brand-green}) CTAs paired with stark white documentation surfaces. The signature green pill button is unmistakable across product, pricing, learning, and AI use-case surfaces. The system uses Euclid Circular A as its display face, anchors a 3-tier pricing comparison (Free / Flex / Dedicated), and presents extensive course catalogs in card grids with colored category tags. Coverage spans homepage, Atlas product page, Community Edition, MongoDB University, AI use cases, and pricing.
 
 colors:
-  primary: "#17171c"
-  cohere-black: "#000000"
-  ink: "#212121"
-  deep-green: "#003c33"
-  dark-navy: "#071829"
+  primary: "#00ed64"
+  primary-deep: "#00b545"
+  primary-pressed: "#008c34"
+  on-primary: "#001e2b"
+  brand-green: "#00ed64"
+  brand-green-dark: "#00684a"
+  brand-green-mid: "#00a35c"
+  brand-green-soft: "#c3f0d2"
+  brand-teal-deep: "#001e2b"
+  brand-teal: "#003d4f"
+  brand-teal-mid: "#00684a"
+  accent-purple: "#7b3ff2"
+  accent-orange: "#fa6e39"
+  accent-pink: "#f06bb8"
+  accent-blue: "#3d4f9f"
+  semantic-warning-bg: "#fff8e0"
+  semantic-warning-text: "#946f3f"
   canvas: "#ffffff"
-  soft-stone: "#eeece7"
-  pale-green: "#edfce9"
-  pale-blue: "#f1f5ff"
-  hairline: "#d9d9dd"
-  border-light: "#e5e7eb"
-  card-border: "#f2f2f2"
-  muted: "#93939f"
-  slate: "#75758a"
-  body-muted: "#616161"
-  action-blue: "#1863dc"
-  focus-blue: "#4c6ee6"
-  coral: "#ff7759"
-  coral-soft: "#ffad9b"
-  form-focus: "#9b60aa"
-  on-primary: "#ffffff"
+  canvas-dark: "#001e2b"
+  surface: "#f9fbfa"
+  surface-soft: "#f4f7f6"
+  surface-feature: "#e3fcef"
+  hairline: "#e1e5e8"
+  hairline-soft: "#eceff1"
+  hairline-strong: "#c1ccd6"
+  hairline-dark: "#1c2d38"
+  ink: "#001e2b"
+  charcoal: "#1c2d38"
+  slate: "#3d4f5b"
+  steel: "#5c6c7a"
+  stone: "#7c8c9a"
+  muted: "#a8b3bc"
   on-dark: "#ffffff"
-  error: "#b30000"
+  on-dark-muted: "#a8b3bc"
 
 typography:
   hero-display:
-    fontFamily: CohereText
-    fontSize: 96px
-    fontWeight: 400
-    lineHeight: 1
-    letterSpacing: -1.92px
-  product-display:
-    fontFamily: CohereText
+    fontFamily: Euclid Circular A
     fontSize: 72px
-    fontWeight: 400
-    lineHeight: 1
-    letterSpacing: -1.44px
-  section-display:
-    fontFamily: Unica77 Cohere Web
-    fontSize: 60px
-    fontWeight: 400
-    lineHeight: 1
-    letterSpacing: -1.2px
-  section-heading:
-    fontFamily: Unica77 Cohere Web
+    fontWeight: 500
+    lineHeight: 1.10
+    letterSpacing: -1.5px
+  display-lg:
+    fontFamily: Euclid Circular A
+    fontSize: 56px
+    fontWeight: 500
+    lineHeight: 1.15
+    letterSpacing: -1px
+  heading-1:
+    fontFamily: Euclid Circular A
     fontSize: 48px
-    fontWeight: 400
-    lineHeight: 1.2
-    letterSpacing: -0.48px
-  card-heading:
-    fontFamily: Unica77 Cohere Web
-    fontSize: 32px
-    fontWeight: 400
-    lineHeight: 1.2
-    letterSpacing: -0.32px
-  feature-heading:
-    fontFamily: Unica77 Cohere Web
-    fontSize: 24px
-    fontWeight: 400
-    lineHeight: 1.3
-    letterSpacing: 0
-  body-large:
-    fontFamily: Unica77 Cohere Web
+    fontWeight: 500
+    lineHeight: 1.20
+    letterSpacing: -0.5px
+  heading-2:
+    fontFamily: Euclid Circular A
+    fontSize: 36px
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: -0.5px
+  heading-3:
+    fontFamily: Euclid Circular A
+    fontSize: 28px
+    fontWeight: 500
+    lineHeight: 1.30
+  heading-4:
+    fontFamily: Euclid Circular A
+    fontSize: 22px
+    fontWeight: 500
+    lineHeight: 1.35
+  heading-5:
+    fontFamily: Euclid Circular A
+    fontSize: 18px
+    fontWeight: 600
+    lineHeight: 1.40
+  subtitle:
+    fontFamily: Euclid Circular A
     fontSize: 18px
     fontWeight: 400
-    lineHeight: 1.4
-    letterSpacing: 0
-  body:
-    fontFamily: Unica77 Cohere Web
+    lineHeight: 1.50
+  body-md:
+    fontFamily: Euclid Circular A
     fontSize: 16px
     fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0
-  button:
-    fontFamily: Unica77 Cohere Web
+    lineHeight: 1.55
+  body-md-medium:
+    fontFamily: Euclid Circular A
+    fontSize: 16px
+    fontWeight: 500
+    lineHeight: 1.55
+  body-sm:
+    fontFamily: Euclid Circular A
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.50
+  body-sm-medium:
+    fontFamily: Euclid Circular A
     fontSize: 14px
     fontWeight: 500
-    lineHeight: 1.71
-    letterSpacing: 0
+    lineHeight: 1.50
   caption:
-    fontFamily: Unica77 Cohere Web
-    fontSize: 14px
+    fontFamily: Euclid Circular A
+    fontSize: 13px
     fontWeight: 400
-    lineHeight: 1.4
-    letterSpacing: 0
-  mono-label:
-    fontFamily: CohereMono
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.4
-    letterSpacing: 0.28px
+    lineHeight: 1.40
+  caption-bold:
+    fontFamily: Euclid Circular A
+    fontSize: 13px
+    fontWeight: 600
+    lineHeight: 1.40
   micro:
-    fontFamily: Unica77 Cohere Web
+    fontFamily: Euclid Circular A
     fontSize: 12px
+    fontWeight: 500
+    lineHeight: 1.40
+  micro-uppercase:
+    fontFamily: Euclid Circular A
+    fontSize: 11px
+    fontWeight: 600
+    lineHeight: 1.40
+    letterSpacing: 1px
+  button-md:
+    fontFamily: Euclid Circular A
+    fontSize: 14px
+    fontWeight: 600
+    lineHeight: 1.30
+  code-md:
+    fontFamily: Source Code Pro
+    fontSize: 14px
     fontWeight: 400
-    lineHeight: 1.4
-    letterSpacing: 0
+    lineHeight: 1.55
 
 rounded:
   xs: 4px
-  sm: 8px
-  md: 16px
-  lg: 22px
-  xl: 30px
-  pill: 32px
+  sm: 6px
+  md: 8px
+  lg: 12px
+  xl: 16px
+  xxl: 24px
   full: 9999px
 
 spacing:
-  xxs: 2px
-  xs: 6px
-  sm: 8px
-  md: 12px
-  lg: 16px
+  xxs: 4px
+  xs: 8px
+  sm: 12px
+  md: 16px
+  lg: 20px
   xl: 24px
   xxl: 32px
-  section: 80px
+  xxxl: 40px
+  section-sm: 48px
+  section: 64px
+  section-lg: 96px
+  hero: 120px
 
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
+    backgroundColor: "{colors.brand-green}"
     textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-    padding: 12px 24px
+    typography: "{typography.button-md}"
+    rounded: "{rounded.full}"
+    padding: "10px 22px"
+  button-primary-pressed:
+    backgroundColor: "{colors.primary-pressed}"
+    textColor: "{colors.on-primary}"
+  button-primary-disabled:
+    backgroundColor: "{colors.hairline}"
+    textColor: "{colors.muted}"
   button-secondary:
-    backgroundColor: transparent
+    backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xs}"
-    padding: 8px 0
-  button-pill-outline:
-    backgroundColor: transparent
-    textColor: "{colors.primary}"
-    typography: "{typography.button}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.full}"
+    padding: "10px 22px"
+    border: "1px solid {colors.hairline-strong}"
+  button-on-dark:
+    backgroundColor: "{colors.brand-green}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.full}"
+    padding: "10px 22px"
+  button-secondary-on-dark:
+    backgroundColor: "transparent"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.full}"
+    padding: "10px 22px"
+    border: "1px solid {colors.hairline-dark}"
+  button-ghost:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.button-md}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+  button-link:
+    backgroundColor: "transparent"
+    textColor: "{colors.brand-green-dark}"
+    typography: "{typography.body-sm-medium}"
+    padding: "0"
+  card-base:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xl}"
+    border: "1px solid {colors.hairline}"
+  card-feature:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+    border: "1px solid {colors.hairline}"
+  card-product-deploy:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+    border: "1px solid {colors.hairline}"
+  card-feature-dark:
+    backgroundColor: "{colors.brand-teal-deep}"
+    textColor: "{colors.on-dark}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+  card-course:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xl}"
+    border: "1px solid {colors.hairline}"
+  card-cert:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xl}"
+    border: "1px solid {colors.hairline}"
+  pricing-card:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+    border: "1px solid {colors.hairline}"
+  pricing-card-featured:
+    backgroundColor: "{colors.surface-feature}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+    border: "2px solid {colors.brand-green}"
+  text-input:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.sm} {spacing.md}"
+    border: "1px solid {colors.hairline-strong}"
+    height: 44px
+  text-input-focused:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    border: "2px solid {colors.brand-green-dark}"
+  search-pill:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.steel}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.sm} {spacing.md}"
+    height: 44px
+    border: "1px solid {colors.hairline-strong}"
+  search-pill-large:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.steel}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
+    height: 56px
+    border: "1px solid {colors.hairline-strong}"
+  pill-tab:
+    backgroundColor: "transparent"
+    textColor: "{colors.steel}"
+    typography: "{typography.body-sm-medium}"
+    rounded: "{rounded.full}"
+    padding: "{spacing.xs} {spacing.md}"
+    border: "1px solid {colors.hairline}"
+  pill-tab-active:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.on-dark}"
+    rounded: "{rounded.full}"
+    border: "1px solid {colors.ink}"
+  segmented-tab:
+    backgroundColor: "transparent"
+    textColor: "{colors.steel}"
+    typography: "{typography.body-sm-medium}"
+    padding: "{spacing.sm} {spacing.md}"
+    border: "0 0 2px transparent solid"
+  segmented-tab-active:
+    backgroundColor: "transparent"
+    textColor: "{colors.brand-green-dark}"
+    typography: "{typography.body-sm-medium}"
+    border: "0 0 2px {colors.brand-green-dark} solid"
+  badge-green:
+    backgroundColor: "{colors.brand-green}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.caption-bold}"
+    rounded: "{rounded.sm}"
+    padding: "2px 8px"
+  badge-green-soft:
+    backgroundColor: "{colors.brand-green-soft}"
+    textColor: "{colors.brand-green-dark}"
+    typography: "{typography.caption-bold}"
+    rounded: "{rounded.full}"
+    padding: "4px 10px"
+  badge-purple:
+    backgroundColor: "{colors.accent-purple}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.caption-bold}"
+    rounded: "{rounded.sm}"
+    padding: "2px 8px"
+  badge-orange:
+    backgroundColor: "{colors.accent-orange}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.caption-bold}"
+    rounded: "{rounded.sm}"
+    padding: "2px 8px"
+  badge-popular:
+    backgroundColor: "{colors.brand-teal-deep}"
+    textColor: "{colors.brand-green}"
+    typography: "{typography.caption-bold}"
+    rounded: "{rounded.full}"
+    padding: "4px 10px"
+  promo-banner:
+    backgroundColor: "{colors.brand-teal-deep}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.body-sm-medium}"
+    padding: "{spacing.sm} {spacing.md}"
+  hero-band-dark:
+    backgroundColor: "{colors.brand-teal-deep}"
+    textColor: "{colors.on-dark}"
+    rounded: "0"
+    padding: "{spacing.hero}"
+  hero-platform-card:
+    backgroundColor: "{colors.brand-teal-mid}"
+    textColor: "{colors.on-dark}"
     rounded: "{rounded.xl}"
-    padding: 6px 12px
-  announcement-bar:
-    backgroundColor: "{colors.cohere-black}"
-    textColor: "{colors.on-dark}"
-    typography: "{typography.micro}"
-    height: 36px
-  hero-photo-card:
-    backgroundColor: "{colors.canvas}"
-    rounded: "{rounded.lg}"
-  agent-console-card:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-dark}"
-    rounded: "{rounded.sm}"
-    padding: 24px
-  trust-logo-strip:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.caption}"
-  capability-card:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xs}"
-    padding: 24px
-  dark-feature-band:
-    backgroundColor: "{colors.deep-green}"
+    padding: "{spacing.xxl}"
+  cta-banner-dark:
+    backgroundColor: "{colors.brand-teal-deep}"
     textColor: "{colors.on-dark}"
     rounded: "{rounded.lg}"
-    padding: 80px
-  product-card:
-    backgroundColor: "{colors.soft-stone}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sm}"
-    padding: 32px
-  blog-filter-chip:
-    backgroundColor: transparent
-    textColor: "{colors.coral}"
-    typography: "{typography.card-heading}"
-    rounded: "{rounded.sm}"
-    padding: 8px 14px
-  research-table:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-large}"
-  contact-form-card:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-    padding: 32px
-  footer-newsletter:
-    backgroundColor: "{colors.primary}"
+    padding: "{spacing.section}"
+  code-block:
+    backgroundColor: "{colors.canvas-dark}"
     textColor: "{colors.on-dark}"
-    typography: "{typography.micro}"
+    typography: "{typography.code-md}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.md}"
+  code-mockup-card:
+    backgroundColor: "{colors.canvas-dark}"
+    textColor: "{colors.on-dark}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.lg}"
+  comparison-table:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.md}"
+    border: "1px solid {colors.hairline}"
+  comparison-row:
+    backgroundColor: "{colors.canvas}"
+    textColor: "{colors.ink}"
+    padding: "{spacing.md} {spacing.lg}"
+    border: "0 0 1px {colors.hairline-soft} solid"
+  service-tile:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xl}"
+    border: "1px solid {colors.hairline}"
+  why-card:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xl}"
+  customer-testimonial-card:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.xxl}"
+    border: "1px solid {colors.hairline}"
+  logo-wall-item:
+    backgroundColor: "transparent"
+    textColor: "{colors.steel}"
+    typography: "{typography.body-md-medium}"
+    padding: "{spacing.lg}"
+  faq-accordion-item:
+    backgroundColor: "{colors.canvas}"
+    rounded: "{rounded.md}"
+    padding: "{spacing.xl}"
+    border: "0 0 1px {colors.hairline} solid"
+  footer-region:
+    backgroundColor: "{colors.brand-teal-deep}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.body-sm}"
+    padding: "{spacing.section} {spacing.xxl}"
+  footer-link:
+    backgroundColor: "transparent"
+    textColor: "{colors.on-dark-muted}"
+    typography: "{typography.body-sm}"
+    padding: "{spacing.xxs} 0"
 ---
 
 ## Overview
 
-Cohere's current web presence feels like a sober enterprise AI command center with editorial restraint. The home page opens on a huge typographic declaration over a white canvas, then uses photography, dark product mockups, trust logos, and generous empty space to make AI infrastructure feel controlled rather than speculative. Product pages invert the tone into deep green-black or dark navy bands, while blog and research pages move toward publishing-system clarity: large filters, thin rules, dense lists, and pale technical backgrounds.
+MongoDB carries a strong dual-mode visual identity — dark deep-teal hero bands with the unmistakable bright MongoDB green ({colors.brand-green}) CTA pill paired with stark white documentation and pricing surfaces. The homepage opens with "One data platform. Unlimited AI potential." headline over a deep navy hero, the green pill sitting at the visual center as the primary CTA. Lower on the page, embedded code mockup cards (terminal-aesthetic) sit on the dark hero band, breaking out into white feature cards below. The pricing page renders a 3-tier comparison (Free / Flex / Dedicated) with a featured tier highlighted in soft mint background and bright green border. The MongoDB University page presents a course catalog grid where each tile carries a colored category tag (orange, purple, green, teal) — these are MongoDB's category-encoding accent colors and are the only place outside the brand green where saturated color appears.
 
-What makes the system distinctive is the mix of austere black-and-white UI with bursts of tactile brand imagery. The site avoids decorative chrome in the normal interface; color arrives through photography, abstract 3D media, coral blog taxonomy chips, blue research links, and dark product environments. Cards are rounded but not cute. Type is large, tight, and almost monospaced in spirit, creating a research-lab cadence across marketing, product, and editorial surfaces.
+The system uses Euclid Circular A as its display face. The face is contemporary geometric — confident but not overly playful — and pairs naturally with both the developer-tool aesthetic of the database product and the educational positioning of the learning surfaces. Cards use `{rounded.lg}` (12px) corners; buttons use `{rounded.full}` pills universally. The brand-teal palette ({colors.brand-teal-deep}) anchors hero bands, footer, code mockups, and the dark CTA banners.
 
 **Key Characteristics:**
-- Monumental display headlines with very tight line height and negative tracking.
-- White editorial canvases interrupted by deep green, dark navy, and image-led CTA bands.
-- Rounded media cards and product cards, usually 8px to 22px.
-- Pill CTAs in near-black or white, with most secondary actions rendered as underlined text links.
-- Trust-logo strips with monochrome partner marks and very wide vertical spacing.
-- Agent-console mockups using dark panels, small status chips, and product integration badges.
-- Blog and research surfaces with prominent taxonomy chips, long rule-separated lists, and search fields.
+- Deep navy/teal hero bands ({colors.brand-teal-deep}) with bright MongoDB green ({colors.brand-green}) CTA pills
+- Stark white pricing/documentation surfaces with colored category tags for course tiles (purple, orange, green, teal)
+- Euclid Circular A across every UI surface
+- Pill-shaped buttons ({rounded.full}) and 12px-rounded cards
+- 3-tier pricing comparison (Free / Flex / Dedicated) with featured-mint highlight tier
+- Code mockup cards with terminal-aesthetic dark canvas
 
 ## Colors
 
+> Source pages: mongodb.com/ (homepage), /products/platform/atlas-database (Atlas product), /products/self-managed/community-edition, learn.mongodb.com/ (MongoDB University), /solutions/use-cases/artificial-intelligence (AI), /pricing (3-tier comparison). Token coverage was identical across all six pages.
+
 ### Brand & Accent
+- **MongoDB Green** ({colors.brand-green}): The brand's most recognizable signal — bright pill-CTA color
+- **Green Dark** ({colors.brand-green-dark}): Inline link color, secondary green
+- **Green Mid** ({colors.brand-green-mid}): Mid-spectrum green for atmospheric tints
+- **Green Soft** ({colors.brand-green-soft}): Pale-mint background tint for success badges and featured pricing tier
+- **Brand Teal Deep** ({colors.brand-teal-deep}): Deep navy-teal for hero bands, footer
+- **Brand Teal** ({colors.brand-teal}): Mid-spectrum teal
+- **Brand Teal Mid** ({colors.brand-teal-mid}): Lighter teal for hero platform cards
 
-- **Cohere Black** (`#000000`): Announcement bar, highest-contrast text, and the global brand anchor.
-- **Near-Black Primary** (`#17171c`): Primary CTA buttons, dark footer, and deep UI cards.
-- **Deep Enterprise Green** (`#003c33`): Product hero bands for North and Command-style dark sections.
-- **Dark Navy** (`#071829`): Financial-services and security-oriented solution bands.
-- **Action Blue** (`#1863dc`): Editorial links, pagination, and secondary action emphasis.
-- **Coral** (`#ff7759`): Blog category chips, taxonomy outlines, and warm product markers.
-- **Soft Coral** (`#ffad9b`): Pale chip borders and segmented article-label details.
+### Category Accent (Course Tags)
+- **Accent Purple** ({colors.accent-purple}): Course tag for "Database & Security"
+- **Accent Orange** ({colors.accent-orange}): Course tag for "Search"
+- **Accent Pink** ({colors.accent-pink}): Course tag variant
+- **Accent Blue** ({colors.accent-blue}): Course tag variant for atlas/cloud topics
 
-### Surface & Background
+### Surface
+- **Canvas White** ({colors.canvas}): Page background and primary card surface
+- **Canvas Dark** ({colors.canvas-dark}): Code-block backgrounds, dark mockup canvas
+- **Surface** ({colors.surface}): Subtle section backgrounds, search-pill rest
+- **Surface Soft** ({colors.surface-soft}): Quieter section divisions
+- **Surface Feature** ({colors.surface-feature}): Pale mint background for featured pricing tier
+- **Hairline** ({colors.hairline}): 1px borders and primary dividers
+- **Hairline Soft** ({colors.hairline-soft}): Quieter dividers
+- **Hairline Strong** ({colors.hairline-strong}): Stronger 1px border for inputs
+- **Hairline Dark** ({colors.hairline-dark}): Border on dark surfaces
 
-- **Canvas White** (`#ffffff`): Dominant page background and form/card surface.
-- **Soft Stone** (`#eeece7`): Product cards, testimonial placeholders, and warm neutral surface blocks.
-- **Pale Green Wash** (`#edfce9`): North page section backdrop behind stacked dark capability panels.
-- **Pale Blue Wash** (`#f1f5ff`): Blog CTA surface behind abstract 3D imagery.
-- **Card Border** (`#f2f2f2`): Softest card containment line.
-
-### Text & Rules
-
-- **Ink** (`#212121`): Default body text and most link text on light backgrounds.
-- **Muted Slate** (`#93939f`): Footer links, dates, metadata, and de-emphasized labels.
-- **Slate** (`#75758a`): Research separators and tertiary text.
-- **Hairline** (`#d9d9dd`): Standard list rules and section dividers.
-- **Border Light** (`#e5e7eb`): Secondary divider and utility rule.
+### Text
+- **Ink** ({colors.ink}): Primary headlines and body text (deep navy-teal)
+- **Charcoal** ({colors.charcoal}): Body emphasis
+- **Slate** ({colors.slate}): Secondary text
+- **Steel** ({colors.steel}): Tertiary text, captions
+- **Stone** ({colors.stone}): Muted labels
+- **Muted** ({colors.muted}): Disabled, placeholders
+- **On Dark** ({colors.on-dark}): White text on dark surfaces
+- **On Dark Muted** ({colors.on-dark-muted}): Reduced-opacity white
 
 ### Semantic
-
-- **Focus Blue** (`#4c6ee6`): Keyboard focus and ring color.
-- **Form Focus Violet** (`#9b60aa`): Focus border for text inputs.
-- **Error Red** (`#b30000`): Extracted ring/shadow color associated with validation-like states.
-
-### Gradient System
-
-Cohere does not use gradients as a generic UI fill. Gradients and color fields are media-led: abstract 3D hero imagery, deep blue open-science particle fields, red-orange product video posters, and dark green-to-black product environments. Keep UI surfaces flat; reserve gradient richness for large media panels and CTA image bands.
+- **Warning Background** ({colors.semantic-warning-bg}): Pale yellow callout bg
+- **Warning Text** ({colors.semantic-warning-text}): Warning state copy color
 
 ## Typography
 
 ### Font Family
-
-- **Display**: `CohereText`, falling back to `Space Grotesk`, `Inter`, `ui-sans-serif`, and `system-ui`.
-- **Body/UI**: `Unica77 Cohere Web`, falling back to `Inter`, `Arial`, `ui-sans-serif`, and `system-ui`.
-- **Technical labels**: `CohereMono`, falling back to `Arial`, `ui-sans-serif`, and `system-ui`.
-- **Icons**: Cohere uses custom icon fonts and thin-line geometric illustrations.
+**Euclid Circular A** (primary): MongoDB's geometric sans-serif. Fallbacks: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif.
+**Source Code Pro** (code): Monospace for code mockups. Fallbacks: 'SF Mono', Menlo, Consolas, monospace.
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
-|---|---|---:|---:|---:|---:|---|
-| Hero Display | CohereText | 96px | 400 | 1.00 | -1.92px | Home page declaration scale. |
-| Product Display | CohereText | 72px | 400 | 1.00 | -1.44px | Product and research hero headlines. |
-| Section Display | Unica77 | 60px | 400 | 1.00 | -1.2px | Large product-page headings. |
-| Section Heading | Unica77 | 48px | 400 | 1.20 | -0.48px | Split hero and CTA headings. |
-| Card Heading | Unica77 | 32px | 400 | 1.20 | -0.32px | Feature card and list section titles. |
-| Feature Heading | Unica77 | 24px | 400 | 1.30 | 0 | Cards, filters, and article titles. |
-| Body Large | Unica77 | 18px | 400 | 1.40 | 0 | Lead text and larger paragraphs. |
-| Body | Unica77 | 16px | 400 | 1.50 | 0 | Default copy and link text. |
-| Button | Unica77 | 14px | 500 | 1.71 | 0 | Compact CTA labels. |
-| Caption | Unica77 | 14px | 400 | 1.40 | 0 | Metadata and small explanatory text. |
-| Mono Label | CohereMono | 14px | 400 | 1.40 | 0.28px | Uppercase technical labels. |
-| Micro | Unica77 | 12px | 400 | 1.40 | 0 | Footer, nav microcopy, and small links. |
+| Token | Size | Weight | Line Height | Letter Spacing | Use |
+|---|---|---|---|---|---|
+| `{typography.hero-display}` | 72px | 500 | 1.10 | -1.5px | Hero ("One data platform") |
+| `{typography.display-lg}` | 56px | 500 | 1.15 | -1px | Major section openers |
+| `{typography.heading-1}` | 48px | 500 | 1.20 | -0.5px | Page-level headlines |
+| `{typography.heading-2}` | 36px | 500 | 1.25 | -0.5px | Subsection headlines |
+| `{typography.heading-3}` | 28px | 500 | 1.30 | 0 | Card titles |
+| `{typography.heading-4}` | 22px | 500 | 1.35 | 0 | Feature tile titles |
+| `{typography.heading-5}` | 18px | 600 | 1.40 | 0 | Smaller card titles, FAQ questions |
+| `{typography.subtitle}` | 18px | 400 | 1.50 | 0 | Hero subtitle, lead body |
+| `{typography.body-md}` | 16px | 400 | 1.55 | 0 | Primary body text |
+| `{typography.body-sm}` | 14px | 400 | 1.50 | 0 | Secondary body, table cells |
+| `{typography.body-sm-medium}` | 14px | 500 | 1.50 | 0 | Active sidebar, button labels |
+| `{typography.caption-bold}` | 13px | 600 | 1.40 | 0 | Badge labels |
+| `{typography.micro-uppercase}` | 11px | 600 | 1.40 | 1px | Section eyebrows, course category tags |
+| `{typography.button-md}` | 14px | 600 | 1.30 | 0 | Pill button labels |
+| `{typography.code-md}` | 14px | 400 | 1.55 | 0 | Code mockups |
 
 ### Principles
-
-- Use massive type sparingly; Cohere pages often have one oversized headline and then settle into restrained 16px-24px UI copy.
-- Keep display type tight. Hero copy should feel compact and carved, not airy.
-- Avoid heavy bold weights. Size, spacing, and surface contrast do most of the hierarchy work.
-- Use uppercase mono labels for category and system markers, especially on product and research pages.
-- Editorial pages can use coral chips and blue links, but the base typography remains black and measured.
+- Tight hero leading (1.10) on 72px display
+- Negative letter-spacing on display sizes (-1.5px to -0.5px)
+- 600 weight reserved for buttons and small emphasis (FAQ headings, badges)
+- Generous body leading (1.55) for technical documentation readability
 
 ## Layout
 
 ### Spacing System
-
-The system uses an 8px base with many one-off alignment values: `2px`, `6px`, `8px`, `10px`, `12px`, `16px`, `20px`, `22px`, `24px`, `28px`, `32px`, `36px`, `40px`, `56px`, `60px`, `64px`, and `80px`.
-
-Large sections rely on dramatic vertical breathing room. The home page places a trust-logo strip far below the hero media. Product pages often hold dark panels inside fields of empty white space, then transition to dense forms or footers only near the end.
+- **Base unit**: 4px (8px primary increment)
+- **Tokens**: `{spacing.xxs}` (4px) through `{spacing.hero}` (120px)
+- **Section rhythm**: Marketing pages use `{spacing.section-lg}` (96px); pricing tightens to `{spacing.section}` (64px)
 
 ### Grid & Container
-
-- Global nav uses a three-zone layout: logo left, menu centered, sign-in/CTA right.
-- Home hero is centered text above a two-card media composition: a wide product mockup card beside a narrower photography card.
-- Feature sections commonly use 3-column cards on desktop.
-- Product pages alternate centered hero blocks, trust-logo strips, large single-feature bands, and 2- or 3-column card grids.
-- Research pages use full-width lists with date and chip columns instead of decorative cards.
-- Forms use two-column input rows inside a rounded white card on dark or stone section backgrounds.
+- 1280px max-width with 32px gutters
+- Pricing: 3-tier card row, dense feature comparison table below
+- Learn catalog: 3-up course tile grid, 4-up certification grid
+- AI use cases: 2-column hero with atmospheric illustration
 
 ### Whitespace Philosophy
-
-Cohere uses whitespace as a trust signal. Large empty intervals separate the brand claim, customer proof, product proof, and CTA. Dense content appears only where it serves the information architecture: research paper rows, blog card grids, and contact form fields.
+Marketing surfaces give content generous breathing room — `{spacing.hero}` (120px) hero padding for deep teal bands. Pricing/learn surfaces tighten dramatically.
 
 ## Elevation & Depth
 
-Cohere is mostly flat. Depth comes from surface alternation, media contrast, rounded corners, and thin borders rather than drop shadows.
-
 | Level | Treatment | Use |
 |---|---|---|
-| Flat | No shadow, white or dark field | Hero copy, research lists, editorial surfaces |
-| Bordered | 1px `#d9d9dd`, `#e5e7eb`, or dark translucent rules | Research rows, forms, pale cards, footer inputs |
-| Media Lift | Rounded image or video over contrasting section color | Hero photo cards, product videos, CTA imagery |
-| Dark Product Field | Deep green or navy full-width band | Command, North, financial services, security sections |
+| 0 (flat) | No shadow; `{colors.hairline}` border | Default cards, table rows |
+| 1 (subtle) | `rgba(0, 30, 43, 0.04) 0px 1px 2px 0px` | Hover-elevated tiles |
+| 2 (card) | `rgba(0, 30, 43, 0.08) 0px 4px 12px 0px` | Feature cards |
+| 3 (mockup) | `rgba(0, 30, 43, 0.12) 0px 12px 24px -4px` | Code mockup over hero |
+| 4 (modal) | `rgba(0, 30, 43, 0.16) 0px 16px 48px -8px` | Modals, dropdowns |
+
+### Decorative Depth
+- Dark teal hero bands carry atmospheric gradient depth
+- Code mockup cards on hero use canvas-dark surface with terminal aesthetic
+- Pale-mint pricing-feature tier uses brand-tinted shadow
 
 ## Shapes
 
-### Radius Scale
+### Border Radius Scale
 
-| Token | Value | Role |
-|---|---:|---|
-| `xs` | 4px | Small images, search fields, article thumbnails, utility elements |
-| `sm` | 8px | Blog chips, cards, small media, dialogs |
-| `md` | 16px | Medium product cards and grouped blocks |
-| `lg` | 22px | Signature media-card and soft placeholder radius |
-| `xl` | 30px | Research/topic filter pills |
-| `pill` | 32px | Primary CTA buttons |
-| `full` | 9999px | Round status elements and fully pill-shaped controls |
+| Token | Value | Use |
+|---|---|---|
+| `{rounded.xs}` | 4px | Course category tags |
+| `{rounded.sm}` | 6px | Type badges, code chips |
+| `{rounded.md}` | 8px | Inputs, search-pill, code blocks |
+| `{rounded.lg}` | 12px | Cards, pricing tiers, course tiles |
+| `{rounded.xl}` | 16px | Larger feature panels |
+| `{rounded.xxl}` | 24px | Featured product showcases |
+| `{rounded.full}` | 9999px | All buttons, status badges |
 
-### Image Treatment
-
-Images are not decorative backdrops for text except in CTA bands. Most imagery sits as rounded cards with visible corners: product videos, enterprise photography, article thumbnails, and abstract 3D renders. The dominant radii are 8px and 22px.
+### Photography Geometry
+- Hero illustrations sit on full-bleed dark backgrounds
+- Course tile thumbnails use `{rounded.lg}` corners
+- Customer logos wall: wordmarks at consistent 60–80px height
 
 ## Components
 
-### **`button-primary`**
+> Per the no-hover policy, hover states are NOT documented. Default and pressed/active states only.
 
-Near-black or white pill CTA, depending on surface contrast. Uses 14px-16px Unica77, 12px 24px padding, and a 32px pill radius. This is the primary action style for "Request a demo", "Submit", and hero CTAs.
+### Buttons
 
-### **`button-secondary`**
+**`button-primary`** — Bright MongoDB green pill primary CTA, the dominant action.
+- Background `{colors.brand-green}`, text `{colors.on-primary}` (deep navy), typography `{typography.button-md}`, padding `10px 22px`, rounded `{rounded.full}`.
+- Pressed state `button-primary-pressed` deepens to `{colors.primary-pressed}`.
+- Disabled state `button-primary-disabled` uses `{colors.hairline}` background.
 
-Text-only action link, usually underlined or rule-aligned, with no filled background. Used for "Explore products", "Try the Playground", newsletter signup, and secondary hero actions.
+**`button-secondary`** — Outlined pill for secondary actions.
+- Background transparent, text `{colors.ink}`, border `1px solid {colors.hairline-strong}`, typography `{typography.button-md}`, padding `10px 22px`, rounded `{rounded.full}`.
 
-### **`button-pill-outline`**
+**`button-on-dark`** — Bright green pill on dark hero bands.
+- Background `{colors.brand-green}`, text `{colors.on-primary}`, typography `{typography.button-md}`, padding `10px 22px`, rounded `{rounded.full}`.
 
-Outlined pill control with transparent fill, 1px dark border, and 30px radius. Used for research filters, topic tags, and lightweight taxonomy controls.
+**`button-secondary-on-dark`** — Outlined pill on dark backgrounds.
+- Background transparent, text `{colors.on-dark}`, border `1px solid {colors.hairline-dark}`, typography `{typography.button-md}`, padding `10px 22px`, rounded `{rounded.full}`.
 
-### **`announcement-bar`**
+**`button-ghost`** — Quieter rectangular ghost button.
+- Background transparent, text `{colors.ink}`, typography `{typography.button-md}`, padding `8px 12px`, rounded `{rounded.md}`.
 
-Full-width black strip above the nav, 36px tall, centered microcopy with an underlined "Learn more" link and a close control at the far right.
+**`button-link`** — Inline green text link.
+- Background transparent, text `{colors.brand-green-dark}`, typography `{typography.body-sm-medium}`, padding `0`.
 
-### **`hero-photo-card`**
+### Cards & Containers
 
-Rounded media card used in the home hero and solution pages. It combines photography or abstract imagery with an overlaid dark agent-console module. Radius is usually 22px on large cards and 8px on smaller thumbnails.
+**`card-base`** — Standard content card.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xl}`, border `1px solid {colors.hairline}`.
 
-### **`agent-console-card`**
+**`card-feature`** — Feature card with larger padding.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`, border `1px solid {colors.hairline}`.
 
-Dark product mockup panel showing agent names, status chips, integration badges, prompt fields, and generated response cards. Background is near-black, text is white or muted, and small accent chips use product colors.
+**`card-product-deploy`** — Product deployment card ("MongoDB Atlas / Community").
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`, border `1px solid {colors.hairline}`.
 
-### **`trust-logo-strip`**
+**`card-feature-dark`** — Dark teal feature card on hero band.
+- Background `{colors.brand-teal-deep}`, text `{colors.on-dark}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`.
 
-Centered copy above a row of monochrome customer logos. It is intentionally quiet: no cards, no borders, just large horizontal spacing and black or white logos depending on the background.
+**`card-course`** — MongoDB University course tile.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xl}`, border `1px solid {colors.hairline}`.
+- Top: colored category tag. Below: title `{typography.heading-5}`, description `{typography.body-sm}`, "Get Started →" link.
 
-### **`capability-card`**
+**`card-cert`** — Certification card.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xl}`, border `1px solid {colors.hairline}`.
 
-Content block with thin-line geometric illustration, 24px heading, body copy, and a text link. On light backgrounds, cards often have only a top rule or a subtle image/card relationship rather than full boxing.
+**`pricing-card`** — Standard pricing tier card.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`, border `1px solid {colors.hairline}`.
 
-### **`dark-feature-band`**
+**`pricing-card-featured`** — Featured pricing tier (Flex tier, mint background + green border).
+- Background `{colors.surface-feature}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`, border `2px solid {colors.brand-green}`.
 
-Deep green or navy full-width section used for product capabilities, security claims, and feature breakdowns. Text turns white; cards use darker translucent surfaces, pale borders, and abstract line illustrations.
+### Inputs & Forms
 
-### **`product-card`**
+**`text-input`** — Standard text field.
+- Background `{colors.canvas}`, text `{colors.ink}`, border `1px solid {colors.hairline-strong}`, rounded `{rounded.md}`, padding `{spacing.sm} {spacing.md}`, height 44px.
 
-Warm stone card used for product/model summaries. Typically 3-column on desktop, with 8px radius, generous padding, a small pill button, a divider line, and checkmark bullet rows.
+**`text-input-focused`** — Activated state.
+- Border switches to `2px solid {colors.brand-green-dark}`.
 
-### **`blog-filter-chip`**
+**`search-pill`** — Standard 44px search bar.
+- Background `{colors.surface}`, text `{colors.steel}`, typography `{typography.body-md}`, rounded `{rounded.md}`, height 44px, border `1px solid {colors.hairline-strong}`.
 
-Large coral taxonomy chip used on the blog index. Active chips invert to coral fill with dark text; inactive chips use coral outline and pale fill. Typography is oversized relative to typical filters, making the taxonomy a hero-level control.
+**`search-pill-large`** — Large 56px search bar (top of MongoDB University catalog).
+- Background `{colors.canvas}`, text `{colors.steel}`, typography `{typography.body-md}`, rounded `{rounded.md}`, height 56px, border `1px solid {colors.hairline-strong}`.
 
-### **`research-table`**
+### Tabs
 
-Rule-separated publication list with title left, topic pills centered, and date right. Rows are tall, white, and border-driven; filters above use many compact outlined pills.
+**`pill-tab`** + **`pill-tab-active`** — Pill-style tab nav (top of pricing: "MongoDB Atlas / Enterprise Advanced").
+- Inactive: text `{colors.steel}`, border `1px solid {colors.hairline}`, padding `{spacing.xs} {spacing.md}`, rounded `{rounded.full}`.
+- Active: background `{colors.ink}`, text `{colors.on-dark}`.
 
-### **`contact-form-card`**
+**`segmented-tab`** + **`segmented-tab-active`** — Underline-style tab navigation.
+- Inactive: text `{colors.steel}`, no border. Active: text `{colors.brand-green-dark}`, 2px bottom border in `{colors.brand-green-dark}`.
 
-Rounded white form panel set against dark green or warm stone sections. Inputs are rectangular with thin gray borders, 12px-16px padding, and compact labels/placeholders. Submit uses the same near-black pill style as primary CTAs.
+### Badges & Status
 
-### **`footer-newsletter`**
+**`badge-green`** — Bright green badge for new product highlights.
+- Background `{colors.brand-green}`, text `{colors.on-primary}`, typography `{typography.caption-bold}`, rounded `{rounded.sm}`, padding `2px 8px`.
 
-Dark footer subscription block with coral "AI moves fast" label, white headline, muted legal microcopy, a single-line email field, and arrow submit marker. Footer columns use white section labels and muted links.
+**`badge-green-soft`** — Pale-mint pill for success/free indicators.
+- Background `{colors.brand-green-soft}`, text `{colors.brand-green-dark}`, typography `{typography.caption-bold}`, rounded `{rounded.full}`, padding `4px 10px`.
+
+**`badge-purple`** — Purple course category tag.
+- Background `{colors.accent-purple}`, text `{colors.on-dark}`, typography `{typography.caption-bold}`, rounded `{rounded.sm}`, padding `2px 8px`.
+
+**`badge-orange`** — Orange course category tag.
+- Background `{colors.accent-orange}`, text `{colors.on-dark}`, typography `{typography.caption-bold}`, rounded `{rounded.sm}`, padding `2px 8px`.
+
+**`badge-popular`** — "Most Popular" tier indicator (dark teal pill with green text).
+- Background `{colors.brand-teal-deep}`, text `{colors.brand-green}`, typography `{typography.caption-bold}`, rounded `{rounded.full}`, padding `4px 10px`.
+
+**`promo-banner`** — Dark teal sticky promo strip ABOVE the top nav.
+- Background `{colors.brand-teal-deep}`, text `{colors.on-dark}`, typography `{typography.body-sm-medium}`, padding `{spacing.sm} {spacing.md}`.
+
+### Code
+
+**`code-block`** — Code container.
+- Background `{colors.canvas-dark}`, text `{colors.on-dark}`, typography `{typography.code-md}`, rounded `{rounded.md}`, padding `{spacing.md}`.
+
+**`code-mockup-card`** — Embedded code mockup on hero band.
+- Background `{colors.canvas-dark}`, text `{colors.on-dark}`, rounded `{rounded.lg}`, padding `{spacing.lg}`. Carries terminal-aesthetic code snippet.
+
+### Tables
+
+**`comparison-table`** — Pricing feature comparison table.
+- Background `{colors.canvas}`, text `{colors.ink}`, typography `{typography.body-sm}`, rounded `{rounded.md}`, border `1px solid {colors.hairline}`.
+
+**`comparison-row`** — Individual feature row.
+- Background `{colors.canvas}`, text `{colors.ink}`, padding `{spacing.md} {spacing.lg}`, bottom border `1px solid {colors.hairline-soft}`.
+
+### Documentation Components
+
+**`service-tile`** — Tile in "Customize your deployment" 6-up grid.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xl}`, border `1px solid {colors.hairline}`.
+
+**`why-card`** — "Loved by builders" feature card.
+- Background `{colors.surface}`, rounded `{rounded.lg}`, padding `{spacing.xl}`.
+
+**`customer-testimonial-card`** — Customer quote card.
+- Background `{colors.canvas}`, rounded `{rounded.lg}`, padding `{spacing.xxl}`, border `1px solid {colors.hairline}`.
+
+**`logo-wall-item`** — Customer logo wordmark cell.
+- Background transparent, text `{colors.steel}`, typography `{typography.body-md-medium}`, padding `{spacing.lg}`.
+
+**`faq-accordion-item`** — FAQ panel.
+- Background `{colors.canvas}`, rounded `{rounded.md}`, padding `{spacing.xl}`, bottom border `1px solid {colors.hairline}`.
+
+### Navigation
+
+**Top Navigation (Marketing)** — Sticky white bar.
+- Background `{colors.canvas}`, height ~64px, bottom border `1px solid {colors.hairline}`.
+- Left: MongoDB leaf logo + "Solutions / Resources / Company / Pricing" links.
+- Right: "Sign In" link + bright-green pill "Try Free" CTA.
+
+### Signature Components
+
+**`hero-band-dark`** — Deep teal hero band with embedded code mockup.
+- Background `{colors.brand-teal-deep}`, text `{colors.on-dark}`, padding `{spacing.hero}`.
+- Layout: centered headline `{typography.hero-display}`, subtitle, button row, `code-mockup-card` below.
+
+**`hero-platform-card`** — Lighter-teal platform showcase card on dark hero.
+- Background `{colors.brand-teal-mid}`, text `{colors.on-dark}`, rounded `{rounded.xl}`, padding `{spacing.xxl}`.
+
+**`cta-banner-dark`** — Dark CTA banner at the bottom of feature pages.
+- Background `{colors.brand-teal-deep}`, text `{colors.on-dark}`, rounded `{rounded.lg}`, padding `{spacing.section}`.
+
+**`footer-region`** — Dark teal multi-column footer.
+- Background `{colors.brand-teal-deep}`, padding `{spacing.section} {spacing.xxl}`.
+- 6-column link grid.
+- Section headings in `{typography.body-sm-medium}` `{colors.on-dark}`.
+
+**`footer-link`** — Individual footer link.
+- Background transparent, text `{colors.on-dark-muted}`, typography `{typography.body-sm}`, padding `{spacing.xxs} 0`.
 
 ## Do's and Don'ts
 
 ### Do
-
-- Use white canvas as the default surface; introduce dark green or navy as full-width product bands.
-- Keep primary CTAs pill-shaped and near-black on light surfaces.
-- Use 22px radius on major media cards and placeholders.
-- Use coral for editorial taxonomy and small warm accents, not as the main CTA system.
-- Use monochrome trust logos with wide spacing.
-- Use thin-line geometric illustrations for research and capability icons.
-- Let photography and product mockups carry color, while the UI shell stays restrained.
+- Use `{colors.brand-green}` (bright MongoDB green) for primary CTAs everywhere
+- Pair dark-teal hero bands with bright green CTA pills
+- Apply `{rounded.full}` to every button, every status badge
+- Apply `{rounded.lg}` (12px) to cards consistently
+- Use category accent colors (purple, orange, green, teal) ONLY for course tags
+- Maintain Euclid Circular A across every UI surface
+- Use code mockup cards with terminal-aesthetic content for product showcases
 
 ### Don't
-
-- Do not turn coral or blue into broad decorative surface colors.
-- Do not add heavy drop shadows to cards.
-- Do not make every section card-based; Cohere often uses unframed rows, rules, and open space.
-- Do not use rounded cards below 8px for major media.
-- Do not replace the display/body type split with one generic sans-serif voice.
-- Do not render undocumented interaction variants in documentation or previews.
-- Do not use saturated gradients as normal UI backgrounds; keep gradients media-led.
+- Don't use the bright green for body text or large surfaces
+- Don't introduce additional accent colors beyond the brand green and category-encoding palette
+- Don't soften corners on buttons; the pill is a brand signature
+- Don't replace deep teal hero bands with white hero bands
+- Don't apply heavy shadows on flat documentation cards; reserve elevation for code mockups
+- Don't use Source Code Pro for prose
 
 ## Responsive Behavior
 
 ### Breakpoints
-
 | Name | Width | Key Changes |
-|---|---:|---|
-| Small Mobile | <425px | Single-column cards, compact nav, reduced hero headline scale |
-| Mobile | 425-640px | Hero media stacks, card grids become one column, form rows stack |
-| Large Mobile | 640-768px | Wider one-column layouts with larger media cards |
-| Tablet | 768-1024px | Two-column cards begin, nav spacing tightens |
-| Desktop | 1024-1440px | Full nav, 3-column card grids, split hero compositions |
-| Large Desktop | 1440-2560px | Wide containers and large empty vertical intervals |
+|---|---|---|
+| Mobile (small) | < 480px | Single column. Hero 36px. Pricing 1-up. Course catalog 1-up. |
+| Mobile (large) | 480 – 767px | Course tiles 2-up. Hero 48px. |
+| Tablet | 768 – 1023px | 2-column feature grids. Hero 56px. |
+| Desktop | 1024 – 1279px | 3-tier pricing card row. 3-up course catalog. Hero 64px. |
+| Wide Desktop | ≥ 1280px | Full 72px hero presentation. |
 
 ### Touch Targets
-
-Primary CTAs and pills meet comfortable touch sizing through 12px-24px padding and pill radii. Research filter chips and blog category chips are larger than standard tags, making dense taxonomy surfaces usable on touch devices.
+- Pill buttons render at 40–44px effective height
+- Form inputs render at 44px height
+- Search pill (large) renders at 56px
+- Pill tabs ~32px → 44px on mobile
 
 ### Collapsing Strategy
+- **Promo banner** stays full-width; truncates at < 480px
+- **Top nav** below 1024px collapses to hamburger
+- **Hero band**: code mockup card moves below text on mobile
+- **Pricing tiers**: 3-column → 2-column tablet → 1-column mobile
+- **Course catalog**: 3-up → 2-up tablet → 1-up mobile
+- **Hero typography**: 72px → 56px → 48px → 36px
+- **Footer**: 6-column desktop → 3-column tablet → accordion mobile
 
-- Nav collapses from full horizontal links to a compact mobile menu.
-- Hero media moves from split cards to stacked cards.
-- Product and capability grids collapse from 3 columns to 2 and then 1.
-- Form fields collapse from paired rows to a single column.
-- Research rows preserve their rule-separated structure but stack metadata below titles on smaller widths.
+### Image Behavior
+- Atmospheric AI imagery uses 16:9 ratio with full-bleed scaling
+- Code mockup card content remains readable across breakpoints
+- Customer logo wall: wordmarks at consistent 60–80px height
 
 ## Iteration Guide
 
-1. Start from a white canvas or a full-width dark green/navy band; avoid mid-tone page backgrounds unless the screenshot shows a specific CTA/form section.
-2. Use `button-primary` for the single highest-priority action and `button-secondary` for the companion action.
-3. Use `hero-photo-card` or `agent-console-card` when a page needs visual energy; avoid invented dashboard data.
-4. For editorial pages, combine `blog-filter-chip`, `button-pill-outline`, and `research-table` instead of generic marketing cards.
-5. Keep component examples structurally honest: placeholder product frames are better than invented product content.
+1. Focus on ONE component at a time
+2. Reference component names and tokens directly
+3. Run `npx @google/design.md lint DESIGN.md` after edits
+4. Add new variants as separate `components:` entries
+5. Default to `{typography.body-md}` for body
+6. Keep `{colors.brand-green}` as the primary CTA across all surfaces
+7. Pill-shaped buttons (`{rounded.full}`) always
+8. Dark-teal hero bands frame primary CTAs
 
 ## Known Gaps
 
-- Exact proprietary font files are not bundled; use the documented fallbacks when implementing externally.
-- Mobile screenshots were not regenerated in this public update, so mobile behavior is documented from the desktop system and existing responsive patterns.
-- Some live pages lazy-load content blocks late; blank testimonial placeholders are documented as placeholder skeleton surfaces rather than filled testimonial cards.
+- Specific dark-mode token values for canvas/surface beyond hero bands not surfaced
+- Animation/transition timings not extracted; recommend 150–200ms ease
+- Form validation success state not explicitly captured
+- Course-tile category color mappings are observation-based

@@ -1,15 +1,16 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Cohere Dark
-   Background: #1e1e24  (dark-soft)
-   Base text:  #ffffff
+   AGIT Code Theme for Prism.js — MongoDB Dark
+   Background: #001e2b  (canvas-dark / brand-teal-deep)
+   Base text:  #e8f0f4
+   Accents: MongoDB green palette
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8e8ec;
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  color: #e8f0f4;
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
-  line-height: 1.7;
+  line-height: 1.65;
   direction: ltr;
   text-align: left;
   white-space: pre;
@@ -21,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #1e1e24;
+  background: #001e2b;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #17171c; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #35353e; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #001018; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #1c2d38; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(24,99,220,0.3);
+  background: rgba(0, 237, 100, 0.2);
 }
 
-/* --- Token colors (Cohere dark palette) --- */
+/* --- Token colors (MongoDB green palette on deep teal) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #75758a; font-style: italic; }
+.token.cdata     { color: #4a6a7a; font-style: italic; }
 
-.token.punctuation { color: #93939f; }
+.token.punctuation { color: #5c8a9a; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #7fa9f5; font-weight: 500; }   /* blue tint */
+.token.important   { color: #00ed64; font-weight: 500; }   /* brand green */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #7dd3a8; }   /* pale green */
+.token.builtin     { color: #c3f0d2; }   /* brand-green-soft */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #ff7759; }   /* coral */
+.token.symbol      { color: #7de8a8; }   /* mid green */
 
 .token.function,
-.token.function-name { color: #e8e8ec; font-weight: 500; }
+.token.function-name { color: #e8f0f4; font-weight: 500; }
 
-.token.class-name  { color: #c4b5fd; }  /* muted violet */
+.token.class-name  { color: #a8d8ea; }  /* cool teal blue */
 
 .token.property,
-.token.tag         { color: #7dd3a8; }  /* pale green */
+.token.tag         { color: #00b545; }  /* primary-deep green */
 
 .token.attr-name,
-.token.selector    { color: #7fa9f5; }  /* blue tint */
+.token.selector    { color: #00ed64; }  /* brand green */
 
 .token.operator,
-.token.entity      { color: #93939f; }
+.token.entity      { color: #5c8a9a; }
 
-.token.variable    { color: #e8e8ec; }
+.token.variable    { color: #e8f0f4; }
 
 .token.deleted     { color: #f87171; }
-.token.inserted    { color: #7dd3a8; }
+.token.inserted    { color: #00ed64; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #2c2c35;
+  border-right: 1px solid #1c2d38;
 }
-.line-numbers-rows > span::before { color: #35353e; }
+.line-numbers-rows > span::before { color: #1c3545; }
