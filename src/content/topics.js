@@ -1658,4 +1658,4 @@ GROUP BY "DefinitionId";`,
 
 ]; // end topics array
 
-export default topics;
+window.topics = topics;

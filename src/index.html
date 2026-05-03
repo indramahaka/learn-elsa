@@ -226,12 +226,14 @@
   </div><!-- /.layout-wrapper -->
 
   <!-- CDN scripts -->
-  <!-- Lucide UMD (must load before module scripts that call lucide.createIcons) -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <!-- Prism core + autoloader for lazy language loading -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
 
-  <script type="module" src="scripts/app.js"></script>
+  <!-- App scripts: load in dependency order, no ES modules (file:// compatible) -->
+  <script defer src="scripts/topics.js"></script>
+  <script defer src="scripts/progress.js"></script>
+  <script defer src="scripts/tabs.js"></script>
+  <script defer src="scripts/app.js"></script>
 </body>
 </html>

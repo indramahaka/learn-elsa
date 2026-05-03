@@ -1,6 +1,7 @@
-import topics from '../content/topics.js';
-import { toggleComplete, isComplete, getProgress, subscribe } from './progress.js';
-import { initTabs } from './tabs.js';
+/* Globals set by topics.js, progress.js, tabs.js loaded before this script */
+const topics = window.topics;
+const { toggleComplete, isComplete, getProgress, subscribe } = window.progressModule;
+const { initTabs } = window.tabsModule;
 
 /* ---- Element refs ---- */
 const hamburgerBtn   = document.getElementById('hamburgerBtn');
