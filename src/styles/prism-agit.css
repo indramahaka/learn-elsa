@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Figma Dark
-   Background: #1f1d3d  (block-navy, Figma's dark color-block)
-   Base text:  #e8e6f0
-   Accents: Figma pastel block palette lifted for visibility
+   AGIT Code Theme for Prism.js — Miro
+   Background: #1c1c1e  (Miro primary / code-block dark)
+   Base text:  #e8eaf0
+   Accents: Miro brand palette lifted for code legibility
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8e6f0;
+  color: #e8eaf0;
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.65;
@@ -22,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #1f1d3d;
+  background: #1c1c1e;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #15132e; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #3a3660; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #111113; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(197, 176, 244, 0.28);
+  background: rgba(255, 208, 47, 0.22);
 }
 
-/* --- Token colors (Figma pastel palette lifted on navy-dark) --- */
+/* --- Token colors (Miro brand palette on charcoal dark) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #5a587a; font-style: italic; }
+.token.cdata     { color: #6b6f82; font-style: italic; }
 
-.token.punctuation { color: #7a78a0; }
+.token.punctuation { color: #8a8d9e; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #c5b0f4; font-weight: 500; }   /* block-lilac */
+.token.important   { color: #ffd02f; font-weight: 500; }   /* Miro canary yellow */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #a8d8ae; }   /* block-mint lifted */
+.token.builtin     { color: #3dd5cc; }   /* Miro teal lifted */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #e8d090; }   /* block-cream / ochre lifted */
+.token.symbol      { color: #ffb06e; }   /* Miro orange-light lifted */
 
 .token.function,
-.token.function-name { color: #e8e6f0; font-weight: 500; }
+.token.function-name { color: #e8eaf0; font-weight: 500; }
 
-.token.class-name  { color: #a8d890; }  /* block-lime lifted */
+.token.class-name  { color: #7d9aff; }   /* Miro blue lifted */
 
 .token.property,
-.token.tag         { color: #c5b0f4; }  /* block-lilac */
+.token.tag         { color: #ffd02f; }   /* canary yellow */
 
 .token.attr-name,
-.token.selector    { color: #a8d8ae; }  /* block-mint lifted */
+.token.selector    { color: #3dd5cc; }   /* teal */
 
 .token.operator,
-.token.entity      { color: #7a78a0; }
+.token.entity      { color: #8a8d9e; }
 
-.token.variable    { color: #e8e6f0; }
+.token.variable    { color: #e8eaf0; }
 
-.token.deleted     { color: #f3a0a0; }
-.token.inserted    { color: #a8d8ae; }
+.token.deleted     { color: #ff8a8a; }
+.token.inserted    { color: #3dd5cc; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #3a3660;
+  border-right: 1px solid #3a3a42;
 }
-.line-numbers-rows > span::before { color: #4a4870; }
+.line-numbers-rows > span::before { color: #4a4d5e; }
