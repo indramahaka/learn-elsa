@@ -552,7 +552,6 @@ const siteHeader   = document.querySelector('.site-header');
 
 function openMobileSearch() {
   siteHeader.classList.add('search-active');
-  document.body.classList.add('search-open');
   searchToggle.setAttribute('aria-expanded', 'true');
   searchInput.focus();
   searchInput.select();
@@ -560,7 +559,6 @@ function openMobileSearch() {
 
 function closeMobileSearch() {
   siteHeader.classList.remove('search-active');
-  document.body.classList.remove('search-open');
   searchToggle.setAttribute('aria-expanded', 'false');
 }
 
