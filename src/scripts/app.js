@@ -1,5 +1,5 @@
 /**
- * AWFS Elsa Academy — app.js (Sprint 1)
+ * AWFS Elsa Academy:app.js (Sprint 1)
  * Responsibilities:
  *   - Initialize Lucide icons
  *   - Mobile hamburger sidebar toggle
@@ -69,7 +69,7 @@ document.querySelectorAll('.nav-section-btn').forEach(btn => {
 
 
 /* ============================================================
-   CTRL+K / CMD+K — FOCUS SEARCH
+   CTRL+K / CMD+K:FOCUS SEARCH
    ============================================================ */
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -81,7 +81,7 @@ document.addEventListener('keydown', e => {
 
 
 /* ============================================================
-   ON THIS PAGE — BUILD FROM ARTICLE HEADINGS
+   ON THIS PAGE:BUILD FROM ARTICLE HEADINGS
    ============================================================ */
 function buildOnThisPage() {
   const article  = mainContent.querySelector('.topic-article');
