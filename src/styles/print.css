@@ -1,0 +1,100 @@
+/* ============================================================
+   AWFS ELSA ACADEMY — Print Stylesheet
+   Strips navigation chrome; formats content for paper/PDF.
+   ============================================================ */
+
+@media print {
+  /* ---- Hide all chrome ---- */
+  .site-header,
+  .sidebar,
+  .sidebar-overlay,
+  .progress-bar,
+  .right-sidebar,
+  .topic-tabs,
+  .topic-footer-nav,
+  .btn-copy,
+  #printBtn,
+  #tierFilter,
+  .progress-chip,
+  .btn-hamburger {
+    display: none !important;
+  }
+
+  /* ---- Reset layout for print ---- */
+  body {
+    padding: 0;
+    font-size: 11pt;
+    color: #000;
+    background: white !important;
+    background-image: none !important;
+  }
+
+  .layout-wrapper {
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  .main-content {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ---- Typography ---- */
+  h1 { font-size: 24pt; color: #3a0e25 !important; }
+  h2 { font-size: 18pt; color: #3a0e25 !important; }
+  h3 { font-size: 14pt; }
+  h4 { font-size: 11pt; }
+
+  a { color: #3a0e25; text-decoration: underline; }
+  /* Show href for external links */
+  a[href^="http"]::after,
+  a[href^="https"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+    word-break: break-all;
+  }
+  /* Suppress for internal anchors */
+  a[href^="#"]::after { content: ""; }
+
+  /* ---- Code blocks: light theme for print ---- */
+  pre[class*="language-"],
+  code[class*="language-"] {
+    background: #f4f4f4 !important;
+    color: #1a1a1a !important;
+    border: 1px solid #ccc !important;
+    font-size: 9pt;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Simplified token colors for B&W or limited color printers */
+  .token.comment  { color: #666 !important; }
+  .token.keyword  { color: #0000aa !important; font-weight: bold; }
+  .token.string   { color: #006600 !important; }
+  .token.number   { color: #aa4400 !important; }
+  .token.function { color: #000066 !important; }
+  .token.class-name { color: #004488 !important; }
+
+  /* Inline code */
+  :not(pre) > code {
+    background: #eee !important;
+    color: #333 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  /* ---- Page breaks ---- */
+  .topic-article { page-break-before: always; }
+  .topic-article:first-child { page-break-before: auto; }
+
+  h1, h2, h3, h4 { page-break-after: avoid; }
+  pre, figure, blockquote, table { page-break-inside: avoid; }
+
+  /* ---- Hero ---- */
+  .hero-accent { background: #6C1D45 !important; }
+  .topic-hero  { border-bottom: 2px solid #ccc !important; }
+
+  /* ---- Tier badges ---- */
+  .tier-badge { border: 1px solid #999 !important; background: white !important; color: #333 !important; }
+}

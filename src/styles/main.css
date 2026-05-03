@@ -1,0 +1,642 @@
+/* ============================================================
+   AWFS ELSA ACADEMY — Main Stylesheet
+   Design system, layout, and all component styles.
+   ============================================================ */
+
+/* ============================================================
+   1. DESIGN TOKENS
+   ============================================================ */
+:root {
+  /* Brand colors (AGIT CI 2023) */
+  --c-burgundy:    #6C1D45;
+  --c-orange:      #DE7C00;
+  --c-blue:        #00537C;
+  --c-bg:          #FAF7F2;
+  --c-text:        #1A1A1A;
+  --c-muted:       #5A5A5A;
+  --c-border:      #E8E2D8;
+  --c-code-light:  #F4EFE7;
+  --c-code-bg:     #1E1E2E;
+  --c-code-text:   #CDD6F4;
+
+  /* Typography */
+  --f-display: "Fraunces", "Georgia", serif;
+  --f-body:    "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --f-code:    "JetBrains Mono", "Consolas", "Courier New", monospace;
+
+  /* Layout dimensions */
+  --progress-h:   3px;
+  --header-h:     64px;
+  --sidebar-w:    260px;
+  --rsidebar-w:   220px;
+  --content-max:  720px;
+
+  /* Spacing scale (multiples of 0.25rem) */
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-6:  1.5rem;
+  --sp-8:  2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* Border radii */
+  --r-sm:   4px;
+  --r-md:   8px;
+  --r-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(108, 29, 69, 0.08);
+  --shadow-md: 0 4px 16px rgba(108, 29, 69, 0.14);
+
+  /* Transitions */
+  --t-fast: 150ms ease;
+  --t-mid:  250ms ease;
+}
+
+
+/* ============================================================
+   2. RESET + BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--f-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--c-text);
+  background-color: var(--c-bg);
+  /* Subtle paper noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  /* Account for fixed header + progress bar */
+  padding-top: calc(var(--header-h) + var(--progress-h));
+}
+
+img, svg { max-width: 100%; display: block; }
+
+a {
+  color: var(--c-burgundy);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+a:hover { color: var(--c-orange); }
+
+button { cursor: pointer; font-family: inherit; }
+
+ul, ol { padding-left: var(--sp-6); }
+li + li { margin-top: var(--sp-1); }
+
+kbd {
+  font-family: var(--f-code);
+  font-size: 0.8125rem;
+  background: var(--c-code-light);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0.1em 0.4em;
+  color: var(--c-burgundy);
+}
+
+strong { font-weight: 700; }
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ============================================================
+   3. PROGRESS BAR
+   ============================================================ */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: var(--progress-h);
+  width: 0%;
+  background: var(--c-orange);
+  z-index: 200;
+  transition: width var(--t-mid);
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   4. SITE HEADER
+   ============================================================ */
+.site-header {
+  position: fixed;
+  top: var(--progress-h);
+  left: 0; right: 0;
+  height: var(--header-h);
+  background: var(--c-burgundy);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: 0 var(--sp-6);
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-left  { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; }
+.header-center { flex: 1; min-width: 0; max-width: 400px; margin: 0 var(--sp-4); }
+.header-right  { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; margin-left: auto; }
+
+/* Hamburger button (hidden on desktop, visible tablet+mobile) */
+.btn-hamburger {
+  display: none;
+  align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  color: white;
+  padding: var(--sp-2);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+}
+.btn-hamburger:hover { background: rgba(255, 255, 255, 0.15); }
+.btn-hamburger svg { width: 22px; height: 22px; }
+
+/* Wordmark lockup */
+.site-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  text-decoration: none;
+  color: white;
+  white-space: nowrap;
+}
+.site-logo:hover { color: white; }
+
+.logo-agit {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.06em;
+  color: white;
+}
+.logo-sep {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 1rem;
+  font-weight: 300;
+}
+.logo-product {
+  font-family: var(--f-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+
+/* ============================================================
+   5. SEARCH BOX
+   ============================================================ */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.search-icon {
+  position: absolute;
+  left: var(--sp-3);
+  width: 15px; height: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+.search-input {
+  width: 100%;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--r-pill);
+  padding: 0 var(--sp-4) 0 calc(var(--sp-3) + 15px + var(--sp-2));
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+  color: white;
+  outline: none;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.search-input::placeholder { color: rgba(255, 255, 255, 0.45); }
+.search-input:focus {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* ============================================================
+   6. TIER FILTER + PROGRESS CHIP + ICON BUTTON
+   ============================================================ */
+.tier-filter {
+  height: 34px;
+  padding: 0 var(--sp-3);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--r-sm);
+  color: white;
+  font-family: var(--f-body);
+  font-size: 0.8125rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--t-fast);
+}
+.tier-filter:focus { border-color: rgba(255, 255, 255, 0.5); }
+.tier-filter option { background: var(--c-burgundy); color: white; }
+
+.progress-chip {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  padding: 0 var(--sp-2);
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: var(--sp-2);
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.btn-icon:hover { color: white; background: rgba(255, 255, 255, 0.15); }
+.btn-icon svg { width: 18px; height: 18px; }
+
+
+/* ============================================================
+   7. LEFT SIDEBAR
+   ============================================================ */
+
+/* Mobile overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 49;
+}
+.sidebar-overlay.is-visible { display: block; }
+
+/* Sidebar panel */
+.sidebar {
+  position: fixed;
+  top: calc(var(--header-h) + var(--progress-h));
+  left: 0;
+  width: var(--sidebar-w);
+  height: calc(100vh - var(--header-h) - var(--progress-h));
+  overflow-y: auto;
+  background: white;
+  border-right: 1px solid var(--c-border);
+  z-index: 50;
+  overscroll-behavior: contain;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+.sidebar-scroller { padding: var(--sp-4) 0 var(--sp-8); }
+
+/* Section */
+.nav-section { border-bottom: 1px solid var(--c-border); }
+.nav-section:last-child { border-bottom: none; }
+
+.nav-section-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  background: transparent;
+  border: none;
+  font-family: var(--f-body);
+  color: var(--c-text);
+  text-align: left;
+  transition: background var(--t-fast);
+}
+.nav-section-btn:hover { background: var(--c-bg); }
+
+.nav-section-label {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.nav-chevron {
+  width: 14px; height: 14px;
+  color: var(--c-muted);
+  flex-shrink: 0;
+  transition: transform var(--t-fast);
+}
+.nav-section-btn[aria-expanded="false"] .nav-chevron {
+  transform: rotate(-90deg);
+}
+
+/* Topic list */
+.nav-topic-list {
+  list-style: none;
+  padding: var(--sp-1) 0 var(--sp-2);
+}
+.nav-section-btn[aria-expanded="false"] + .nav-topic-list {
+  display: none;
+}
+
+.nav-topic-item { margin: 0; }
+
+.nav-topic-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4) var(--sp-2) calc(var(--sp-4) + var(--sp-3));
+  font-size: 0.875rem;
+  color: var(--c-text);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.nav-topic-link:hover {
+  background: var(--c-bg);
+  color: var(--c-burgundy);
+}
+.nav-topic-link.is-active {
+  background: #f8edf3;
+  color: var(--c-burgundy);
+  border-left-color: var(--c-burgundy);
+  font-weight: 700;
+}
+
+.completion-icon {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  color: var(--c-border);
+  transition: color var(--t-fast);
+}
+.nav-topic-link.is-complete .completion-icon { color: var(--c-orange); }
+
+
+/* ============================================================
+   8. TIER BADGES
+   ============================================================ */
+.tier-badge {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-family: var(--f-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2em 0.65em;
+  border-radius: var(--r-pill);
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1;
+}
+.tier-badge.tier-1       { background: #FFF0D6; color: #8A4D00; }
+.tier-badge.tier-2       { background: #F5E6EE; color: #6C1D45; }
+.tier-badge.tier-3       { background: #DFF0F8; color: #00537C; }
+.tier-badge.tier-labs    { background: #E8F5E9; color: #1B5E20; }
+.tier-badge.tier-welcome { background: var(--c-border); color: var(--c-muted); }
+
+
+/* ============================================================
+   9. LAYOUT WRAPPER + MAIN CONTENT
+   ============================================================ */
+.layout-wrapper {
+  margin-left: var(--sidebar-w);
+  display: grid;
+  grid-template-columns: 1fr var(--rsidebar-w);
+  min-height: calc(100vh - var(--header-h) - var(--progress-h));
+  align-items: start;
+}
+
+.main-content {
+  max-width: var(--content-max);
+  width: 100%;
+  padding: var(--sp-12) var(--sp-8);
+  margin: 0 auto;
+}
+
+
+/* ============================================================
+   10. TOPIC ARTICLE
+   ============================================================ */
+
+/* Hero */
+.topic-hero {
+  margin-bottom: var(--sp-12);
+  padding-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--c-border);
+}
+.topic-hero-eyebrow { margin-bottom: var(--sp-4); }
+
+.topic-hero h1 {
+  font-family: var(--f-display);
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--c-burgundy);
+  margin-bottom: var(--sp-4);
+}
+
+.hero-accent {
+  width: 56px; height: 4px;
+  background: var(--c-orange);
+  border-radius: 2px;
+  margin-bottom: var(--sp-6);
+}
+
+.topic-lead {
+  font-size: 1.125rem;
+  color: var(--c-muted);
+  line-height: 1.65;
+  max-width: 580px;
+}
+
+/* Section spacing */
+.topic-article section {
+  margin-bottom: var(--sp-8);
+}
+
+/* Headings */
+.topic-article h2 {
+  font-family: var(--f-display);
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--c-burgundy);
+  margin-top: var(--sp-12);
+  margin-bottom: var(--sp-4);
+  scroll-margin-top: calc(var(--header-h) + var(--progress-h) + var(--sp-6));
+  position: relative;
+}
+
+.topic-article h3 {
+  font-family: var(--f-body);
+  font-size: clamp(1.375rem, 2vw, 1.625rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--c-text);
+  margin-top: var(--sp-8);
+  margin-bottom: var(--sp-3);
+  scroll-margin-top: calc(var(--header-h) + var(--progress-h) + var(--sp-6));
+  position: relative;
+}
+
+.topic-article h4 {
+  font-family: var(--f-body);
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-muted);
+  margin-top: var(--sp-6);
+  margin-bottom: var(--sp-2);
+}
+
+/* Body text */
+.topic-article p {
+  margin-bottom: var(--sp-4);
+  max-width: 68ch;
+}
+.topic-article li { max-width: 66ch; }
+
+/* Anchor links on headings */
+.anchor-link {
+  opacity: 0;
+  margin-left: var(--sp-2);
+  font-size: 0.8em;
+  color: var(--c-burgundy);
+  text-decoration: none;
+  font-family: var(--f-code);
+  transition: opacity var(--t-fast);
+  vertical-align: middle;
+}
+.topic-article h2:hover .anchor-link,
+.topic-article h3:hover .anchor-link {
+  opacity: 0.6;
+}
+.anchor-link:hover { opacity: 1 !important; }
+
+
+/* ============================================================
+   11. RIGHT SIDEBAR (On This Page)
+   ============================================================ */
+.right-sidebar {
+  position: sticky;
+  top: calc(var(--header-h) + var(--progress-h) + var(--sp-8));
+  max-height: calc(100vh - var(--header-h) - var(--progress-h) - var(--sp-16));
+  overflow-y: auto;
+  padding: var(--sp-8) var(--sp-4) var(--sp-8) var(--sp-6);
+  border-left: 1px solid var(--c-border);
+  align-self: start;
+}
+.right-sidebar::-webkit-scrollbar { width: 3px; }
+.right-sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+.right-sidebar-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-muted);
+  margin-bottom: var(--sp-4);
+}
+
+.otp-list {
+  list-style: none;
+  padding: 0;
+}
+.otp-list li + li { margin-top: 0; }
+
+.otp-link {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--c-muted);
+  text-decoration: none;
+  padding: var(--sp-1) var(--sp-2) var(--sp-1) var(--sp-3);
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.otp-link:hover { color: var(--c-burgundy); }
+.otp-link.is-active {
+  color: var(--c-burgundy);
+  border-left-color: var(--c-burgundy);
+  font-weight: 700;
+}
+/* H3 links are indented */
+.otp-link.otp-h3 {
+  padding-left: calc(var(--sp-3) + var(--sp-4));
+  font-size: 0.75rem;
+}
+
+
+/* ============================================================
+   12. RESPONSIVE: TABLET (max-width: 1023px)
+   ============================================================ */
+@media (max-width: 1023px) {
+  /* Show hamburger */
+  .btn-hamburger { display: flex; }
+
+  /* Sidebar becomes off-canvas */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--t-mid);
+    box-shadow: var(--shadow-md);
+  }
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  /* Remove sidebar push on layout */
+  .layout-wrapper {
+    margin-left: 0;
+    grid-template-columns: 1fr;
+  }
+
+  /* Hide right sidebar */
+  .right-sidebar { display: none; }
+
+  /* Hide progress chip (space is tight) */
+  .progress-chip { display: none; }
+}
+
+
+/* ============================================================
+   13. RESPONSIVE: MOBILE (max-width: 767px)
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Hide center search on mobile (accessible from search icon or sidebar) */
+  .header-center { display: none; }
+
+  /* Tighter content padding */
+  .main-content {
+    padding: var(--sp-8) var(--sp-4);
+  }
+
+  /* Slightly smaller hero */
+  .topic-hero { margin-bottom: var(--sp-8); padding-bottom: var(--sp-6); }
+  .topic-hero h1 { font-size: 2rem; }
+  .topic-lead { font-size: 1rem; }
+
+  /* Tighten tier filter */
+  .tier-filter { font-size: 0.75rem; padding: 0 var(--sp-2); }
+
+  /* Stack heading sizes down a notch */
+  .topic-article h2 { font-size: 1.75rem; }
+  .topic-article h3 { font-size: 1.375rem; }
+}

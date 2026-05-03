@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AWFS Elsa Academy — Personal learning reference for Elsa Workflows 3.x, anchored to the Approval Workflow Service for Toyota-Astra Motor.">
+  <title>AWFS Elsa Academy</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Plus+Jakarta+Sans:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/prism-agit.css">
+  <link rel="stylesheet" href="styles/print.css" media="print">
+</head>
+<body>
+
+  <!-- Top progress bar (3px, fills as topics complete) -->
+  <div class="progress-bar" id="progressBar"
+       role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+       aria-label="Learning progress"></div>
+
+  <!-- Fixed top header -->
+  <header class="site-header" role="banner">
+    <div class="header-left">
+      <button class="btn-hamburger" id="hamburgerBtn"
+              aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="sidebar">
+        <i data-lucide="menu"></i>
+      </button>
+      <a class="site-logo" href="#welcome" aria-label="AWFS Elsa Academy home">
+        <span class="logo-agit">AGIT</span>
+        <span class="logo-sep" aria-hidden="true">|</span>
+        <span class="logo-product">Elsa Academy</span>
+      </a>
+    </div>
+
+    <div class="header-center">
+      <div class="search-box">
+        <i data-lucide="search" class="search-icon" aria-hidden="true"></i>
+        <input
+          type="search"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search topics… (Ctrl+K)"
+          aria-label="Search all topics"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+    </div>
+
+    <div class="header-right">
+      <label class="sr-only" for="tierFilter">Filter by tier</label>
+      <select id="tierFilter" class="tier-filter">
+        <option value="all">All Tiers</option>
+        <option value="1">Tier 1</option>
+        <option value="2">Tier 2</option>
+        <option value="3">Tier 3</option>
+        <option value="labs">Hands-On</option>
+        <option value="refs">References</option>
+      </select>
+      <div class="progress-chip" id="progressChip" aria-live="polite" aria-label="Session progress">
+        <span id="progressText">0 / 28 (0%)</span>
+      </div>
+      <button class="btn-icon" id="printBtn" aria-label="Print current page" onclick="window.print()">
+        <i data-lucide="printer"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile sidebar overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <!-- Left navigation sidebar -->
+  <nav class="sidebar" id="sidebar" aria-label="Topic navigation">
+    <div class="sidebar-scroller">
+
+      <div class="nav-section" id="ns-tier1">
+        <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier1-list">
+          <span class="tier-badge tier-1">T1</span>
+          <span class="nav-section-label">Must Know</span>
+          <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-topic-list" id="nav-tier1-list" role="list">
+          <!-- Populated by app.js in Sprint 2 -->
+        </ul>
+      </div>
+
+      <div class="nav-section" id="ns-tier2">
+        <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier2-list">
+          <span class="tier-badge tier-2">T2</span>
+          <span class="nav-section-label">Should Know</span>
+          <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-topic-list" id="nav-tier2-list" role="list">
+          <!-- Populated by app.js in Sprint 2 -->
+        </ul>
+      </div>
+
+      <div class="nav-section" id="ns-tier3">
+        <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier3-list">
+          <span class="tier-badge tier-3">T3</span>
+          <span class="nav-section-label">Nice to Know</span>
+          <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-topic-list" id="nav-tier3-list" role="list">
+          <!-- Populated by app.js in Sprint 2 -->
+        </ul>
+      </div>
+
+      <div class="nav-section" id="ns-labs">
+        <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-labs-list">
+          <span class="tier-badge tier-labs">LAB</span>
+          <span class="nav-section-label">Hands-On Labs</span>
+          <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-topic-list" id="nav-labs-list" role="list">
+          <!-- Populated by app.js in Sprint 2 -->
+        </ul>
+      </div>
+
+      <div class="nav-section" id="ns-refs">
+        <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-refs-list">
+          <span class="nav-section-label">References</span>
+          <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-topic-list" id="nav-refs-list" role="list">
+          <li class="nav-topic-item">
+            <a href="#cheat-sheet" class="nav-topic-link">
+              <i data-lucide="circle" class="completion-icon" aria-hidden="true"></i>
+              <span>TAM CTO Cheat Sheet</span>
+            </a>
+          </li>
+          <li class="nav-topic-item">
+            <a href="#glossary" class="nav-topic-link">
+              <i data-lucide="circle" class="completion-icon" aria-hidden="true"></i>
+              <span>Glossary</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Main layout wrapper (sidebar is fixed; this is right of it) -->
+  <div class="layout-wrapper">
+
+    <main class="main-content" id="mainContent" role="main" tabindex="-1">
+
+      <!-- Welcome article (shown on initial load) -->
+      <article class="topic-article" id="welcome">
+
+        <div class="topic-hero">
+          <div class="topic-hero-eyebrow">
+            <span class="tier-badge tier-welcome">Welcome</span>
+          </div>
+          <h1>AWFS Elsa Academy</h1>
+          <div class="hero-accent"></div>
+          <p class="topic-lead">Your personal learning reference for Elsa Workflows 3.x, anchored to the Approval Workflow Service (AWFS) for Toyota-Astra Motor. Built for one architect, under pitch deadline.</p>
+        </div>
+
+        <section>
+          <h2 id="how-to-use">How to use this site</h2>
+          <p>Each topic has four tabs: <strong>Concept</strong> (the mental model and AWFS connection), <strong>Code</strong> (working samples with explanations), <strong>Hands-On</strong> (an exercise you run locally), and <strong>Self-Check</strong> (questions that mirror TAM CTO Q&amp;A style). Work through Tier 1 first. Return to Tier 2 before detailed design sessions. Check Tier 3 when the CTO goes deep.</p>
+
+          <h3 id="the-three-tiers">The three tiers</h3>
+          <ul>
+            <li><strong>Tier 1: Must Know (9 topics).</strong> Non-negotiable for the pitch. Hold all of these in working memory before walking into TAM.</li>
+            <li><strong>Tier 2: Should Know (7 topics).</strong> Comes up in design sessions and detailed Q&amp;A. Be fluent, not necessarily fast.</li>
+            <li><strong>Tier 3: Nice to Know (5 topics).</strong> Escape hatches for deep questions. Know they exist; find them when needed.</li>
+          </ul>
+
+          <h3 id="progress-tracking">Progress tracking</h3>
+          <p>Mark topics complete using the button at the bottom of each topic. The thin bar at the very top of the page and the circles in the sidebar both reflect your session progress. <strong>Progress resets when you reload the page.</strong> This is intentional: the goal is daily active review, not a one-time checkbox exercise.</p>
+
+          <h3 id="keyboard-shortcuts">Keyboard shortcuts</h3>
+          <ul>
+            <li><kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>: Focus search</li>
+            <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd>: Switch tabs when focused on a topic</li>
+            <li><kbd>J</kbd> / <kbd>K</kbd>: Next / previous topic</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 id="start-here">Start here</h2>
+          <p>If this is your first session, start with T1-01: Mental Model and Setup. It lays the conceptual foundation for every other topic. You can navigate using the sidebar on the left or by pressing <kbd>J</kbd> to step forward through topics in order.</p>
+        </section>
+
+        <section>
+          <h2 id="the-pitch-context">The pitch context</h2>
+          <p>This is not a generic Elsa tutorial. Every concept connects to a real TAM requirement: POA delegation (Persetujuan), MDM org hierarchy lookup for dynamic approver resolution, multi-level sequential approval, SLA escalation via WhatsApp notification, and the 4-step workflow wizard your team will build. The hands-on labs build a mini-AWFS you can demo in the pitch. The cheat sheet prepares you for the CTO Q&amp;A.</p>
+          <p>If a code sample or claim in this site is marked <strong>[verify against current Elsa docs]</strong>, do not cite it in the pitch until confirmed. Better to flag a gap than to state a wrong answer in the room.</p>
+        </section>
+
+        <section>
+          <h2 id="assumptions">Assumptions and open items</h2>
+          <ul>
+            <li><strong>AGIT logo:</strong> Using text lockup until SVG asset is provided.</li>
+            <li><strong>Language:</strong> English with Bahasa terms where relevant (for example, "POA," "Persetujuan").</li>
+            <li><strong>Hosting:</strong> Strictly local. No hosting concerns.</li>
+            <li><strong>Content format:</strong> JSON per topic, designed for easy non-developer editing.</li>
+            <li><strong>Reading context:</strong> Mobile-first content, desktop-richer chrome.</li>
+          </ul>
+        </section>
+
+      </article>
+
+    </main>
+
+    <!-- Right sidebar: On this page (desktop only) -->
+    <aside class="right-sidebar" id="rightSidebar" aria-label="On this page navigation">
+      <div class="right-sidebar-inner">
+        <p class="right-sidebar-title">On this page</p>
+        <nav aria-label="Page sections">
+          <ul class="otp-list" id="otpList" role="list">
+            <!-- Populated by app.js based on h2/h3 in current article -->
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+  </div><!-- /.layout-wrapper -->
+
+  <!-- CDN scripts -->
+  <!-- Lucide UMD (must load before module scripts that call lucide.createIcons) -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <!-- Prism core + autoloader for lazy language loading -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js" defer></script>
+
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>

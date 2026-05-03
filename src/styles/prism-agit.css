@@ -1,0 +1,113 @@
+/* ============================================================
+   AGIT Dark Code Theme for Prism.js
+   Background: #1E1E2E (Catppuccin Mocha-inspired)
+   Base text:  #CDD6F4
+   ============================================================ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #CDD6F4;
+  font-family: "JetBrains Mono", "Consolas", "Courier New", monospace;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  tab-size: 2;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  background: #1E1E2E;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  position: relative;
+  border: 1px solid rgba(205, 214, 244, 0.08);
+}
+
+/* Inline code (not inside a pre) */
+:not(pre) > code:not([class*="language-"]),
+:not([class*="language-"]) > code {
+  background: var(--c-code-light, #F4EFE7);
+  color: var(--c-burgundy, #6C1D45);
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: "JetBrains Mono", "Consolas", monospace;
+}
+
+/* Selection */
+code[class*="language-"] ::selection,
+pre[class*="language-"] ::selection {
+  background: rgba(139, 149, 196, 0.25);
+}
+
+/* Tokens */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6C7086;
+  font-style: italic;
+}
+
+.token.punctuation { color: #BAC2DE; }
+
+.token.namespace { opacity: 0.7; }
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted { color: #F38BA8; }
+
+.token.boolean,
+.token.number   { color: #FAB387; }
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted { color: #A6E3A1; }
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: #89DCEB;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword,
+.token.control  { color: #CBA6F7; }
+
+.token.function,
+.token.function-name { color: #89B4FA; }
+
+.token.class-name { color: #F5C2E7; }
+
+.token.regex,
+.token.important { color: #FAB387; }
+
+.token.variable { color: #CDD6F4; }
+
+.token.important,
+.token.bold { font-weight: bold; }
+
+.token.italic { font-style: italic; }
+
+.token.entity { cursor: help; }
+
+/* Line numbers plugin support (if loaded) */
+.line-numbers .line-numbers-rows {
+  border-right: 1px solid rgba(205, 214, 244, 0.1);
+}
+.line-numbers-rows > span::before {
+  color: #45475A;
+}
