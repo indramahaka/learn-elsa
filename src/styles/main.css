@@ -1,7 +1,7 @@
 /* ============================================================
    AWFS ELSA ACADEMY — Main Stylesheet
-   Design: Notion (DESIGN.md)
-   Fonts: Inter (Notion-Sans sub), JetBrains Mono (code only)
+   Design: Miro (DESIGN.md)
+   Fonts: Inter (Roobert PRO sub), JetBrains Mono (code only)
    ============================================================ */
 
 
@@ -9,73 +9,73 @@
    1. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* Primary — Notion Purple: dominant CTA, signature signal */
-  --c-primary:         #5645d4;
-  --c-primary-pressed: #4534b3;
-  --c-primary-deep:    #3a2a99;
+  /* Primary — Black pill (dominant CTA, Miro signature) */
+  --c-primary:         #1c1c1e;
+  --c-primary-pressed: #2c2c34;
   --c-on-primary:      #ffffff;
 
-  /* Hero band */
-  --c-navy:     #0a1530;
-  --c-navy-mid: #1a2a52;
+  /* Brand Yellow — reserved for hero, accents, NOT primary CTAs */
+  --c-yellow:       #ffd02f;
+  --c-yellow-deep:  #fcb900;
+  --c-yellow-light: #fff4c4;
+  --c-yellow-dark:  #746019;
 
-  /* Brand color spectrum — echoes live product database properties */
-  --c-orange:   #dd5b00;
-  --c-teal:     #2a9d99;
-  --c-green:    #1aae39;
-  --c-pink:     #ff64c8;
-  --c-yellow:   #f5d75e;
-  --c-purple:   #7b3ff2;
-  --c-purple-300: #d6b6f6;
-  --c-purple-800: #391c57;
+  /* Brand Blue — links, inline actions */
+  --c-blue:         #4262ff;
+  --c-blue-pressed: #2a41b6;
 
-  /* Card tints — pastel palette echoing Notion database properties */
-  --c-tint-lavender: #e6e0f5;
-  --c-tint-peach:    #ffe8d4;
-  --c-tint-rose:     #fde0ec;
-  --c-tint-mint:     #d9f3e1;
-  --c-tint-sky:      #dcecfa;
-  --c-tint-yellow:   #fef7d6;
-  --c-tint-cream:    #f8f5e8;
+  /* Pastel feature tints — echo sticky-note palette */
+  --c-coral:        #ff9999;
+  --c-coral-light:  #ffc6c6;
+  --c-coral-dark:   #600000;
+  --c-teal:         #0fbcb0;
+  --c-teal-light:   #c3faf5;
+  --c-moss-dark:    #187574;
+  --c-rose-light:   #fde0f0;
+  --c-orange-light: #ffe6cd;
 
-  /* Link */
-  --c-link:       #0075de;
-  --c-link-hover: #005bab;
+  /* Success */
+  --c-success: #00b473;
 
   /* Text scale */
-  --c-ink:      #1a1a1a;
-  --c-charcoal: #37352f;
-  --c-slate:    #5d5b54;
-  --c-steel:    #787671;
-  --c-stone:    #a4a097;
-  --c-muted:    #bbb8b1;
+  --c-ink-deep: #050038;
+  --c-ink:      #1c1c1e;
+  --c-charcoal: #2c2c34;
+  --c-slate:    #555a6a;
+  --c-steel:    #6b6f7e;
+  --c-stone:    #8e91a0;
+  --c-muted:    #a5a8b5;
   --c-on-dark:  #ffffff;
-  --c-on-dark-muted: #a4a097;
+  --c-on-dark-muted: #a5a8b5;
 
   /* Surfaces */
   --c-canvas:       #ffffff;
-  --c-surface:      #f6f5f4;
-  --c-surface-soft: #fafaf9;
+  --c-surface:      #f7f8fa;
+  --c-surface-soft: #fafbfc;
+  --c-surface-yellow: #fff8e0;  /* sidebar active bg */
 
   /* Hairlines */
-  --c-hairline:        #e5e3df;
-  --c-hairline-soft:   #ede9e4;
-  --c-hairline-strong: #c8c4be;
+  --c-hairline:        #e0e2e8;
+  --c-hairline-soft:   #eef0f3;
+  --c-hairline-strong: #c7cad5;
+
+  /* Link */
+  --c-link:       #4262ff;
+  --c-link-hover: #2a41b6;
 
   /* Semantic */
-  --c-success: #1aae39;
-  --c-warning: #dd5b00;
-  --c-error:   #e03131;
+  --c-error: #e03131;
+  --c-warning: #fcb900;
 
-  /* Tier badge palette */
-  --c-t1-bg:    #5645d4;   --c-t1-text:   #ffffff;   /* Primary Purple */
-  --c-t2-bg:    #dd5b00;   --c-t2-text:   #ffffff;   /* Brand Orange */
-  --c-t3-bg:    #787671;   --c-t3-text:   #ffffff;   /* Steel Gray */
-  --c-labs-bg:  #2a9d99;   --c-labs-text: #ffffff;   /* Brand Teal */
+  /* Tier badge palette — pastel sticky-note echo */
+  --c-t1-bg:    #1c1c1e;   --c-t1-text:   #ffffff;   /* Ink black */
+  --c-t2-bg:    #ffc6c6;   --c-t2-text:   #600000;   /* Coral */
+  --c-t3-bg:    #c3faf5;   --c-t3-text:   #187574;   /* Teal */
+  --c-labs-bg:  #4262ff;   --c-labs-text: #ffffff;   /* Brand Blue */
 
-  /* Typography — Inter (Notion-Sans open-source substitute) */
-  --f-display: "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, sans-serif;
-  --f-body:    "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, sans-serif;
+  /* Typography — Inter (Roobert PRO open-source substitute) */
+  --f-display: "Inter", -apple-system, system-ui, "Noto Sans", sans-serif;
+  --f-body:    "Inter", -apple-system, system-ui, "Noto Sans", sans-serif;
   --f-code:    "JetBrains Mono", ui-monospace, monospace;
 
   /* Layout */
@@ -84,23 +84,24 @@
   --rsidebar-w:  220px;
   --content-max: 760px;
 
-  /* Spacing (from design tokens) */
+  /* Spacing */
   --sp-1:  4px;  --sp-2:  8px;  --sp-3: 12px;
   --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;
   --sp-8: 32px;  --sp-10: 40px; --sp-12: 48px; --sp-16: 64px;
 
-  /* Border radius — Notion scale: sober editorial, NOT pill for buttons */
-  --r-xs:   4px;    /* tag chips */
-  --r-sm:   6px;    /* type badges, ghost buttons */
-  --r-btn:  8px;    /* all regular buttons — rounded-rect, Notion signature */
-  --r-card: 12px;   /* cards, pricing tiers */
-  --r-hero: 16px;   /* topic hero card (rounded.xl) */
-  --r-full: 9999px; /* pill tabs + badges ONLY */
+  /* Border radius — Miro scale */
+  --r-xs:      4px;    /* micro chips */
+  --r-sm:      6px;    /* discount badges */
+  --r-btn:     8px;    /* ghost/input rectangles */
+  --r-card:    16px;   /* standard cards */
+  --r-feature: 28px;   /* pastel feature cards */
+  --r-hero:    28px;   /* topic hero card (xxxl) */
+  --r-full:    9999px; /* ALL buttons + pill tabs + badges */
 
-  /* Elevation */
-  --shadow-xs:   rgba(15,15,15,0.04) 0px 1px 2px 0px;
-  --shadow-card: rgba(15,15,15,0.08) 0px 4px 12px 0px;
-  --shadow-hero: rgba(15,15,15,0.20) 0px 24px 48px -8px;
+  /* Elevation — flat-first, depth only on hero */
+  --shadow-xs:   rgba(5,0,56,0.04) 0px 1px 2px 0px;
+  --shadow-card: rgba(5,0,56,0.06) 0px 4px 12px 0px;
+  --shadow-hero: rgba(5,0,56,0.08) 0px 12px 32px -4px;
 
   /* Transitions */
   --t-fast: 150ms ease;
@@ -128,7 +129,7 @@ body {
   font-weight: 400;
   line-height: 1.55;
   color: var(--c-slate);
-  background-color: var(--c-canvas);
+  background-color: var(--c-surface);
   padding-top: var(--header-h);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -150,7 +151,7 @@ strong { font-weight: 600; color: var(--c-charcoal); }
 kbd {
   font-family: var(--f-code);
   font-size: 0.8em;
-  background: var(--c-surface);
+  background: var(--c-canvas);
   border: 1px solid var(--c-hairline-strong);
   border-bottom-width: 2px;
   border-radius: var(--r-sm);
@@ -169,14 +170,14 @@ kbd {
 
 
 /* ============================================================
-   3. PROGRESS BAR — Primary Purple
+   3. PROGRESS BAR — Brand Yellow
    ============================================================ */
 .progress-bar {
   position: fixed;
   top: 0; left: 0;
   height: 3px;
   width: 0%;
-  background: var(--c-primary);
+  background: var(--c-yellow);
   z-index: 200;
   transition: width 400ms ease;
   pointer-events: none;
@@ -226,19 +227,19 @@ kbd {
 }
 .site-logo:hover { background: var(--c-surface); text-decoration: none; }
 
-/* Inter — Notion-Sans editorial wordmark */
+/* Yellow wordmark — Miro brand signature */
 .logo-product {
   font-family: var(--f-display);
   font-size: 1.0625rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--c-ink);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   line-height: 1;
 }
 
 
 /* ============================================================
-   5. SEARCH — rounded.md, surface bg (search-pill spec)
+   5. SEARCH — surface bg, md radius (search-pill spec)
    ============================================================ */
 .search-box {
   position: relative;
@@ -268,7 +269,7 @@ kbd {
 }
 .search-input::placeholder { color: var(--c-steel); }
 .search-input:focus {
-  border-color: var(--c-primary);
+  border-color: var(--c-blue);
   border-width: 2px;
   background: var(--c-canvas);
   box-shadow: none;
@@ -281,8 +282,8 @@ kbd {
 .tier-filter {
   height: 36px;
   padding: 0 var(--sp-4);
-  background: var(--c-surface);
-  border: 1px solid var(--c-hairline);
+  background: var(--c-canvas);
+  border: 1px solid var(--c-hairline-strong);
   border-radius: var(--r-full);
   color: var(--c-ink);
   font-family: var(--f-body);
@@ -292,9 +293,9 @@ kbd {
   cursor: pointer;
   transition: border-color var(--t-fast);
 }
-.tier-filter:hover { border-color: var(--c-hairline-strong); }
+.tier-filter:hover { border-color: var(--c-stone); }
 .tier-filter:focus {
-  border-color: var(--c-primary);
+  border-color: var(--c-blue);
   border-width: 2px;
 }
 
@@ -307,6 +308,7 @@ kbd {
   padding: 4px var(--sp-3);
   background: var(--c-surface);
   border-radius: var(--r-full);
+  border: 1px solid var(--c-hairline);
 }
 
 .btn-icon {
@@ -329,7 +331,7 @@ kbd {
 .sidebar-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(10,21,48,0.45);
+  background: rgba(5,0,56,0.35);
   z-index: 49;
 }
 .sidebar-overlay.is-visible { display: block; }
@@ -364,7 +366,7 @@ kbd {
   text-align: left;
   transition: background var(--t-fast);
 }
-.nav-section-btn:hover { background: var(--c-surface-soft); }
+.nav-section-btn:hover { background: var(--c-surface); }
 
 .nav-section-label {
   flex: 1;
@@ -388,12 +390,12 @@ kbd {
   transition: color var(--t-fast), background var(--t-fast);
 }
 .nav-section-count.has-progress {
-  background: var(--c-primary);
-  color: var(--c-on-primary);
+  background: var(--c-yellow);
+  color: var(--c-ink);
 }
 .nav-section-count.is-complete {
-  background: var(--c-ink);
-  color: var(--c-on-dark);
+  background: var(--c-primary);
+  color: var(--c-on-primary);
 }
 
 .nav-chevron {
@@ -436,15 +438,16 @@ kbd {
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
 }
 .nav-topic-link:hover {
-  background: var(--c-surface-soft);
+  background: var(--c-surface);
   color: var(--c-charcoal);
   text-decoration: none;
 }
+/* Sidebar active: surface-yellow bg, yellow left border */
 .nav-topic-link.is-active {
-  background: var(--c-surface);
+  background: var(--c-surface-yellow);
   color: var(--c-ink);
   font-weight: 500;
-  border-left-color: var(--c-primary);
+  border-left-color: var(--c-yellow);
 }
 
 .nav-topic-num {
@@ -472,9 +475,9 @@ kbd {
   color: var(--c-hairline-strong);
   transition: color var(--t-fast);
 }
-.nav-topic-link.is-complete .completion-icon { color: var(--c-green); }
+.nav-topic-link.is-complete .completion-icon { color: var(--c-success); }
 .nav-topic-link.is-complete { color: var(--c-muted); }
-.nav-topic-link.is-active .completion-icon { color: var(--c-primary); }
+.nav-topic-link.is-active .completion-icon { color: var(--c-yellow-deep); }
 
 .sidebar-no-results {
   padding: var(--sp-4);
@@ -487,7 +490,7 @@ kbd {
 
 
 /* ============================================================
-   8. TIER BADGES — Notion brand spectrum, full pill
+   8. TIER BADGES — Miro sticky-note pastel palette, full pill
    ============================================================ */
 .tier-badge {
   display: inline-flex;
@@ -507,7 +510,7 @@ kbd {
 .tier-badge.tier-2       { background: var(--c-t2-bg);   color: var(--c-t2-text); }
 .tier-badge.tier-3       { background: var(--c-t3-bg);   color: var(--c-t3-text); }
 .tier-badge.tier-labs    { background: var(--c-labs-bg); color: var(--c-labs-text); }
-.tier-badge.tier-welcome { background: var(--c-surface); color: var(--c-steel); }
+.tier-badge.tier-welcome { background: rgba(0,0,0,0.12); color: var(--c-ink); }
 
 
 /* ============================================================
@@ -536,10 +539,10 @@ kbd {
 
 
 /* ============================================================
-   10. TOPIC HERO — Brand Navy hero band, white text
+   10. TOPIC HERO — Brand blue feature card, white text
    ============================================================ */
 .topic-hero {
-  background: var(--c-navy);
+  background: var(--c-blue);
   border-radius: var(--r-hero);
   padding: var(--sp-12) var(--sp-8);
   margin-bottom: var(--sp-8);
@@ -554,45 +557,44 @@ kbd {
   margin-bottom: var(--sp-4);
 }
 
-/* Badges on dark hero — semi-transparent white pill */
+/* Badges on blue hero — semi-transparent white pill */
 .topic-hero .tier-badge {
-  background: rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.88);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.18);
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.25);
   letter-spacing: 0.04em;
 }
 
 .topic-hero h1 {
   font-family: var(--f-display);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.10;
-  letter-spacing: -0.04em;
-  color: var(--c-on-dark);
+  letter-spacing: -0.03em;
+  color: #ffffff;
   margin-bottom: var(--sp-3);
 }
-
 
 .topic-hero .topic-lead {
   font-family: var(--f-body);
   font-size: 1rem;
   font-weight: 400;
-  color: rgba(255,255,255,0.60);
+  color: rgba(255,255,255,0.75);
   line-height: 1.55;
   max-width: 64ch;
 }
 
-/* Meta on dark hero */
-.topic-hero .topic-time    { color: rgba(255,255,255,0.45); }
-.topic-hero .prereq-list   { color: rgba(255,255,255,0.45); }
-.topic-hero .prereq-label  { color: rgba(255,255,255,0.65); }
+/* Meta on blue hero */
+.topic-hero .topic-time    { color: rgba(255,255,255,0.60); }
+.topic-hero .prereq-list   { color: rgba(255,255,255,0.60); }
+.topic-hero .prereq-label  { color: rgba(255,255,255,0.80); font-weight: 600; }
 .topic-hero .prereq-chip {
-  border-color: rgba(255,255,255,0.20);
-  color: rgba(255,255,255,0.88);
-  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.30);
+  color: #ffffff;
+  background: rgba(255,255,255,0.15);
 }
 .topic-hero .prereq-chip:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.25);
   text-decoration: none;
 }
 
@@ -646,13 +648,13 @@ kbd {
    ============================================================ */
 .topic-article section { margin-bottom: var(--sp-6); }
 
-/* H2 — Ink, weight 600, tight negative tracking (heading-2 spec) */
+/* H2 — ink, weight 600 */
 .topic-article h2 {
   font-family: var(--f-display);
-  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
   font-weight: 600;
-  line-height: 1.20;
-  letter-spacing: -0.03em;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
   color: var(--c-ink);
   margin-top: var(--sp-10);
   margin-bottom: var(--sp-3);
@@ -705,28 +707,29 @@ kbd {
 }
 .topic-article h2:hover .anchor-link,
 .topic-article h3:hover .anchor-link { opacity: 1; }
-.anchor-link:hover { color: var(--c-primary); opacity: 1 !important; text-decoration: none; }
+.anchor-link:hover { color: var(--c-yellow-deep); opacity: 1 !important; text-decoration: none; }
 
 
 /* ============================================================
-   12. CODE BLOCKS — Brand Navy (#0a1530)
+   12. CODE BLOCKS — ink #1c1c1e bg
    ============================================================ */
 .code-block {
   margin: var(--sp-6) 0;
   border-radius: var(--r-card);
   overflow: hidden;
-  background: var(--c-navy);
+  background: var(--c-primary);
   box-shadow: var(--shadow-hero);
+  max-width: 100%;
 }
 
 .code-block-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.05);
   padding: 0 var(--sp-4);
   height: 36px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   gap: var(--sp-3);
 }
 
@@ -774,9 +777,11 @@ kbd {
 pre[class*="language-"] {
   border-radius: var(--r-card);
   margin: var(--sp-6) 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-/* Inline code — surface bg, charcoal text (card-base style) */
+/* Inline code */
 :not(pre) > code:not([class*="language-"]) {
   font-family: var(--f-code);
   font-size: 0.875em;
@@ -831,13 +836,13 @@ pre[class*="language-"] {
 }
 .otp-link:hover {
   color: var(--c-charcoal);
-  border-left-color: var(--c-primary);
+  border-left-color: var(--c-yellow);
   text-decoration: none;
 }
 .otp-link.is-active {
   color: var(--c-ink);
   font-weight: 500;
-  border-left-color: var(--c-primary);
+  border-left-color: var(--c-yellow);
 }
 .otp-link.otp-h3 {
   padding-left: calc(var(--sp-3) + var(--sp-4));
@@ -846,7 +851,7 @@ pre[class*="language-"] {
 
 
 /* ============================================================
-   TAB BAR — pill-tab spec: full pill, active = ink-deep black
+   TAB BAR — pill-tab spec: full pill, active = ink black
    ============================================================ */
 .topic-tabs-bar {
   display: flex;
@@ -859,13 +864,12 @@ pre[class*="language-"] {
 }
 .topic-tabs-bar::-webkit-scrollbar { display: none; }
 
-/* pill-tab: rounded.full, individual outlined pills */
 .tab-btn {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   padding: 7px var(--sp-4);
-  background: transparent;
+  background: var(--c-canvas);
   border: 1px solid var(--c-hairline);
   border-radius: var(--r-full);
   font-family: var(--f-body);
@@ -879,17 +883,16 @@ pre[class*="language-"] {
 .tab-btn:hover {
   color: var(--c-charcoal);
   border-color: var(--c-hairline-strong);
-  background: var(--c-surface-soft);
+  background: var(--c-surface);
 }
-/* pill-tab-active: ink-deep black bg, white text */
+/* pill-tab-active: ink black (Miro signature) */
 .tab-btn.is-active {
-  background: var(--c-ink);
-  border-color: var(--c-ink);
-  color: var(--c-on-dark);
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-on-primary);
 }
 .tab-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-/* Tab panels */
 .tab-panel { display: none; }
 .tab-panel.is-active {
   display: block;
@@ -940,38 +943,38 @@ pre[class*="language-"] {
   margin-bottom: var(--sp-2);
 }
 .callout.callout-info {
-  background: rgba(0,117,222,0.05);
-  border-color: rgba(0,117,222,0.15);
-  border-left-color: var(--c-link);
+  background: rgba(66,98,255,0.04);
+  border-color: rgba(66,98,255,0.15);
+  border-left-color: var(--c-blue);
 }
-.callout.callout-info .callout-title { color: var(--c-link); }
+.callout.callout-info .callout-title { color: var(--c-blue); }
 .callout.callout-warning {
-  background: rgba(221,91,0,0.05);
-  border-color: rgba(221,91,0,0.15);
-  border-left-color: var(--c-orange);
+  background: rgba(252,185,0,0.08);
+  border-color: rgba(252,185,0,0.20);
+  border-left-color: var(--c-yellow-deep);
 }
-.callout.callout-warning .callout-title { color: var(--c-orange); }
+.callout.callout-warning .callout-title { color: var(--c-yellow-dark); }
 .callout.callout-success {
-  background: rgba(26,174,57,0.05);
-  border-color: rgba(26,174,57,0.15);
-  border-left-color: var(--c-green);
+  background: rgba(0,180,115,0.05);
+  border-color: rgba(0,180,115,0.15);
+  border-left-color: var(--c-success);
 }
-.callout.callout-success .callout-title { color: var(--c-green); }
+.callout.callout-success .callout-title { color: var(--c-success); }
 .callout.callout-verify {
-  background: rgba(221,91,0,0.05);
-  border-color: rgba(221,91,0,0.15);
-  border-left-color: var(--c-orange);
+  background: rgba(252,185,0,0.08);
+  border-color: rgba(252,185,0,0.20);
+  border-left-color: var(--c-yellow-deep);
 }
-.callout.callout-verify .callout-title { color: var(--c-orange); }
+.callout.callout-verify .callout-title { color: var(--c-yellow-dark); }
 
 
 /* ============================================================
    HANDS-ON LAB LAYOUT
    ============================================================ */
 .lab-goal {
-  background: rgba(0,117,222,0.05);
+  background: rgba(66,98,255,0.04);
   border: none;
-  border-left: 3px solid var(--c-link);
+  border-left: 3px solid var(--c-blue);
   border-radius: 0;
   padding: var(--sp-4) var(--sp-6);
   margin-bottom: var(--sp-6);
@@ -980,7 +983,7 @@ pre[class*="language-"] {
   line-height: 1.6;
   color: var(--c-ink);
 }
-.lab-goal strong { color: var(--c-link); font-weight: 600; }
+.lab-goal strong { color: var(--c-blue); font-weight: 600; }
 
 .lab-steps { padding-left: 0; list-style: none; counter-reset: lab-step; }
 .lab-steps > li {
@@ -1072,8 +1075,8 @@ pre[class*="language-"] {
   width: 18px;
   height: 18px;
   min-width: 18px;
-  background: rgba(221,91,0,0.10);
-  color: var(--c-orange);
+  background: rgba(252,185,0,0.15);
+  color: var(--c-yellow-dark);
   font-family: var(--f-body);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -1092,19 +1095,18 @@ pre[class*="language-"] {
   margin-top: var(--sp-2);
 }
 
-/* card-base spec: canvas bg, 12px rounded, hairline border */
+/* card-base: canvas bg, 16px rounded, hairline border */
 .self-check-item {
   background: var(--c-canvas);
   border: 1px solid var(--c-hairline);
   border-radius: var(--r-card);
   overflow: hidden;
   box-shadow: var(--shadow-xs);
-  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  transition: border-color var(--t-fast);
 }
 .self-check-item:focus-within {
-  border-color: var(--c-primary);
+  border-color: var(--c-yellow-deep);
   border-width: 2px;
-  box-shadow: none;
 }
 
 .self-check-q {
@@ -1123,7 +1125,7 @@ pre[class*="language-"] {
   flex: 1;
 }
 
-/* Reveal — button-primary: purple #5645d4, 8px radius */
+/* Reveal — black pill primary (Miro button-primary spec) */
 .btn-reveal {
   display: inline-flex;
   align-items: center;
@@ -1131,7 +1133,7 @@ pre[class*="language-"] {
   flex-shrink: 0;
   background: var(--c-primary);
   border: 1px solid var(--c-primary);
-  border-radius: var(--r-btn);
+  border-radius: var(--r-full);
   padding: 8px 18px;
   font-family: var(--f-body);
   font-size: 0.875rem;
@@ -1156,12 +1158,12 @@ pre[class*="language-"] {
   border-color: var(--c-hairline-strong);
 }
 
-/* Answer — lavender tint (card-tint-lavender), purple left border */
+/* Answer — coral-light tint (sticky-note echo), ink left border */
 .self-check-answer {
   display: none;
   padding: var(--sp-4) var(--sp-6);
-  background: var(--c-tint-lavender);
-  border-top: 1px solid rgba(86,69,212,0.12);
+  background: var(--c-coral-light);
+  border-top: 1px solid rgba(255,153,153,0.30);
   border-left: 3px solid var(--c-primary);
   font-family: var(--f-body);
   font-size: 0.9375rem;
@@ -1176,11 +1178,11 @@ pre[class*="language-"] {
 .self-check-answer code {
   font-family: var(--f-code);
   font-size: 0.875em;
-  background: rgba(86,69,212,0.08);
+  background: rgba(255,153,153,0.15);
   padding: 0.15em 0.45em;
   border-radius: var(--r-xs);
-  border: 1px solid rgba(86,69,212,0.15);
-  color: var(--c-primary-deep);
+  border: 1px solid rgba(255,153,153,0.25);
+  color: var(--c-coral-dark);
 }
 
 
@@ -1198,7 +1200,7 @@ pre[class*="language-"] {
   border-top: 1px solid var(--c-hairline);
 }
 
-/* Mark Complete — button-secondary (outlined); button-primary when done */
+/* Mark Complete — outlined pill secondary */
 .btn-complete {
   display: inline-flex;
   align-items: center;
@@ -1232,7 +1234,7 @@ pre[class*="language-"] {
 
 .topic-footer-nav { display: flex; gap: var(--sp-3); align-items: center; }
 
-/* Prev — button-secondary: outlined 8px rect */
+/* Prev — outlined pill secondary */
 .btn-nav {
   display: inline-flex;
   align-items: center;
@@ -1255,7 +1257,7 @@ pre[class*="language-"] {
 }
 .btn-nav svg { width: 13px; height: 13px; }
 
-/* Next — button-primary: purple pill */
+/* Next — black pill primary */
 .btn-nav-next {
   background: var(--c-primary);
   border-color: var(--c-primary);
@@ -1296,7 +1298,7 @@ pre[class*="language-"] {
   .sidebar {
     transform: translateX(-100%);
     transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 4px 0 32px rgba(10,21,48,0.15);
+    box-shadow: 4px 0 32px rgba(5,0,56,0.12);
   }
   .sidebar.is-open { transform: translateX(0); }
 
@@ -1333,24 +1335,17 @@ pre[class*="language-"] {
   .header-right  { grid-area: right;  display: flex; align-items: center; gap: var(--sp-2); }
   .header-center { grid-area: search; display: flex; align-items: center; gap: var(--sp-2); overflow: hidden; min-height: 0; padding: 0; margin: 0; max-width: none; }
 
-  /* When search is open — expand the search row */
-  .site-header.search-active {
-    grid-template-rows: var(--header-h) 52px;
-  }
-  .site-header.search-active .header-center {
-    padding: 0 0 var(--sp-2);
-  }
+  .site-header.search-active { grid-template-rows: var(--header-h) 52px; }
+  .site-header.search-active .header-center { padding: 0 0 var(--sp-2); }
   .site-header.search-active .btn-search-back { display: flex; }
   .site-header.search-active .header-center .search-box { flex: 1; }
 
-  /* Body & sidebar shift down when search row opens */
   body.search-open { padding-top: calc(var(--header-h) + 52px); }
   body.search-open .sidebar {
     top: calc(var(--header-h) + 52px);
     height: calc(100vh - var(--header-h) - 52px);
   }
 
-  /* Show search toggle, hide tier filter (no room) */
   .btn-search-mobile { display: flex; }
   .tier-filter { display: none; }
 
@@ -1359,8 +1354,8 @@ pre[class*="language-"] {
     width: auto;
     max-width: 100%;
     min-width: 0;
-    margin: var(--sp-3);
-    padding: var(--sp-6) var(--sp-4);
+    margin: var(--sp-2) 0;
+    padding: var(--sp-5) var(--sp-4);
     overflow-x: hidden;
   }
 
@@ -1372,7 +1367,7 @@ pre[class*="language-"] {
   }
 
   /* --- Topic hero --- */
-  .topic-hero { padding: var(--sp-8) var(--sp-5); border-radius: var(--r-hero); }
+  .topic-hero { padding: var(--sp-8) var(--sp-5); border-radius: var(--r-card); }
   .topic-hero h1 { font-size: 1.75rem; }
   .topic-lead    { font-size: 0.9375rem; }
 
@@ -1385,18 +1380,10 @@ pre[class*="language-"] {
 
   /* --- Self-check --- */
   .self-check-q { flex-direction: column; gap: var(--sp-3); }
-  .btn-reveal {
-    align-self: stretch;
-    justify-content: center;
-    min-height: 44px;
-  }
+  .btn-reveal { align-self: stretch; justify-content: center; min-height: 44px; }
 
   /* --- Topic footer nav --- */
-  .topic-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--sp-3);
-  }
+  .topic-footer { flex-direction: column; align-items: stretch; gap: var(--sp-3); }
   .topic-footer-nav { width: 100%; }
   .btn-nav, .btn-nav-next {
     width: 100%;

@@ -1,8 +1,8 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Notion
-   Background: #0a1530  (Brand Navy)
+   AGIT Code Theme for Prism.js — Miro
+   Background: #1c1c1e  (Ink / primary)
    Base text:  rgba(255,255,255,0.88)
-   Accents: Notion editorial palette — lavender, yellow-warm, mint
+   Accents: Miro sticky-note palette — yellow, teal, coral, blue
    ============================================================ */
 
 code[class*="language-"],
@@ -22,63 +22,63 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #0a1530;
+  background: #1c1c1e;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #07101f; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #1f2f52; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #111113; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #3a3a3e; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(86,69,212,0.35);
+  background: rgba(255,208,47,0.25);
 }
 
-/* --- Token colors (Notion editorial palette on Brand Navy) --- */
+/* --- Token colors (Miro sticky-note palette on ink bg) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: rgba(255,255,255,0.30); font-style: italic; }
+.token.cdata     { color: rgba(255,255,255,0.28); font-style: italic; }
 
-.token.punctuation { color: rgba(255,255,255,0.40); }
+.token.punctuation { color: rgba(255,255,255,0.38); }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #d6b6f6; font-weight: 500; }   /* Purple-300 — Notion primary */
+.token.important   { color: #ffd02f; font-weight: 500; }   /* Canary Yellow */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #f9e79f; }   /* Yellow-warm — string literals */
+.token.builtin     { color: #c3faf5; }   /* Teal Light */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #d9f3e1; }   /* Mint-light — numeric/boolean */
+.token.symbol      { color: #ffb380; }   /* Orange warm */
 
 .token.function,
 .token.function-name { color: rgba(255,255,255,0.88); font-weight: 500; }
 
-.token.class-name  { color: #b8d4f8; }   /* Soft cornflower — type names */
+.token.class-name  { color: #90b8ff; }   /* Blue light */
 
 .token.property,
-.token.tag         { color: #d6b6f6; }   /* Purple-300 */
+.token.tag         { color: #ffd02f; }   /* Canary Yellow */
 
 .token.attr-name,
-.token.selector    { color: #f9e79f; }   /* Yellow-warm */
+.token.selector    { color: #c3faf5; }   /* Teal Light */
 
 .token.operator,
-.token.entity      { color: rgba(255,255,255,0.40); }
+.token.entity      { color: rgba(255,255,255,0.38); }
 
 .token.variable    { color: rgba(255,255,255,0.88); }
 
-.token.deleted     { color: #f4a9a8; }
-.token.inserted    { color: #d9f3e1; }
+.token.deleted     { color: #ffc6c6; }
+.token.inserted    { color: #c3faf5; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
