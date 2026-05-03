@@ -61,9 +61,9 @@
   /* ---- Code blocks: light theme for print ---- */
   pre[class*="language-"],
   code[class*="language-"] {
-    background: #f4f4f4 !important;
-    color: #1a1a1a !important;
-    border: 1px solid #ccc !important;
+    background: #f6f7f8 !important;
+    color: #1c1e21 !important;
+    border: 1px solid #dadde1 !important;
     font-size: 9pt;
     white-space: pre-wrap;
     word-break: break-all;
@@ -92,8 +92,8 @@
   pre, figure, blockquote, table { page-break-inside: avoid; }
 
   /* ---- Hero ---- */
-  .hero-accent { background: #0052CC !important; }
-  .topic-hero  { border-bottom: 2px solid #ccc !important; }
+  .hero-accent { background: #3578e5 !important; width: 48px; height: 4px; }
+  .topic-hero  { border-bottom: 1px solid #ccc !important; }
 
   /* ---- Tier badges ---- */
   .tier-badge { border: 1px solid #999 !important; background: white !important; color: #333 !important; }

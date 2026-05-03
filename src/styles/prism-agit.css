@@ -1,16 +1,15 @@
 /* ============================================================
    AGIT Code Theme for Prism.js
-   Background: #1C2333 (ADS code surface)
-   Base text:  #CDD9E5
-   Aligned with Confluence / Atlassian Design System
+   Background: #f6f7f8 (Slack docs light surface)
+   Base text:  #1c1e21
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #CDD9E5;
-  font-family: "JetBrains Mono", "Consolas", monospace;
+  color: #1c1e21;
+  font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.875rem;
-  line-height: 1.75;
+  line-height: 1.7;
   direction: ltr;
   text-align: left;
   white-space: pre;
@@ -22,69 +21,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #1C2333;
+  background: #f6f7f8;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
-  border-radius: 0 0 4px 4px;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #ebedf0; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #c8cbd0; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(0,82,204,0.30);
+  background: rgba(53,120,229,0.18);
 }
 
 /* --- Token colors --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #5C7085; font-style: italic; }
+.token.cdata     { color: #8c959f; font-style: italic; }
 
-.token.punctuation { color: #8DA1B9; }
+.token.punctuation { color: #525860; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #78C4E8; font-weight: 500; }
+.token.important   { color: #0550ae; font-weight: 500; }
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #7EC894; }
+.token.builtin     { color: #1a7f37; }
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #E5A84B; }
+.token.symbol      { color: #953800; }
 
 .token.function,
-.token.function-name { color: #79B8FF; }
+.token.function-name { color: #8250df; }
 
-.token.class-name  { color: #B392F0; }
+.token.class-name  { color: #953800; }
 
 .token.property,
-.token.tag         { color: #79B8FF; }
+.token.tag         { color: #116329; }
 
 .token.attr-name,
-.token.selector    { color: #FFAB70; }
+.token.selector    { color: #0550ae; }
 
 .token.operator,
-.token.entity      { color: #8DA1B9; }
+.token.entity      { color: #525860; }
 
-.token.variable    { color: #CDD9E5; }
+.token.variable    { color: #e3066a; }
 
-.token.deleted     { color: #F97583; }
-.token.inserted    { color: #7EC894; }
+.token.deleted     { color: #cf222e; }
+.token.inserted    { color: #1a7f37; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid rgba(255,255,255,0.07);
+  border-right: 1px solid #dadde1;
 }
-.line-numbers-rows > span::before { color: #3D4F6A; }
+.line-numbers-rows > span::before { color: #c8cbd0; }

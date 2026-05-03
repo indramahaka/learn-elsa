@@ -1,65 +1,66 @@
 /* ============================================================
    AWFS ELSA ACADEMY: Main Stylesheet
-   Design language: Confluence / Atlassian Design System
-   Font: Source Sans 3 (body + headings), JetBrains Mono (code)
+   Design language: Slack Developer Docs
+   Font: System UI stack (body/headings), JetBrains Mono (code)
    ============================================================ */
 
 
 /* ============================================================
-   1. DESIGN TOKENS — Atlassian Design System
+   1. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* ADS Color palette */
-  --c-bg:           #F4F5F7;   /* N20 — page background */
-  --c-surface:      #FFFFFF;   /* content card */
-  --c-surface-2:    #EBECF0;   /* N30 — hover, inset */
-  --c-surface-3:    #DFE1E6;   /* N40 — pressed */
-  --c-header-bg:    #FFFFFF;
-  --c-sidebar-bg:   #F4F5F7;   /* N20 — same as page bg, sidebar blends in */
+  /* Backgrounds */
+  --c-bg:           #ffffff;
+  --c-surface:      #ffffff;
+  --c-surface-2:    #f5f6f7;   /* Gray 100 — sidebar */
+  --c-surface-3:    #ebedf0;   /* Gray 200 — hover */
+  --c-surface-4:    #dadde1;   /* Gray 300 — pressed */
+  --c-header-bg:    #ffffff;
+  --c-sidebar-bg:   #f5f6f7;
 
-  /* Text — ADS N900/N500/N300 */
-  --c-text:         #172B4D;   /* N900 */
-  --c-text-2:       #6B778C;   /* N500 */
-  --c-text-3:       #8993A4;   /* N300 */
+  /* Text */
+  --c-text:         #1c1e21;   /* Gray 900 */
+  --c-text-2:       #525860;
+  --c-text-3:       #8d949e;   /* Gray 600 */
 
-  /* Primary blue — ADS B400 */
-  --c-accent:       #0052CC;
-  --c-accent-hover: #0747A6;   /* B500 */
-  --c-accent-light: #4C9AFF;   /* B200 */
-  --c-accent-dim:   #DEEBFF;   /* B75 */
-  --c-accent-text:  #0747A6;
+  /* Accent — Slack blue */
+  --c-accent:       #3578e5;
+  --c-accent-hover: #2d66c3;
+  --c-accent-dim:   #ebf2fc;
+  --c-accent-light: #72a1ed;
+  --c-accent-text:  #2554a0;
 
-  /* Status colors */
-  --c-success:      #006644;
-  --c-success-bg:   #E3FCEF;
-  --c-warning:      #FF8B00;
-  --c-warning-bg:   #FFFAE6;
-  --c-danger:       #DE350B;
-  --c-danger-bg:    #FFEBE6;
+  /* Status */
+  --c-success:      #00a400;
+  --c-success-bg:   #e8f8ea;
+  --c-warning:      #ffba00;
+  --c-warning-bg:   #fffde7;
+  --c-danger:       #fa383e;
+  --c-danger-bg:    #fff0f0;
 
-  /* Borders — ADS N40/N60 */
-  --c-border:       #DFE1E6;
-  --c-border-strong:#C1C7D0;
+  /* Borders */
+  --c-border:       #dadde1;
+  --c-border-strong:#8d949e;
 
-  /* Tier badge palette */
-  --c-t1-bg:    #FFFAE6; --c-t1-text: #FF8B00;
-  --c-t2-bg:    #DEEBFF; --c-t2-text: #0052CC;
-  --c-t3-bg:    #E3FCEF; --c-t3-text: #006644;
-  --c-labs-bg:  #EAE6FF; --c-labs-text: #403294;
+  /* Tier badge palette — Slack brand colors */
+  --c-t1-bg:    #fff3c4; --c-t1-text: #946200;
+  --c-t2-bg:    #ebf2fc; --c-t2-text: #2554a0;
+  --c-t3-bg:    #e8f8ea; --c-t3-text: #1a6b2a;
+  --c-labs-bg:  #fce3f0; --c-labs-text: #a3195b;
 
-  /* Code */
-  --c-code-bg:        #1C2333;
-  --c-code-tab-bg:    #151C2A;
-  --c-code-inline-bg: #F4F5F7;
-  --c-code-inline-text: #172B4D;
+  /* Code — light theme */
+  --c-code-bg:        #f6f7f8;
+  --c-code-tab-bg:    #ebedf0;
+  --c-code-inline-bg: #ebedf0;
+  --c-code-inline-text: #1c1e21;
 
-  /* Typography */
-  --f-body:    "Source Sans 3", "Segoe UI", sans-serif;
-  --f-code:    "JetBrains Mono", "Consolas", monospace;
+  /* Typography — system UI */
+  --f-body: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  --f-code: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   /* Layout */
-  --header-h:    56px;
-  --sidebar-w:   248px;
+  --header-h:    60px;
+  --sidebar-w:   260px;
   --rsidebar-w:  220px;
   --content-max: 760px;
 
@@ -68,20 +69,20 @@
   --sp-4:  1rem;     --sp-6:  1.5rem;   --sp-8:  2rem;
   --sp-10: 2.5rem;   --sp-12: 3rem;     --sp-16: 4rem;
 
-  /* Radii — ADS uses 3-4px */
+  /* Radii */
   --r-sm:   3px;
   --r-md:   4px;
-  --r-lg:   6px;
+  --r-lg:   8px;
   --r-pill: 999px;
 
-  /* Shadows — ADS elevation */
-  --shadow-card:    0 1px 1px rgba(9,30,66,0.25), 0 0 1px rgba(9,30,66,0.31);
-  --shadow-raised:  0 4px 8px -2px rgba(9,30,66,0.25), 0 0 1px rgba(9,30,66,0.31);
-  --shadow-overlay: 0 8px 16px -4px rgba(9,30,66,0.25), 0 0 1px rgba(9,30,66,0.31);
+  /* Shadows — very light, Slack style */
+  --shadow-card:    0 1px 2px 0 rgba(0,0,0,0.10);
+  --shadow-raised:  0 5px 40px rgba(0,0,0,0.05), 0 1px 2px 0 rgba(0,0,0,0.10);
+  --shadow-overlay: 0 12px 28px 0 rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.10);
 
   /* Transitions */
-  --t-fast: 100ms ease;
-  --t-mid:  200ms ease;
+  --t-fast: 0.2s cubic-bezier(0.08, 0.52, 0.52, 1);
+  --t-mid:  0.2s cubic-bezier(0.08, 0.52, 0.52, 1);
 }
 
 
@@ -101,9 +102,9 @@ html {
 
 body {
   font-family: var(--f-body);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--c-text);
   background-color: var(--c-bg);
   padding-top: var(--header-h);
@@ -125,16 +126,16 @@ a:hover {
 button { cursor: pointer; font-family: inherit; }
 ul, ol { padding-left: var(--sp-6); }
 li + li { margin-top: var(--sp-1); }
-strong { font-weight: 700; }
+strong { font-weight: 600; }
 
 kbd {
   font-family: var(--f-code);
-  font-size: 0.775rem;
-  background: var(--c-surface-2);
+  font-size: 0.8em;
+  background: var(--c-surface-3);
   border: 1px solid var(--c-border-strong);
   border-bottom-width: 2px;
   border-radius: var(--r-sm);
-  padding: 0.1em 0.4em;
+  padding: 0.1em 0.45em;
   color: var(--c-text-2);
 }
 
@@ -171,17 +172,17 @@ kbd {
   top: 0; left: 0; right: 0;
   height: var(--header-h);
   background: var(--c-header-bg);
-  border-bottom: 2px solid var(--c-accent);
+  border-bottom: 1px solid var(--c-border);
+  box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
   gap: var(--sp-3);
   padding: 0 var(--sp-6);
   z-index: 100;
-  box-shadow: var(--shadow-card);
 }
 
 .header-left  { display: flex; align-items: center; gap: var(--sp-3); flex-shrink: 0; }
-.header-center { flex: 1; min-width: 0; max-width: 420px; margin: 0 var(--sp-6); }
+.header-center { flex: 1; min-width: 0; max-width: 400px; margin: 0 var(--sp-6); }
 .header-right  { display: flex; align-items: center; gap: var(--sp-2); flex-shrink: 0; margin-left: auto; }
 
 /* Hamburger */
@@ -194,10 +195,10 @@ kbd {
   border-radius: var(--r-md);
   transition: background var(--t-fast);
 }
-.btn-hamburger:hover { background: var(--c-surface-2); }
+.btn-hamburger:hover { background: var(--c-surface-3); }
 .btn-hamburger svg { width: 18px; height: 18px; }
 
-/* Wordmark — Confluence-style: product name prominent, company subtle */
+/* Wordmark */
 .site-logo {
   display: flex;
   align-items: center;
@@ -207,26 +208,24 @@ kbd {
   border-radius: var(--r-md);
   transition: background var(--t-fast);
 }
-.site-logo:hover { background: var(--c-surface-2); text-decoration: none; }
+.site-logo:hover { background: var(--c-surface-3); text-decoration: none; }
 
 .logo-agit {
-  font-family: var(--f-body);
   font-size: 0.8125rem;
   font-weight: 400;
-  color: var(--c-text-2);
+  color: var(--c-text-3);
   letter-spacing: 0.01em;
 }
 .logo-sep {
   width: 1px; height: 14px;
-  background: var(--c-border-strong);
+  background: var(--c-border);
   flex-shrink: 0;
 }
 .logo-product {
-  font-family: var(--f-body);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--c-accent);
-  letter-spacing: 0;
+  color: var(--c-text);
+  letter-spacing: -0.01em;
 }
 
 
@@ -250,7 +249,7 @@ kbd {
   width: 100%;
   height: 36px;
   background: var(--c-surface-2);
-  border: 2px solid var(--c-border);
+  border: 1px solid var(--c-border);
   border-radius: var(--r-md);
   padding: 0 var(--sp-3) 0 calc(var(--sp-3) + 14px + var(--sp-2));
   font-family: var(--f-body);
@@ -274,18 +273,20 @@ kbd {
   height: 34px;
   padding: 0 var(--sp-3);
   background: var(--c-surface);
-  border: 2px solid var(--c-border);
+  border: 1px solid var(--c-border);
   border-radius: var(--r-md);
   color: var(--c-text);
   font-family: var(--f-body);
   font-size: 0.875rem;
-  font-weight: 400;
   outline: none;
   cursor: pointer;
-  transition: border-color var(--t-fast);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
 .tier-filter:hover { border-color: var(--c-border-strong); }
-.tier-filter:focus { border-color: var(--c-accent); box-shadow: 0 0 0 2px var(--c-accent-dim); }
+.tier-filter:focus {
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 2px var(--c-accent-dim);
+}
 
 .progress-chip {
   font-size: 0.8125rem;
@@ -307,17 +308,17 @@ kbd {
   border-radius: var(--r-md);
   transition: background var(--t-fast), color var(--t-fast);
 }
-.btn-icon:hover { background: var(--c-surface-2); color: var(--c-text); }
+.btn-icon:hover { background: var(--c-surface-3); color: var(--c-text); }
 .btn-icon svg { width: 16px; height: 16px; }
 
 
 /* ============================================================
-   7. LEFT SIDEBAR — Confluence page-tree style
+   7. LEFT SIDEBAR
    ============================================================ */
 .sidebar-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(9,30,66,0.54);
+  background: rgba(0,0,0,0.50);
   z-index: 49;
 }
 .sidebar-overlay.is-visible { display: block; }
@@ -335,12 +336,12 @@ kbd {
 }
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
-.sidebar-scroller { padding: var(--sp-4) 0 var(--sp-16); }
+.sidebar-scroller { padding: var(--sp-3) 0 var(--sp-16); }
 
 /* Section header */
-.nav-section { margin-bottom: var(--sp-2); }
+.nav-section { margin-bottom: var(--sp-1); }
 
 .nav-section-btn {
   width: 100%;
@@ -351,22 +352,20 @@ kbd {
   background: transparent; border: none;
   text-align: left;
   transition: background var(--t-fast);
-  border-radius: 0;
 }
 .nav-section-btn:hover { background: var(--c-surface-3); }
 
 .nav-section-label {
   flex: 1;
-  font-family: var(--f-body);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--c-text-2);
+  letter-spacing: 0.10em;
+  color: var(--c-text-3);
 }
 
 .nav-chevron {
-  width: 14px; height: 14px;
+  width: 12px; height: 12px;
   color: var(--c-text-3);
   flex-shrink: 0;
   transition: transform var(--t-fast);
@@ -379,6 +378,7 @@ kbd {
 .nav-topic-list {
   list-style: none;
   padding: 0;
+  margin-bottom: var(--sp-2);
 }
 .nav-section-btn[aria-expanded="false"] + .nav-topic-list {
   display: none;
@@ -386,30 +386,27 @@ kbd {
 
 .nav-topic-item { margin: 0; }
 
-/* Page-tree link: ADS left-border active style */
 .nav-topic-link {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  padding: 6px var(--sp-4) 6px var(--sp-6);
-  font-family: var(--f-body);
-  font-size: 0.9375rem;
+  padding: 6px var(--sp-4) 6px var(--sp-5);
+  font-size: 0.9rem;
   font-weight: 400;
-  color: var(--c-text);
+  color: var(--c-text-2);
   text-decoration: none;
-  border-left: 3px solid transparent;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+  border-radius: 0;
+  transition: background var(--t-fast), color var(--t-fast);
 }
 .nav-topic-link:hover {
-  background: var(--c-surface-3);
-  color: var(--c-accent);
+  background: rgba(0,0,0,0.05);
+  color: var(--c-text);
   text-decoration: none;
 }
 .nav-topic-link.is-active {
   background: var(--c-accent-dim);
   color: var(--c-accent);
-  border-left-color: var(--c-accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .completion-icon {
@@ -422,27 +419,26 @@ kbd {
 
 
 /* ============================================================
-   8. TIER BADGES — ADS Lozenge style
+   8. TIER BADGES
    ============================================================ */
 .tier-badge {
   display: inline-flex;
   align-items: center;
-  font-family: var(--f-body);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: var(--r-pill);
   flex-shrink: 0;
   white-space: nowrap;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .tier-badge.tier-1       { background: var(--c-t1-bg); color: var(--c-t1-text); }
 .tier-badge.tier-2       { background: var(--c-t2-bg); color: var(--c-t2-text); }
 .tier-badge.tier-3       { background: var(--c-t3-bg); color: var(--c-t3-text); }
 .tier-badge.tier-labs    { background: var(--c-labs-bg); color: var(--c-labs-text); }
-.tier-badge.tier-welcome { background: var(--c-surface-2); color: var(--c-text-2); }
+.tier-badge.tier-welcome { background: var(--c-surface-3); color: var(--c-text-2); }
 
 
 /* ============================================================
@@ -456,23 +452,19 @@ kbd {
   align-items: start;
 }
 
-/* Confluence content area: white card with ADS card shadow */
 .main-content {
   max-width: var(--content-max);
   width: 100%;
   padding: var(--sp-10) var(--sp-10);
-  margin: var(--sp-6) auto;
-  background: var(--c-surface);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-card);
+  margin: var(--sp-8) auto;
 }
 
-@keyframes confluenceFade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+@keyframes slackFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .topic-article {
-  animation: confluenceFade 180ms ease both;
+  animation: slackFade 160ms ease both;
 }
 
 
@@ -492,21 +484,21 @@ kbd {
   margin-bottom: var(--sp-4);
 }
 
-/* Confluence page title style */
 .topic-hero h1 {
-  font-family: var(--f-body);
   font-size: clamp(1.75rem, 3.5vw, 2.25rem);
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   color: var(--c-text);
-  margin-bottom: var(--sp-4);
+  margin-bottom: var(--sp-3);
 }
 
+/* Slack 4-color signature bar */
 .hero-accent {
-  width: 100%;
-  height: 1px;
-  background: var(--c-border);
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(to right, #e3066a 0%, #fcc003 33%, #41b658 66%, #1ab9ff 100%);
+  border-radius: var(--r-pill);
   margin-bottom: var(--sp-4);
 }
 
@@ -514,34 +506,28 @@ kbd {
   font-size: 1.0625rem;
   font-weight: 400;
   color: var(--c-text-2);
-  line-height: 1.65;
-  max-width: 60ch;
+  line-height: 1.7;
+  max-width: 62ch;
 }
 
 /* Sections */
 .topic-article section { margin-bottom: var(--sp-6); }
 
-/* H2 — Confluence heading style */
 .topic-article h2 {
-  font-family: var(--f-body);
-  font-size: clamp(1.375rem, 2vw, 1.625rem);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.3;
   letter-spacing: -0.01em;
   color: var(--c-text);
   margin-top: var(--sp-10);
   margin-bottom: var(--sp-3);
-  padding-bottom: var(--sp-2);
-  border-bottom: 1px solid var(--c-border);
   scroll-margin-top: calc(var(--header-h) + var(--sp-4));
   position: relative;
 }
 
-/* H3 */
 .topic-article h3 {
-  font-family: var(--f-body);
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   line-height: 1.4;
   color: var(--c-text);
   margin-top: var(--sp-6);
@@ -550,19 +536,16 @@ kbd {
   position: relative;
 }
 
-/* H4 */
 .topic-article h4 {
-  font-family: var(--f-body);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--c-text-2);
+  letter-spacing: 0.08em;
+  color: var(--c-text-3);
   margin-top: var(--sp-4);
   margin-bottom: var(--sp-2);
 }
 
-/* Body */
 .topic-article p {
   margin-bottom: var(--sp-4);
   max-width: 72ch;
@@ -570,14 +553,14 @@ kbd {
 }
 .topic-article li {
   max-width: 70ch;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* Anchor links */
 .anchor-link {
   opacity: 0;
   margin-left: var(--sp-2);
-  font-size: 0.8em;
+  font-size: 0.85em;
   font-family: var(--f-code);
   color: var(--c-text-3);
   text-decoration: none;
@@ -590,14 +573,14 @@ kbd {
 
 
 /* ============================================================
-   11. CODE BLOCKS
+   11. CODE BLOCKS — light theme
    ============================================================ */
 .code-block {
   margin: var(--sp-6) 0;
   border-radius: var(--r-lg);
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: var(--shadow-raised);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--shadow-card);
 }
 
 .code-block-header {
@@ -607,23 +590,23 @@ kbd {
   background: var(--c-code-tab-bg);
   padding: 0 var(--sp-4);
   height: 36px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--c-border);
   gap: var(--sp-3);
 }
 
 .code-block-lang {
   font-family: var(--f-code);
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.35);
+  color: var(--c-text-3);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .code-block-filename {
   font-family: var(--f-code);
-  font-size: 0.7rem;
-  color: rgba(255,255,255,0.3);
+  font-size: 0.6875rem;
+  color: var(--c-text-3);
   flex: 1;
   text-align: center;
   overflow: hidden;
@@ -636,9 +619,9 @@ kbd {
   align-items: center;
   gap: var(--sp-1);
   background: transparent; border: none;
-  color: rgba(255,255,255,0.3);
+  color: var(--c-text-3);
   font-family: var(--f-body);
-  font-size: 0.7rem;
+  font-size: 0.6875rem;
   padding: var(--sp-1) var(--sp-2);
   border-radius: var(--r-sm);
   white-space: nowrap;
@@ -646,8 +629,8 @@ kbd {
   transition: color var(--t-fast), background var(--t-fast);
 }
 .btn-copy:hover {
-  color: rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.07);
+  color: var(--c-text);
+  background: var(--c-surface-4);
 }
 .btn-copy svg { width: 11px; height: 11px; }
 
@@ -658,7 +641,7 @@ kbd {
 pre[class*="language-"] {
   border-radius: var(--r-lg);
   margin: var(--sp-6) 0;
-  box-shadow: var(--shadow-raised);
+  border: 1px solid var(--c-border);
 }
 
 /* Inline code */
@@ -668,7 +651,7 @@ pre[class*="language-"] {
   font-weight: 500;
   background: var(--c-code-inline-bg);
   color: var(--c-code-inline-text);
-  padding: 0.1em 0.4em;
+  padding: 0.125em 0.4em;
   border-radius: var(--r-sm);
   border: 1px solid var(--c-border);
 }
@@ -682,18 +665,18 @@ pre[class*="language-"] {
   top: calc(var(--header-h) + var(--sp-6));
   max-height: calc(100vh - var(--header-h) - var(--sp-12));
   overflow-y: auto;
-  padding: var(--sp-6) var(--sp-4);
+  padding: var(--sp-8) var(--sp-4);
   align-self: start;
 }
 .right-sidebar::-webkit-scrollbar { width: 3px; }
-.right-sidebar::-webkit-scrollbar-thumb { background: var(--c-border-strong); border-radius: 2px; }
+.right-sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
 .right-sidebar-title {
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--c-text-2);
+  letter-spacing: 0.10em;
+  color: var(--c-text-3);
   margin-bottom: var(--sp-3);
 }
 
@@ -701,7 +684,6 @@ pre[class*="language-"] {
 
 .otp-link {
   display: block;
-  font-family: var(--f-body);
   font-size: 0.875rem;
   font-weight: 400;
   color: var(--c-text-2);
@@ -709,7 +691,7 @@ pre[class*="language-"] {
   padding: 5px var(--sp-3);
   border-left: 2px solid var(--c-border);
   line-height: 1.4;
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  transition: color var(--t-fast), border-color var(--t-fast);
 }
 .otp-link:hover {
   color: var(--c-accent);
@@ -719,7 +701,7 @@ pre[class*="language-"] {
 .otp-link.is-active {
   color: var(--c-accent);
   border-left-color: var(--c-accent);
-  font-weight: 600;
+  font-weight: 500;
 }
 .otp-link.otp-h3 {
   padding-left: calc(var(--sp-3) + var(--sp-4));
@@ -748,7 +730,7 @@ pre[class*="language-"] {
   .right-sidebar { display: none; }
   .progress-chip { display: none; }
 
-  .main-content { margin: var(--sp-4); padding: var(--sp-8); }
+  .main-content { margin: var(--sp-6) var(--sp-4); padding: var(--sp-8); }
 }
 
 
@@ -764,9 +746,9 @@ pre[class*="language-"] {
   }
 
   .topic-hero h1 { font-size: 1.625rem; }
-  .topic-lead   { font-size: 1rem; }
+  .topic-lead    { font-size: 1rem; }
   .topic-article h2 { font-size: 1.25rem; }
-  .topic-article h3 { font-size: 1rem; }
+  .topic-article h3 { font-size: 0.9375rem; }
 
   .tier-filter { font-size: 0.8125rem; }
 }
