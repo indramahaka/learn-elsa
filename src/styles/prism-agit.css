@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Miro
-   Background: #1c1c1e  (Miro primary / code-block dark)
-   Base text:  #e8eaf0
-   Accents: Miro brand palette lifted for code legibility
+   AGIT Code Theme for Prism.js — Mastercard
+   Background: #141413  (Ink Black / footer color)
+   Base text:  #e8e4e0  (warm near-cream on dark)
+   Accents: Mastercard editorial palette — orange, blue, amber
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8eaf0;
+  color: #e8e4e0;
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.65;
@@ -22,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #1c1c1e;
+  background: #141413;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #111113; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #3a3a42; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #0a0a09; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #2e2e2d; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(255, 208, 47, 0.22);
+  background: rgba(207, 69, 0, 0.25);
 }
 
-/* --- Token colors (Miro brand palette on charcoal dark) --- */
+/* --- Token colors (Mastercard editorial palette on Ink Black) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #6b6f82; font-style: italic; }
+.token.cdata     { color: #6b6866; font-style: italic; }
 
-.token.punctuation { color: #8a8d9e; }
+.token.punctuation { color: #8a8580; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #ffd02f; font-weight: 500; }   /* Miro canary yellow */
+.token.important   { color: #f37338; font-weight: 500; }   /* Light Signal Orange */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #3dd5cc; }   /* Miro teal lifted */
+.token.builtin     { color: #8ab8d8; }   /* muted dusty blue */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #ffb06e; }   /* Miro orange-light lifted */
+.token.symbol      { color: #e8c880; }   /* warm amber */
 
 .token.function,
-.token.function-name { color: #e8eaf0; font-weight: 500; }
+.token.function-name { color: #e8e4e0; font-weight: 500; }
 
-.token.class-name  { color: #7d9aff; }   /* Miro blue lifted */
+.token.class-name  { color: #9abce0; }   /* link blue lifted */
 
 .token.property,
-.token.tag         { color: #ffd02f; }   /* canary yellow */
+.token.tag         { color: #f37338; }   /* orbit orange */
 
 .token.attr-name,
-.token.selector    { color: #3dd5cc; }   /* teal */
+.token.selector    { color: #8ab8d8; }   /* dusty blue */
 
 .token.operator,
-.token.entity      { color: #8a8d9e; }
+.token.entity      { color: #8a8580; }
 
-.token.variable    { color: #e8eaf0; }
+.token.variable    { color: #e8e4e0; }
 
-.token.deleted     { color: #ff8a8a; }
-.token.inserted    { color: #3dd5cc; }
+.token.deleted     { color: #e08080; }
+.token.inserted    { color: #8ab8d8; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #3a3a42;
+  border-right: 1px solid #2e2e2d;
 }
-.line-numbers-rows > span::before { color: #4a4d5e; }
+.line-numbers-rows > span::before { color: #3e3e3c; }
