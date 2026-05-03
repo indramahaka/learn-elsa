@@ -92,7 +92,7 @@
   pre, figure, blockquote, table { page-break-inside: avoid; }
 
   /* ---- Hero ---- */
-  .hero-accent { background: #4F46E5 !important; }
+  .hero-accent { background: #0052CC !important; }
   .topic-hero  { border-bottom: 2px solid #ccc !important; }
 
   /* ---- Tier badges ---- */
