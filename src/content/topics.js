@@ -1,9 +1,8 @@
 /**
  * AWFS Elsa Academy: All topic content.
- * Format: JS module (works on file:// without a server).
- * Code samples target Elsa Workflows 3.x. Items marked [verify]
- * should be confirmed against current docs before the TAM pitch.
+ * Wrapped in IIFE so const topics does not collide with app.js in shared global scope.
  */
+(function () {
 
 const topics = [
 
@@ -1659,3 +1658,5 @@ GROUP BY "DefinitionId";`,
 ]; // end topics array
 
 window.topics = topics;
+
+})();
