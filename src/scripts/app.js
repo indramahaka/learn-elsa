@@ -122,7 +122,7 @@ function observeHeadings(headings) {
   if (headingObserver) headingObserver.disconnect();
 
   const topOffset = parseInt(getComputedStyle(document.documentElement)
-    .getPropertyValue('--header-h'), 10) + 3 + 16;
+    .getPropertyValue('--header-h'), 10) + 16;
 
   headingObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {

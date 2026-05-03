@@ -103,7 +103,7 @@ body {
   line-height: 1.7;
   color: var(--c-text);
   background-color: var(--c-bg);
-  padding-top: calc(var(--header-h) + var(--progress-h));
+  padding-top: var(--header-h);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -171,7 +171,7 @@ kbd {
    ============================================================ */
 .site-header {
   position: fixed;
-  top: var(--progress-h);
+  top: 0;
   left: 0; right: 0;
   height: var(--header-h);
   background: var(--c-header-bg);
@@ -338,10 +338,10 @@ kbd {
 /* Sidebar panel */
 .sidebar {
   position: fixed;
-  top: calc(var(--header-h) + var(--progress-h));
+  top: var(--header-h);
   left: 0;
   width: var(--sidebar-w);
-  height: calc(100vh - var(--header-h) - var(--progress-h));
+  height: calc(100vh - var(--header-h));
   overflow-y: auto;
   background: var(--c-surface);
   border-right: 1px solid var(--c-border);
@@ -476,7 +476,7 @@ kbd {
   margin-left: var(--sidebar-w);
   display: grid;
   grid-template-columns: 1fr var(--rsidebar-w);
-  min-height: calc(100vh - var(--header-h) - var(--progress-h));
+  min-height: calc(100vh - var(--header-h));
   align-items: start;
 }
 
@@ -552,7 +552,7 @@ kbd {
   color: var(--c-text);
   margin-top: var(--sp-12);
   margin-bottom: var(--sp-3);
-  scroll-margin-top: calc(var(--header-h) + var(--progress-h) + var(--sp-6));
+  scroll-margin-top: calc(var(--header-h) + var(--sp-6));
   position: relative;
 }
 
@@ -565,7 +565,7 @@ kbd {
   color: var(--c-text);
   margin-top: var(--sp-8);
   margin-bottom: var(--sp-2);
-  scroll-margin-top: calc(var(--header-h) + var(--progress-h) + var(--sp-6));
+  scroll-margin-top: calc(var(--header-h) + var(--sp-6));
   position: relative;
 }
 
@@ -705,8 +705,8 @@ pre[class*="language-"] {
    ============================================================ */
 .right-sidebar {
   position: sticky;
-  top: calc(var(--header-h) + var(--progress-h) + var(--sp-12));
-  max-height: calc(100vh - var(--header-h) - var(--progress-h) - var(--sp-16));
+  top: calc(var(--header-h) + var(--sp-12));
+  max-height: calc(100vh - var(--header-h) - var(--sp-16));
   overflow-y: auto;
   padding: var(--sp-6) var(--sp-4) var(--sp-8) var(--sp-6);
   align-self: start;
