@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js — Notion Dark
-   Background: #0a1530  (brand-navy, matches hero band)
-   Base text:  #e8e6e1
-   Accents: Notion brand palette
+   AGIT Code Theme for Prism.js — Airtable Dark
+   Background: #181d26  (surface-dark, matches primary)
+   Base text:  #e8e6e0
+   Accents: Airtable signature palette
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #e8e6e1;
+  color: #e8e6e0;
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.65;
@@ -22,68 +22,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #0a1530;
+  background: #181d26;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #060d1e; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #1a2a52; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #0d1218; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #2a3040; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(86, 69, 212, 0.35);
+  background: rgba(170, 45, 0, 0.25);
 }
 
-/* --- Token colors (Notion brand palette on navy) --- */
+/* --- Token colors (Airtable signature palette on surface-dark) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #5a6a8a; font-style: italic; }
+.token.cdata     { color: #545d72; font-style: italic; }
 
-.token.punctuation { color: #7a8aaa; }
+.token.punctuation { color: #6b7591; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #9b7ff5; font-weight: 500; }   /* brand-purple light */
+.token.important   { color: #e07c5a; font-weight: 500; }   /* coral warm — signature */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #4dd96d; }   /* brand-green */
+.token.builtin     { color: #7dcfb6; }   /* mint */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #ff85d4; }   /* brand-pink */
+.token.symbol      { color: #f4c06a; }   /* mustard/yellow */
 
 .token.function,
-.token.function-name { color: #e8e6e1; font-weight: 500; }
+.token.function-name { color: #e8e6e0; font-weight: 500; }
 
-.token.class-name  { color: #3dc4bf; }  /* brand-teal */
+.token.class-name  { color: #88bff0; }  /* link-blue lifted */
 
 .token.property,
-.token.tag         { color: #9b7ff5; }  /* brand-purple light */
+.token.tag         { color: #e07c5a; }  /* coral warm */
 
 .token.attr-name,
-.token.selector    { color: #4dd96d; }  /* brand-green */
+.token.selector    { color: #7dcfb6; }  /* mint */
 
 .token.operator,
-.token.entity      { color: #7a8aaa; }
+.token.entity      { color: #6b7591; }
 
-.token.variable    { color: #e8e6e1; }
+.token.variable    { color: #e8e6e0; }
 
-.token.deleted     { color: #ff6b6b; }
-.token.inserted    { color: #4dd96d; }
+.token.deleted     { color: #e07c5a; }
+.token.inserted    { color: #7dcfb6; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #1a2a52;
+  border-right: 1px solid #2a3040;
 }
-.line-numbers-rows > span::before { color: #2a3a62; }
+.line-numbers-rows > span::before { color: #3a4258; }
