@@ -3,20 +3,22 @@ const topics = window.topics;
 const { toggleComplete, isComplete, getProgress, subscribe } = window.progressModule;
 const { initTabs } = window.tabsModule;
 
-/* Safe Lucide wrapper — createIcons() can throw cross-origin errors on file:// */
+/* Safe Lucide wrapper — lucide.createIcons() can throw cross-origin errors on file:// */
 function createIcons() {
-  try { createIcons(); } catch (e) { /* icons won't render but app still works */ }
+  try { lucide.createIcons(); } catch (e) { /* icons won't render but app still works */ }
 }
 
 /* ---- Element refs ---- */
-const hamburgerBtn   = document.getElementById('hamburgerBtn');
-const sidebar        = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-const searchInput    = document.getElementById('searchInput');
-const otpList        = document.getElementById('otpList');
-const mainContent    = document.getElementById('mainContent');
-const progressBar    = document.getElementById('progressBar');
-const progressText   = document.getElementById('progressText');
+const hamburgerBtn      = document.getElementById('hamburgerBtn');
+const sidebar           = document.getElementById('sidebar');
+const sidebarOverlay    = document.getElementById('sidebarOverlay');
+const searchInput       = document.getElementById('searchInput');
+const sidebarNoResults  = document.getElementById('sidebarNoResults');
+const otpList           = document.getElementById('otpList');
+const mainContent       = document.getElementById('mainContent');
+const progressBar       = document.getElementById('progressBar');
+const progressText      = document.getElementById('progressText');
+const tierFilter        = document.getElementById('tierFilter');
 
 /* Snapshot welcome HTML before any navigation */
 const welcomeHtml = mainContent.innerHTML;
@@ -35,26 +37,57 @@ function populateSidebar() {
     3:    'nav-tier3-list',
     labs: 'nav-labs-list',
   };
+  const countIds = {
+    1:    'count-tier1',
+    2:    'count-tier2',
+    3:    'count-tier3',
+    labs: 'count-labs',
+  };
+
+  /* Initialize count pills with totals */
+  const tierTotals = {};
+  topics.forEach(t => { tierTotals[t.tier] = (tierTotals[t.tier] || 0) + 1; });
+  Object.entries(countIds).forEach(([tier, id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '0 / ' + (tierTotals[tier] || 0);
+  });
+
+  /* Per-tier sequence counter for the "01" prefix */
+  const tierCounters = {};
 
   topics.forEach(topic => {
     const listEl = document.getElementById(listIds[topic.tier]);
     if (!listEl) return;
 
+    tierCounters[topic.tier] = (tierCounters[topic.tier] || 0) + 1;
+    const num = String(tierCounters[topic.tier]).padStart(2, '0');
+
     const li = document.createElement('li');
-    li.className = 'nav-topic-item';
+    li.className       = 'nav-topic-item';
+    li.dataset.topicId = topic.id;
 
     const a = document.createElement('a');
-    a.href           = `#${topic.id}`;
-    a.className      = 'nav-topic-link';
-    a.dataset.topicId = topic.id;
+    a.href             = '#' + topic.id;
+    a.className        = 'nav-topic-link';
+    a.dataset.topicId  = topic.id;
+
+    const numSpan = document.createElement('span');
+    numSpan.className   = 'nav-topic-num';
+    numSpan.textContent = num;
+    numSpan.setAttribute('aria-hidden', 'true');
 
     const icon = document.createElement('i');
     icon.setAttribute('data-lucide', 'circle');
     icon.className = 'completion-icon';
     icon.setAttribute('aria-hidden', 'true');
 
+    const titleSpan = document.createElement('span');
+    titleSpan.className   = 'nav-topic-title';
+    titleSpan.textContent = topic.title;
+
+    a.appendChild(numSpan);
     a.appendChild(icon);
-    a.appendChild(document.createTextNode(' ' + topic.title));
+    a.appendChild(titleSpan);
     li.appendChild(a);
     listEl.appendChild(li);
   });
@@ -78,7 +111,7 @@ function escapeHtml(str) {
    ============================================================ */
 function renderCodePanel(blocks) {
   if (!blocks || blocks.length === 0) {
-    return '<p style="color:var(--c-text-3);font-style:italic;padding:var(--sp-4) 0;">No code samples for this topic yet.</p>';
+    return '<p style="color:var(--c-muted);font-style:italic;padding:var(--sp-4) 0;">No code samples for this topic yet.</p>';
   }
 
   return blocks.map(block => `
@@ -94,39 +127,39 @@ function renderCodePanel(blocks) {
         </button>
       </div>
       ${block.title
-        ? `<p style="font-size:0.875rem;font-weight:600;color:var(--c-text-2);padding:var(--sp-3) var(--sp-4) 0;margin:0;">${escapeHtml(block.title)}</p>`
+        ? `<p style="font-size:0.8125rem;font-weight:400;color:var(--c-on-dark-soft);padding:var(--sp-3) var(--sp-4) 0;margin:0;font-style:italic;">${escapeHtml(block.title)}</p>`
         : ''}
       <pre class="language-${block.language}"><code class="language-${block.language}">${escapeHtml(block.code)}</code></pre>
-      ${block.explanation
-        ? `<p class="code-explanation">${block.explanation}</p>`
-        : ''}
     </div>
+    ${block.explanation
+      ? `<p class="code-explanation">${block.explanation}</p>`
+      : ''}
   `).join('');
 }
 
 function renderHandsOnPanel(handsOn) {
   if (!handsOn) {
-    return '<p style="color:var(--c-text-3);font-style:italic;padding:var(--sp-4) 0;">No hands-on exercise for this topic yet.</p>';
+    return '<p style="color:var(--c-muted);font-style:italic;padding:var(--sp-4) 0;">No hands-on exercise for this topic yet.</p>';
   }
 
-  const stepsHtml   = (handsOn.steps        || []).map(s  => `<li>${s}</li>`).join('');
-  const verifyHtml  = (handsOn.verification  || []).map(v  => `<li>${v}</li>`).join('');
-  const pitfallsHtml = (handsOn.pitfalls     || []).map(p  => `<li>${p}</li>`).join('');
+  const stepsHtml    = (handsOn.steps       || []).map(s => '<li><span>' + s + '</span></li>').join('');
+  const verifyHtml   = (handsOn.verification || []).map(v => '<li>' + v + '</li>').join('');
+  const pitfallsHtml = (handsOn.pitfalls     || []).map(p => '<li>' + p + '</li>').join('');
 
-  return `
-    ${handsOn.goal ? `<div class="lab-goal"><strong>Goal:</strong> ${handsOn.goal}</div>` : ''}
-    ${stepsHtml   ? `<p class="lab-section-title">Steps</p><ol class="lab-steps">${stepsHtml}</ol>` : ''}
-    ${verifyHtml  ? `<p class="lab-section-title">Verify it worked</p><ul class="lab-checklist">${verifyHtml}</ul>` : ''}
-    ${pitfallsHtml ? `<p class="lab-section-title">Common pitfalls</p><ul class="pitfall-list">${pitfallsHtml}</ul>` : ''}
-  `;
+  return (
+    (handsOn.goal   ? '<div class="lab-goal"><strong>Goal:</strong> ' + handsOn.goal + '</div>' : '') +
+    (stepsHtml      ? '<p class="lab-section-title">Steps</p><ol class="lab-steps">' + stepsHtml + '</ol>' : '') +
+    (verifyHtml     ? '<p class="lab-section-title">Verify it worked</p><ul class="lab-checklist">' + verifyHtml + '</ul>' : '') +
+    (pitfallsHtml   ? '<p class="lab-section-title">Common pitfalls</p><ul class="pitfall-list">' + pitfallsHtml + '</ul>' : '')
+  );
 }
 
 function renderSelfCheckPanel(items) {
   if (!items || items.length === 0) {
-    return '<p style="color:var(--c-text-3);font-style:italic;padding:var(--sp-4) 0;">No self-check questions for this topic yet.</p>';
+    return '<p style="color:var(--c-muted);font-style:italic;padding:var(--sp-4) 0;">No self-check questions for this topic yet.</p>';
   }
 
-  return `<ol class="self-check-list" style="list-style:none;padding:0;">` +
+  return '<ol class="self-check-list" style="list-style:none;padding:0;">' +
     items.map(item => `
       <li class="self-check-item">
         <div class="self-check-q">
@@ -136,7 +169,7 @@ function renderSelfCheckPanel(items) {
         <div class="self-check-answer">${item.answer}</div>
       </li>
     `).join('') +
-  `</ol>`;
+  '</ol>';
 }
 
 
@@ -144,17 +177,16 @@ function renderSelfCheckPanel(items) {
    BUILD TOPIC ARTICLE HTML
    ============================================================ */
 function buildTopicHtml(topic, activeTab) {
-  const tierLabel = topic.tier === 'labs' ? 'LAB' : `T${topic.tier}`;
-  const tierClass = topic.tier === 'labs' ? 'tier-labs' : `tier-${topic.tier}`;
+  const tierLabel = topic.tier === 'labs' ? 'LAB' : 'T' + topic.tier;
+  const tierClass = topic.tier === 'labs' ? 'tier-labs' : 'tier-' + topic.tier;
 
   const prereqHtml = (topic.prerequisites || []).length > 0
-    ? `<div class="prereq-list">
-         <span class="prereq-label">Requires:</span>
-         ${topic.prerequisites.map(pid => {
-           const pre = topics.find(t => t.id === pid);
-           return `<a href="#${pid}" class="prereq-chip">${pre ? escapeHtml(pre.title) : pid}</a>`;
-         }).join('')}
-       </div>`
+    ? '<div class="prereq-list"><span class="prereq-label">Requires:</span>' +
+      topic.prerequisites.map(pid => {
+        const pre = topics.find(t => t.id === pid);
+        return '<a href="#' + pid + '" class="prereq-chip">' + (pre ? escapeHtml(pre.title) : pid) + '</a>';
+      }).join('') +
+      '</div>'
     : '';
 
   const idx  = topics.findIndex(t => t.id === topic.id);
@@ -162,17 +194,15 @@ function buildTopicHtml(topic, activeTab) {
   const next = topics[idx + 1];
 
   const prevHtml = prev
-    ? `<a href="#${prev.id}" class="btn-nav">
-         <i data-lucide="arrow-left" aria-hidden="true"></i>
-         <span>${escapeHtml(prev.title)}</span>
-       </a>`
+    ? '<a href="#' + prev.id + '" class="btn-nav">' +
+      '<i data-lucide="arrow-left" aria-hidden="true"></i>' +
+      '<span>' + escapeHtml(prev.title) + '</span></a>'
     : '';
 
   const nextHtml = next
-    ? `<a href="#${next.id}" class="btn-nav btn-nav-next">
-         <span>${escapeHtml(next.title)}</span>
-         <i data-lucide="arrow-right" aria-hidden="true"></i>
-       </a>`
+    ? '<a href="#' + next.id + '" class="btn-nav btn-nav-next">' +
+      '<span>' + escapeHtml(next.title) + '</span>' +
+      '<i data-lucide="arrow-right" aria-hidden="true"></i></a>'
     : '';
 
   const done = isComplete(topic.id);
@@ -184,63 +214,49 @@ function buildTopicHtml(topic, activeTab) {
     { id: 'self-check', label: 'Self-Check' },
   ];
 
-  const tabBtns = tabDefs.map(t => `
-    <button class="tab-btn${t.id === activeTab ? ' is-active' : ''}"
-            type="button"
-            role="tab"
-            data-tab="${t.id}"
-            aria-selected="${t.id === activeTab}">${t.label}</button>
-  `).join('');
+  const tabBtns = tabDefs.map(t =>
+    '<button class="tab-btn' + (t.id === activeTab ? ' is-active' : '') + '"' +
+    ' type="button" role="tab" data-tab="' + t.id + '"' +
+    ' aria-selected="' + (t.id === activeTab) + '">' + t.label + '</button>'
+  ).join('');
 
-  return `
-<article class="topic-article" id="${topic.id}" data-topic-id="${topic.id}">
+  return (
+    '<article class="topic-article" id="' + topic.id + '" data-topic-id="' + topic.id + '">' +
 
-  <div class="topic-hero">
-    <div class="topic-hero-eyebrow">
-      <span class="tier-badge ${tierClass}">${tierLabel}</span>
-      <span class="topic-time">
-        <i data-lucide="clock" aria-hidden="true"></i>
-        ${topic.estimatedMinutes}&thinsp;min
-      </span>
-    </div>
-    <h1>${escapeHtml(topic.title)}</h1>
-    <div class="hero-accent"></div>
-    ${prereqHtml}
-  </div>
+    '<div class="topic-hero">' +
+      '<div class="topic-hero-eyebrow">' +
+        '<span class="tier-badge ' + tierClass + '">' + tierLabel + '</span>' +
+        '<span class="topic-time">' +
+          '<i data-lucide="clock" aria-hidden="true"></i>' +
+          topic.estimatedMinutes + '&thinsp;min' +
+        '</span>' +
+      '</div>' +
+      '<h1>' + escapeHtml(topic.title) + '</h1>' +
+      '<div class="hero-accent"></div>' +
+      prereqHtml +
+    '</div>' +
 
-  <div class="topic-tabs topic-tabs-bar" role="tablist" aria-label="Topic sections">
-    ${tabBtns}
-  </div>
+    '<div class="topic-tabs topic-tabs-bar" role="tablist" aria-label="Topic sections">' +
+      tabBtns +
+    '</div>' +
 
-  <div class="tab-panel${activeTab === 'concept'    ? ' is-active' : ''}" data-panel="concept">
-    ${topic.tabs.concept || '<p>Concept content coming soon.</p>'}
-  </div>
+    '<div class="tab-panel' + (activeTab === 'concept'    ? ' is-active' : '') + '" data-panel="concept">'    + (topic.tabs.concept || '<p>Concept content coming soon.</p>') + '</div>' +
+    '<div class="tab-panel' + (activeTab === 'code'       ? ' is-active' : '') + '" data-panel="code">'       + renderCodePanel(topic.tabs.code) + '</div>' +
+    '<div class="tab-panel' + (activeTab === 'hands-on'   ? ' is-active' : '') + '" data-panel="hands-on">'   + renderHandsOnPanel(topic.tabs.handsOn) + '</div>' +
+    '<div class="tab-panel' + (activeTab === 'self-check' ? ' is-active' : '') + '" data-panel="self-check">' + renderSelfCheckPanel(topic.tabs.selfCheck) + '</div>' +
 
-  <div class="tab-panel${activeTab === 'code'       ? ' is-active' : ''}" data-panel="code">
-    ${renderCodePanel(topic.tabs.code)}
-  </div>
+    '<footer class="topic-footer">' +
+      '<div class="topic-footer-nav">' + prevHtml + '</div>' +
+      '<button class="btn-complete' + (done ? ' is-complete' : '') + '"' +
+        ' type="button" data-topic-id="' + topic.id + '" aria-pressed="' + done + '">' +
+        '<i data-lucide="' + (done ? 'circle-check' : 'circle') + '" aria-hidden="true"></i>' +
+        '<span>' + (done ? 'Mark incomplete' : 'Mark complete') + '</span>' +
+      '</button>' +
+      '<div class="topic-footer-nav">' + nextHtml + '</div>' +
+    '</footer>' +
 
-  <div class="tab-panel${activeTab === 'hands-on'   ? ' is-active' : ''}" data-panel="hands-on">
-    ${renderHandsOnPanel(topic.tabs.handsOn)}
-  </div>
-
-  <div class="tab-panel${activeTab === 'self-check' ? ' is-active' : ''}" data-panel="self-check">
-    ${renderSelfCheckPanel(topic.tabs.selfCheck)}
-  </div>
-
-  <footer class="topic-footer">
-    <div class="topic-footer-nav">${prevHtml}</div>
-    <button class="btn-complete${done ? ' is-complete' : ''}"
-            type="button"
-            data-topic-id="${topic.id}"
-            aria-pressed="${done}">
-      <i data-lucide="${done ? 'circle-check' : 'circle'}" aria-hidden="true"></i>
-      <span>${done ? 'Mark incomplete' : 'Mark complete'}</span>
-    </button>
-    <div class="topic-footer-nav">${nextHtml}</div>
-  </footer>
-
-</article>`;
+    '</article>'
+  );
 }
 
 
@@ -257,19 +273,41 @@ function updateSidebarActive(topicId) {
 }
 
 function updateSidebarCompletion() {
+  const tierDone = {};
+
   topics.forEach(topic => {
-    const link = document.querySelector(`.nav-topic-link[data-topic-id="${topic.id}"]`);
+    const link = document.querySelector('.nav-topic-link[data-topic-id="' + topic.id + '"]');
     if (!link) return;
     const existing = link.querySelector('.completion-icon');
     if (!existing) return;
+
     const done = isComplete(topic.id);
+    if (done) tierDone[topic.tier] = (tierDone[topic.tier] || 0) + 1;
+
     link.classList.toggle('is-complete', done);
+
     const newIcon = document.createElement('i');
     newIcon.setAttribute('data-lucide', done ? 'circle-check' : 'circle');
     newIcon.className = 'completion-icon';
     newIcon.setAttribute('aria-hidden', 'true');
     existing.replaceWith(newIcon);
   });
+
+  /* Update per-section count pills */
+  const tierTotals = {};
+  topics.forEach(t => { tierTotals[t.tier] = (tierTotals[t.tier] || 0) + 1; });
+
+  const countMap = { 1: 'count-tier1', 2: 'count-tier2', 3: 'count-tier3', labs: 'count-labs' };
+  Object.entries(countMap).forEach(([tier, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const done  = tierDone[tier] || 0;
+    const total = tierTotals[tier] || 0;
+    el.textContent = done + ' / ' + total;
+    el.classList.toggle('has-progress', done > 0);
+    el.classList.toggle('is-complete', done === total && total > 0);
+  });
+
   createIcons();
 }
 
@@ -279,9 +317,9 @@ function updateSidebarCompletion() {
    ============================================================ */
 function updateProgress() {
   const { done, total, pct } = getProgress(topics.length);
-  progressBar.style.width = `${pct}%`;
+  progressBar.style.width = pct + '%';
   progressBar.setAttribute('aria-valuenow', pct);
-  progressText.textContent = `${done} / ${total} (${pct}%)`;
+  progressText.textContent = done + ' / ' + total + ' (' + pct + '%)';
   updateSidebarCompletion();
 }
 
@@ -341,7 +379,9 @@ function wireCompleteButton(articleEl) {
     const done = isComplete(id);
     btn.classList.toggle('is-complete', done);
     btn.setAttribute('aria-pressed', String(done));
-    btn.innerHTML = `<i data-lucide="${done ? 'circle-check' : 'circle'}" aria-hidden="true"></i><span>${done ? 'Mark incomplete' : 'Mark complete'}</span>`;
+    btn.innerHTML =
+      '<i data-lucide="' + (done ? 'circle-check' : 'circle') + '" aria-hidden="true"></i>' +
+      '<span>' + (done ? 'Mark incomplete' : 'Mark complete') + '</span>';
     createIcons();
   });
 }
@@ -413,14 +453,14 @@ function buildOnThisPage() {
   headings.forEach(h => {
     const li = document.createElement('li');
     const a  = document.createElement('a');
-    a.href      = `#${h.id}`;
-    a.className = `otp-link${h.tagName === 'H3' ? ' otp-h3' : ''}`;
+    a.href      = '#' + h.id;
+    a.className = 'otp-link' + (h.tagName === 'H3' ? ' otp-h3' : '');
     a.textContent = h.textContent.replace(/#\s*$/, '').trim();
     a.addEventListener('click', e => {
       e.preventDefault();
       const target = document.getElementById(h.id);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      history.replaceState(null, '', `#${h.id}`);
+      history.replaceState(null, '', '#' + h.id);
     });
     li.appendChild(a);
     otpList.appendChild(li);
@@ -441,10 +481,10 @@ function observeHeadings(headings) {
 
   headingObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      const link = otpList.querySelector(`a[href="#${entry.target.id}"]`);
+      const link = otpList.querySelector('a[href="#' + entry.target.id + '"]');
       if (link) link.classList.toggle('is-active', entry.isIntersecting);
     });
-  }, { rootMargin: `-${topOffset}px 0px -75% 0px`, threshold: 0 });
+  }, { rootMargin: '-' + topOffset + 'px 0px -75% 0px', threshold: 0 });
 
   headings.forEach(h => headingObserver.observe(h));
 }
@@ -460,13 +500,13 @@ function addAnchorLinks() {
   article.querySelectorAll('h2[id], h3[id]').forEach(h => {
     if (h.querySelector('.anchor-link')) return;
     const a = document.createElement('a');
-    a.href      = `#${h.id}`;
+    a.href      = '#' + h.id;
     a.className = 'anchor-link';
-    a.setAttribute('aria-label', `Permalink to "${h.textContent.trim()}"`);
+    a.setAttribute('aria-label', 'Permalink to "' + h.textContent.trim() + '"');
     a.textContent = '#';
     a.addEventListener('click', e => {
       e.preventDefault();
-      history.replaceState(null, '', `#${h.id}`);
+      history.replaceState(null, '', '#' + h.id);
       if (navigator.clipboard) navigator.clipboard.writeText(location.href).catch(() => {});
     });
     h.appendChild(a);
@@ -511,6 +551,54 @@ document.querySelectorAll('.nav-section-btn').forEach(btn => {
 
 
 /* ============================================================
+   SIDEBAR SEARCH FILTER
+   ============================================================ */
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.trim().toLowerCase();
+  let anyVisible = false;
+
+  document.querySelectorAll('.nav-topic-item').forEach(item => {
+    const titleEl = item.querySelector('.nav-topic-title');
+    const match = !q || (titleEl && titleEl.textContent.toLowerCase().includes(q));
+    item.classList.toggle('is-hidden', !match);
+    if (match) anyVisible = true;
+  });
+
+  /* Auto-expand sections that have matching items when searching */
+  if (q) {
+    document.querySelectorAll('.nav-section').forEach(section => {
+      const btn  = section.querySelector('.nav-section-btn');
+      const list = section.querySelector('.nav-topic-list');
+      if (!btn || !list) return;
+      const hasMatch = list.querySelector('.nav-topic-item:not(.is-hidden)');
+      if (hasMatch) btn.setAttribute('aria-expanded', 'true');
+    });
+  }
+
+  if (sidebarNoResults) {
+    sidebarNoResults.classList.toggle('is-visible', q.length > 0 && !anyVisible);
+  }
+});
+
+/* Tier filter changes also filter sidebar */
+if (tierFilter) {
+  tierFilter.addEventListener('change', () => {
+    const val = tierFilter.value;
+    document.querySelectorAll('.nav-topic-item').forEach(item => {
+      const link = item.querySelector('.nav-topic-link');
+      if (!link) return;
+      const topicId = link.dataset.topicId;
+      const topic   = topics.find(t => t.id === topicId);
+      if (!topic) return;
+      const tierStr = String(topic.tier);
+      const match   = val === 'all' || tierStr === val;
+      item.classList.toggle('is-hidden', !match);
+    });
+  });
+}
+
+
+/* ============================================================
    KEYBOARD SHORTCUTS
    ============================================================ */
 document.addEventListener('keydown', e => {
@@ -537,12 +625,12 @@ document.addEventListener('keydown', e => {
   if (e.key === 'j' || e.key === 'J') {
     const idx  = currentTopicId ? topics.findIndex(t => t.id === currentTopicId) : -1;
     const next = topics[idx + 1];
-    if (next) location.hash = `#${next.id}`;
+    if (next) location.hash = '#' + next.id;
   } else if (e.key === 'k' || e.key === 'K') {
     const idx = currentTopicId ? topics.findIndex(t => t.id === currentTopicId) : -1;
     if (idx <= 0) { location.hash = '#welcome'; return; }
     const prev = topics[idx - 1];
-    if (prev) location.hash = `#${prev.id}`;
+    if (prev) location.hash = '#' + prev.id;
   }
 });
 

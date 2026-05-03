@@ -1,13 +1,13 @@
 /* ============================================================
-   AGIT Code Theme for Prism.js
-   Background: #f6f7f8 (Slack docs light surface)
-   Base text:  #1c1e21
+   AGIT Code Theme for Prism.js — Cohere Dark
+   Background: #1e1e24  (dark-soft)
+   Base text:  #ffffff
    ============================================================ */
 
 code[class*="language-"],
 pre[class*="language-"] {
-  color: #1c1e21;
-  font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color: #e8e8ec;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
   font-size: 0.875rem;
   line-height: 1.7;
   direction: ltr;
@@ -21,68 +21,68 @@ pre[class*="language-"] {
 }
 
 pre[class*="language-"] {
-  background: #f6f7f8;
+  background: #1e1e24;
   padding: 1.25rem 1.5rem;
   overflow-x: auto;
 }
 
 pre[class*="language-"]::-webkit-scrollbar { height: 4px; }
-pre[class*="language-"]::-webkit-scrollbar-track { background: #ebedf0; }
-pre[class*="language-"]::-webkit-scrollbar-thumb { background: #c8cbd0; border-radius: 2px; }
+pre[class*="language-"]::-webkit-scrollbar-track { background: #17171c; }
+pre[class*="language-"]::-webkit-scrollbar-thumb { background: #35353e; border-radius: 2px; }
 
 code[class*="language-"]::selection,
 code[class*="language-"] *::selection,
 pre[class*="language-"]::selection,
 pre[class*="language-"] *::selection {
-  background: rgba(53,120,229,0.18);
+  background: rgba(24,99,220,0.3);
 }
 
-/* --- Token colors --- */
+/* --- Token colors (Cohere dark palette) --- */
 .token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata     { color: #8c959f; font-style: italic; }
+.token.cdata     { color: #75758a; font-style: italic; }
 
-.token.punctuation { color: #525860; }
+.token.punctuation { color: #93939f; }
 .token.namespace   { opacity: 0.7; }
 
 .token.keyword,
 .token.control,
-.token.important   { color: #0550ae; font-weight: 500; }
+.token.important   { color: #7fa9f5; font-weight: 500; }   /* blue tint */
 
 .token.string,
 .token.char,
 .token.attr-value,
-.token.builtin     { color: #1a7f37; }
+.token.builtin     { color: #7dd3a8; }   /* pale green */
 
 .token.number,
 .token.boolean,
 .token.constant,
-.token.symbol      { color: #953800; }
+.token.symbol      { color: #ff7759; }   /* coral */
 
 .token.function,
-.token.function-name { color: #8250df; }
+.token.function-name { color: #e8e8ec; font-weight: 500; }
 
-.token.class-name  { color: #953800; }
+.token.class-name  { color: #c4b5fd; }  /* muted violet */
 
 .token.property,
-.token.tag         { color: #116329; }
+.token.tag         { color: #7dd3a8; }  /* pale green */
 
 .token.attr-name,
-.token.selector    { color: #0550ae; }
+.token.selector    { color: #7fa9f5; }  /* blue tint */
 
 .token.operator,
-.token.entity      { color: #525860; }
+.token.entity      { color: #93939f; }
 
-.token.variable    { color: #e3066a; }
+.token.variable    { color: #e8e8ec; }
 
-.token.deleted     { color: #cf222e; }
-.token.inserted    { color: #1a7f37; }
+.token.deleted     { color: #f87171; }
+.token.inserted    { color: #7dd3a8; }
 
 .token.bold   { font-weight: 700; }
 .token.italic { font-style: italic; }
 
 .line-numbers .line-numbers-rows {
-  border-right: 1px solid #dadde1;
+  border-right: 1px solid #2c2c35;
 }
-.line-numbers-rows > span::before { color: #c8cbd0; }
+.line-numbers-rows > span::before { color: #35353e; }

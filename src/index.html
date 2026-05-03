@@ -6,10 +6,10 @@
   <meta name="description" content="AWFS Elsa Academy: Personal learning reference for Elsa Workflows 3.x, anchored to the Approval Workflow Service for Toyota-Astra Motor.">
   <title>AWFS Elsa Academy</title>
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Space Grotesk (display/CohereText), Inter (body/Unica77), JetBrains Mono (code/CohereMono) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles/main.css">
@@ -30,9 +30,7 @@
               aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="sidebar">
         <i data-lucide="menu"></i>
       </button>
-      <a class="site-logo" href="#welcome" aria-label="AWFS Elsa Academy home">
-        <span class="logo-agit">AGIT</span>
-        <span class="logo-sep" aria-hidden="true">|</span>
+      <a class="site-logo" href="#welcome" aria-label="Elsa Academy home">
         <span class="logo-product">Elsa Academy</span>
       </a>
     </div>
@@ -78,48 +76,46 @@
   <nav class="sidebar" id="sidebar" aria-label="Topic navigation">
     <div class="sidebar-scroller">
 
+      <p class="sidebar-no-results" id="sidebarNoResults">No topics match.</p>
+
       <div class="nav-section" id="ns-tier1">
         <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier1-list">
           <span class="tier-badge tier-1">T1</span>
           <span class="nav-section-label">Must Know</span>
+          <span class="nav-section-count" id="count-tier1" aria-label="Tier 1 progress"></span>
           <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
         </button>
-        <ul class="nav-topic-list" id="nav-tier1-list" role="list">
-          <!-- Populated by app.js in Sprint 2 -->
-        </ul>
+        <ul class="nav-topic-list" id="nav-tier1-list" role="list"></ul>
       </div>
 
       <div class="nav-section" id="ns-tier2">
         <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier2-list">
           <span class="tier-badge tier-2">T2</span>
           <span class="nav-section-label">Should Know</span>
+          <span class="nav-section-count" id="count-tier2" aria-label="Tier 2 progress"></span>
           <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
         </button>
-        <ul class="nav-topic-list" id="nav-tier2-list" role="list">
-          <!-- Populated by app.js in Sprint 2 -->
-        </ul>
+        <ul class="nav-topic-list" id="nav-tier2-list" role="list"></ul>
       </div>
 
       <div class="nav-section" id="ns-tier3">
         <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-tier3-list">
           <span class="tier-badge tier-3">T3</span>
           <span class="nav-section-label">Nice to Know</span>
+          <span class="nav-section-count" id="count-tier3" aria-label="Tier 3 progress"></span>
           <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
         </button>
-        <ul class="nav-topic-list" id="nav-tier3-list" role="list">
-          <!-- Populated by app.js in Sprint 2 -->
-        </ul>
+        <ul class="nav-topic-list" id="nav-tier3-list" role="list"></ul>
       </div>
 
       <div class="nav-section" id="ns-labs">
         <button class="nav-section-btn" aria-expanded="true" aria-controls="nav-labs-list">
           <span class="tier-badge tier-labs">LAB</span>
           <span class="nav-section-label">Hands-On Labs</span>
+          <span class="nav-section-count" id="count-labs" aria-label="Labs progress"></span>
           <i data-lucide="chevron-down" class="nav-chevron" aria-hidden="true"></i>
         </button>
-        <ul class="nav-topic-list" id="nav-labs-list" role="list">
-          <!-- Populated by app.js in Sprint 2 -->
-        </ul>
+        <ul class="nav-topic-list" id="nav-labs-list" role="list"></ul>
       </div>
 
       <div class="nav-section" id="ns-refs">
